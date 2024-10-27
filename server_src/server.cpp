@@ -5,13 +5,13 @@
 
 constexpr const char* SALIR = "q";
 
-Server::Server(int port): aceptador(port, *this, monitor), gameloop(*this), monitor(*this) {}
+Server::Server(int port): accepter(port, *this, monitor), gameloop(*this), monitor(*this) {}
 
 std::vector<std::shared_ptr<Sender>>& Server::obtener_emisores() {
-    return aceptador.obtener_emisores();
+    return accepter.obtener_emisores();
 }
 
-void Server::manejar_entrada() {
+void Server::handleInput() {
     try {
         std::string input;
         while (_keep_running) {
@@ -28,36 +28,34 @@ void Server::manejar_entrada() {
 
 void Server::run() {
     try {
-        aceptador.start();
+        accepter.start();
         gameloop.start();
-        manejar_entrada();
+        handleInput();
 
-        aceptador.join();
+        accepter.join();
         gameloop.join();
     } catch (const std::exception& e) {
-        std::cerr << EXCEPTION << e.what() << std::endl;
+        std::cerr << EXCEPTION << " server run - " << e.what() << std::endl;
         stop();
     }
 }
 
-void Server::cerrar_clientes() { monitor.cerrar_clientes(); }
+void Server::closeClients() { monitor.cerrar_clientes(); }
 
-void Server::agregar_cliente(std::shared_ptr<Protocolo> client) { monitor.agregar_cliente(client); }
+void Server::addClient(std::shared_ptr<ServerProtocol> client) { monitor.agregar_cliente(client); }
 
-void Server::eliminar_cliente(std::shared_ptr<Protocolo> client) {
+void Server::removeClient(std::shared_ptr<ServerProtocol> client) {
     monitor.eliminar_cliente(client);
 }
 
-std::vector<std::shared_ptr<Protocolo>> Server::obtener_clientes() {
+std::vector<std::shared_ptr<ServerProtocol>> Server::getClients() {
     return monitor.obtener_clientes();
-}
-
-std::unordered_map<CajaID, Caja>& Server::obtener_cajas() { return cajas; }
+} 
 
 void Server::stop() {
     Thread::stop();
     monitor.cerrar_clientes();
-    aceptador.stop();
+    accepter.stop();
     gameloop.stop();
 }
 
@@ -70,9 +68,9 @@ Server::~Server() {
 
     try {
         monitor.cerrar_clientes();
-        aceptador.stop();
+        accepter.stop();
         gameloop.stop();
     } catch (const std::exception& e) {
-        std::cerr << EXCEPTION << e.what() << std::endl;
+        std::cerr << "Error: " << e.what() << std::endl;
     }
 }

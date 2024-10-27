@@ -1,5 +1,5 @@
-#ifndef LISTENER_H
-#define LISTENER_H
+#ifndef ACCEPTER_H
+#define ACCEPTER_H
 
 #include <atomic>
 #include <memory>
@@ -8,13 +8,18 @@
 
 #include <arpa/inet.h>
 
+// Own libraries
 #include "receiver.h"
 #include "sender.h"
+#include "monitor.h"
+#include "../common_src/utils.h"
+#include "../common_src/socket.h"
+#include "../common_src/thread.h"
+#include "../common_src/serverprotocol.h"
 
 class Server;
-class Monitor;
 
-class Listener: public Thread {
+class Accepter: public Thread {
 private:
     Socket socket_servidor;
     Server& server;
@@ -24,7 +29,7 @@ private:
 
 
 public:
-    Listener(int port, Server& server, Monitor& monitor);
+    Accepter(int port, Server& server, Monitor& monitor);
 
     // Devuelve el vector de emisores de los clientes.
     std::vector<std::shared_ptr<Sender>>& obtener_emisores() { return emisores; }
@@ -35,8 +40,8 @@ public:
     // Detiene el hilo aceptador de conexiones.
     void stop() override;
 
-    // Destruye el listener, liberanndo todos los recursos reservados.
-    ~Listener();
+    // Destruye el Accepter, liberanndo todos los recursos reservados.
+    ~Accepter();
 };
 
-#endif  // LISTENER_H
+#endif  // ACCEPTER_H

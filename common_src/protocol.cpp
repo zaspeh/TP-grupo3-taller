@@ -3,8 +3,7 @@
 void Protocol::checkReceivedStatus(int receivedBytes, bool was_closed,
                                      const std::string& error_message) {
     if (receivedBytes <= 0 || was_closed) {
-        std::cerr << error_message << std::endl;
-        exit(1);
+        //std::cerr << error_message << std::endl;
     }
 }
 
@@ -24,8 +23,7 @@ void Protocol::sendString(const std::string& string, bool& wasClosed) {
 }
 
 void Protocol::sendUint8(uint8_t num, bool& wasClosed) {
-    uint8_t networkNum = htons(num);
-    this->socket.sendall(reinterpret_cast<char*>(&networkNum), sizeof(networkNum), &wasClosed);
+    this->socket.sendall(reinterpret_cast<char*>(&num), sizeof(num), &wasClosed);
 }
 
 uint8_t Protocol::recvUint8(bool& wasClosed) {
@@ -47,4 +45,9 @@ uint16_t Protocol::recvUint16(bool& wasClosed) {
     return ntohs(network_num);
 }
 
-Protocol::Protocol(Socket& socket) : socket(socket) {}
+Protocol::Protocol(Socket socket) : socket(std::move(socket)) {}
+
+void Protocol::closeSocket() {
+    this->socket.shutdown(SHUT_RDWR);
+    this->socket.close();
+}

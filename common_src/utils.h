@@ -2,13 +2,18 @@
 #define UTILS_H
 
 // Client side
-
+#define CLIENT_USAGE_COMMAND_ERROR "Error of usage: ./client <ip> <port>"
 
 // Server side
+//#define MOVEMENT 0x15
+//#define NO_MOVEMENT 0x16
+
+#define MAX_CLIENTS_PER_QUEUE 100
 
 // Protocol side
 #define ERROR_READING_STRING "Error reading string from protocol"
 #define ERROR_READING_INT "Error reading int from protocol"
+#define EXCEPTION "Error: "
 
 // Shared
 #define MOVE_LEFT 0x01

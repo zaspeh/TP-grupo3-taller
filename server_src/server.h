@@ -6,19 +6,19 @@
 #include <unordered_map>
 #include <vector>
 
-#include "../common_src/caja.h"
 #include "../common_src/socket.h"
+#include "../common_src/serverprotocol.h"
 #include "../common_src/thread.h"
 
+#include "accepter.h"
 #include "gameloop.h"
-#include "listener.h"
 #include "monitor.h"
 #include "receiver.h"
 #include "sender.h"
 
 class Server: public Thread {
 private:
-    Listener listener;
+    Accepter accepter;
     GameLoop gameloop;
     Monitor monitor;
 
@@ -35,16 +35,16 @@ public:
     void stop() override;
 
     // Agrega un cliente nuevo al servidor.
-    void addClient(std::shared_ptr<Protocolo> client);
+    void addClient(std::shared_ptr<ServerProtocol> client);
 
     // Elimina un cliente del servidor.
-    void removeClient(std::shared_ptr<Protocolo> client);
+    void removeClient(std::shared_ptr<ServerProtocol> client);
 
     // Maneja la entrada del usuario desde la consola.
     void handleInput();
 
     // Devuelve el vector de clientes conectados.
-    std::vector<std::shared_ptr<Protocolo>> obtener_clientes();
+    std::vector<std::shared_ptr<ServerProtocol>> getClients();
 
     // Devuelve una referencia al gameloop.
     GameLoop& obtener_gameloop() { return gameloop; }
