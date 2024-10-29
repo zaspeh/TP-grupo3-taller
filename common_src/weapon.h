@@ -6,7 +6,8 @@
 
 class Weapon {
 protected:
-    int ammo;
+    uint8_t id;
+    uint8_t ammo;
     int range;
     std::string name;
     bool isReloading;
@@ -21,6 +22,9 @@ public:
     virtual bool canShoot() const { return ammo > 0 && !isReloading; }
     
     int getAmmo() const { return ammo; }
+    void reload(uint8_t newAmmo) { ammo += newAmmo; }
+    void setAmmo(uint8_t newAmmo) { ammo = newAmmo; }
+    int getId() const { return id; }
     int getRange() const { return range; }
     const std::string& getName() const { return name; }
 };
@@ -33,7 +37,7 @@ private:
     static const int EXPLOSION_RADIUS = 5;
 
 public:
-    Grenade() : Weapon(1, 5, "Granada"), pinPulled(false), timeToExplode(4.0f) {}
+    Grenade() : Weapon(1, 5, "Granada"), id(GRENADE_WEAPON) pinPulled(false), timeToExplode(4.0f) {}
     
     bool shoot() override {
         if (!canShoot()) return false;
@@ -51,7 +55,7 @@ public:
 
 class Banana : public Weapon {
 public:
-    Banana() : Weapon(1, 5, "Banana") {}
+    Banana() : Weapon(1, 5, "Banana"), id(BANANA_WEAPON) {}
     
     bool shoot() override {
         if (!canShoot()) return false;
@@ -65,7 +69,7 @@ private:
     static const int SHOTS_PER_BURST = 3;
 
 public:
-    PewPewLaser() : Weapon(12, 35, "Pew-Pew Laser") {}
+    PewPewLaser() : Weapon(12, 35, "Pew-Pew Laser"), id(PEWPEWLASER_WEAPON) {}
     
     bool shoot() override {
         if (!canShoot()) return false;
@@ -77,7 +81,7 @@ public:
 
 class LaserRifle : public Weapon {
 public:
-    LaserRifle() : Weapon(10, 30, "Laser Rifle") {}
+    LaserRifle() : Weapon(10, 30, "Laser Rifle"), id(LASERRIFLE_WEAPON) {}
     
     bool shoot() override {
         if (!canShoot()) return false;
@@ -86,40 +90,6 @@ public:
     }
 };
 
-// Equipamiento
-class Equipment {
-protected:
-    bool isEquipped;
 
-public:
-    Equipment() : isEquipped(false) {}
-    virtual ~Equipment() = default;
-    
-    virtual void equip() { isEquipped = true; }
-    virtual void unequip() { isEquipped = false; }
-    bool isEquipped() const { return isEquipped; }
-};
-
-class Armor : public Equipment {
-private:
-    int protection;
-
-public:
-    Armor() : protection(1) {}
-    
-    int getProtection() const { return protection; }
-    void absorb_hit() { protection--; if (protection <= 0) unequip(); }
-};
-
-class Helmet : public Equipment {
-private:
-    int protection;
-
-public:
-    Helmet() : protection(1) {}
-    
-    int getProtection() const { return protection; }
-    void absorb_hit() { protection--; if (protection <= 0) unequip(); }
-};
 
 // banana, fewfew, laser podrian ser parte de lo mismo

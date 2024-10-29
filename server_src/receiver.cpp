@@ -20,7 +20,11 @@ void Receiver::run() {
             }
 
             server.obtener_gameloop().agregar_comando([this, mensaje]() {
-                server.obtener_monitor().procesar_mensaje(mensaje);
+                if(mensaje[1] == START_MATCH) {
+                    server.startMatch();
+                } else {
+                    server.doActionGameState(mensaje[0], mensaje[1]);
+                }
             });
 
             

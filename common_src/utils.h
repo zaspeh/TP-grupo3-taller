@@ -23,5 +23,6 @@
 #define SHOOT 0x05
 #define LOOK_UP 0x06
 #define FLOOR 0x07
+#define START_MATCH 0x99
 
 #endif

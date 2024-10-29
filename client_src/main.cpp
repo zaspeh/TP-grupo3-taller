@@ -73,7 +73,7 @@ class Client {
         arg >> command;
 
 		if(command == "Read"){
-			std::vector<uint8_t>  response = clientprotocol.recvFinalPosition(wasClosed);
+			std::vector<uint8_t> response = clientprotocol.recvFinalPosition(wasClosed);
 			std::cout << "Response1: " << static_cast<int>(response[0]) << std::endl;
 			std::cout << "Response2: " << static_cast<int>(response[1]) << std::endl;
 
