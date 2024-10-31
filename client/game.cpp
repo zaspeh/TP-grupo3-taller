@@ -37,14 +37,14 @@ bool Game::init()
         return false;
     }
 
-    duck = new Duck(SCREEN_WIDTH, SCREEN_HEIGHT, gRenderer);
+    duck = new Duck(gameState.levels[gameState.current_level].ducks[0], SCREEN_WIDTH, SCREEN_HEIGHT, gRenderer);
 
     return true;
 }
 
 bool Game::loadMedia()
 {
-    return duck->loadTexture("duckyellow.png");
+    return duck->loadTexture();
 }
 
 void Game::run()
@@ -63,15 +63,14 @@ void Game::run()
             {
                 quit = true;
             }
-            duck->handleEvent(e);
         }
-
-        duck->move();
 
         SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
         SDL_RenderClear(gRenderer);
 
-        duck->render();
+        //GameState game_state; //Esto lo tengo que recibir por server
+        //update(game_state);
+        render();
 
         SDL_RenderPresent(gRenderer);
 
@@ -81,6 +80,14 @@ void Game::run()
             SDL_Delay(frameDelay - frameTime);
         }
     }
+}
+
+void Game::render(){
+   duck->render();
+}
+
+void Game::update(GameState game_state){
+    duck->updateState(game_state.levels[game_state.current_level].ducks[0]);
 }
 
 void Game::close()

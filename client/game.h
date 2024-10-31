@@ -19,9 +19,12 @@ public:
     void close();
 
 private:
+    GameState gameState;
     SDL_Window* gWindow;
     SDL_Renderer* gRenderer;
     Duck* duck;
+    void render();
+    void update(GameState game_state);
 };
 
 #endif

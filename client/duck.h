@@ -4,7 +4,11 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <string>
+#include <unordered_map>
 #include "ltexture.h"
+#include "game_state.h"
+#include "animation.h"
+#include <memory>
 
 const int SCREEN_WIDTH = 640;
 const int SCREEN_HEIGHT = 480;
@@ -12,32 +16,25 @@ const int SPRITE_WIDTH = 32;
 const int SPRITE_HEIGHT = 32;
 const int WALKING_ANIMATION_FRAMES = 6;
 const int JUMPING_ANIMATION_FRAMES = 6;
+const int DUCKING_ANIMATION_FRAMES = 5;
 const float DUCK_SPEED = 1.0f;
 
 class Duck
 {
 public:
-    Duck(int screenWidth, int screenHeight, SDL_Renderer* renderer);
-    void handleEvent(SDL_Event& e);
-    void move();
+    Duck(duck_t duckState, int screenWidth, int screenHeight, SDL_Renderer* renderer);
     void render();
-    bool loadTexture(std::string path);
+    bool loadTexture();
+    void updateState(const duck_t& newDuckState);
 
 private:
-    float playerX, playerY;
-    bool moveLeft, moveRight, faceLeft;
-    bool isJumping;
-    int frame;
-    float jumpVelocity;
-    float jumpHeight;
-    float gravity;
-    SDL_Rect gSpriteClips[WALKING_ANIMATION_FRAMES + JUMPING_ANIMATION_FRAMES];
-    LTexture gSpriteSheetTexture;
+    duck_t duckState;
+    std::unordered_map<DuckAnimationType, std::unique_ptr<Animation>> animations;
+    DuckAnimationType currentAnimation;
     SDL_Renderer* gRenderer;
     SDL_Rect scaleRect;
     int screenWidth;
     int screenHeight;
 };
-
 
 #endif
