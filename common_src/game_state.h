@@ -15,6 +15,8 @@
 typedef struct {
     float x;
     float y;
+    float w;
+    float h;
 } position_t;
 
 // Representa plataformas en el escenario
@@ -25,6 +27,7 @@ typedef struct {
 
 // Representa un arma en el juego
 typedef struct {
+    position_t pos;
     uint8_t type;    // Tipo de arma (ej.: pistola, escopeta, etc.)
     int ammo;        // Munición restante del arma
     bool is_equipped; // Indica si el arma está equipada por un jugador
@@ -32,6 +35,7 @@ typedef struct {
 
 // Representa una armadura o casco en el juego
 typedef struct {
+    position_t pos;
     uint8_t type;     // Tipo de armadura/casco
     bool is_equipped; // Indica si está equipada por un jugador
 } armor_t;
@@ -62,38 +66,41 @@ typedef struct {
 
 // Representa el estado de un pato
 typedef struct {
-    int id;                 // ID único del pato para identificar al jugador
     position_t pos; // Posición actual del pato en el nivel
+    uint8_t id;                 // ID único del pato para identificar al jugador
     bool faceLeft;          // Dirección hacia la que mira el pato
     bool isJumping;         // Estado de salto del pato
     bool isDucking;         // Estado de estar tirado al piso
-    int health;             // Salud actual del pato
+    bool isFalling;         // Si el jugador está en caída libre
+    bool isFlaping;         // Si el jugador está en salto
+    uint8_t health;             // Salud actual del pato
     bool alive;             // Estado de vida del pato (vivo o muerto)
-    int score;              // Puntaje acumulado del pato
+    uint8_t score;              // Puntaje acumulado del pato
+    uint8_t color;              // Color asignado al pato   
     weapon_t equipped_weapon; // Arma equipada por el pato
     armor_t equipped_armor;   // Armadura o casco equipado por el pato
 } duck_t;
 
 // Representa un nivel completo con todos sus elementos
 typedef struct {
+    uint8_t num_ducks;
     duck_t ducks[MAX_DUCKS];
-    int num_ducks;
+    uint8_t num_platforms;
     platform_t platforms[MAX_PLATFORMS];
-    int num_platforms;
+    uint8_t num_spawn_places;
     spawn_place_t spawn_places[MAX_SPAWN_PLACES];
-    int num_spawn_places;
+    uint8_t num_boxes;
     box_t boxes[MAX_BOXES];
-    int num_boxes;
+    uint8_t num_projectiles;
     projectile_t projectiles[MAX_PROJECTILES];
-    int num_projectiles;
 } level_t;
 
 // Estado global del juego
 typedef struct {
-    level_t levels[MAX_LEVELS];
-    int current_level;
-    int round;         // Ronda actual en progreso
-    int winning_score; // Puntaje necesario para ganar la partida
+    level_t level;
+    uint8_t current_level;
+    uint8_t round;         // Ronda actual en progreso
+    uint8_t winning_score; // Puntaje necesario para ganar la partida
 } GameState;
 
 #endif /* __GAME_STATE_H__ */

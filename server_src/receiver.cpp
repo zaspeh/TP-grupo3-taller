@@ -1,0 +1,36 @@
+#include "receiver.h"
+
+#include <iostream>
+
+#include "server.h"
+
+Receiver::Receiver(Server& server, std::shared_ptr<ServerProtocol> protocol):
+        server(server), protocol(protocol) {}
+
+void Receiver::run() {
+    bool wasClosed = false;
+
+    while (_keep_running && !wasClosed && server.esta_corriendo()) {
+        try {
+            std::vector<uint8_t> mensaje = protocol->recvMovement(wasClosed);
+            if (wasClosed) {
+                break;
+            }
+             
+            server.obtener_gameloop().agregar_comando([this, mensaje]() {
+                //if(mensaje[1] == START_MATCH) {
+                //    server.startMatch();
+                //} else {
+                server.doActionGameState(mensaje[0], mensaje[1]);
+                //}
+            });
+
+            
+        } catch (const std::exception& e) {
+            std::cerr << EXCEPTION << " receiver - " << e.what() << std::endl;
+            break;
+        }
+    }
+
+    server.removeClient(protocol);
+}

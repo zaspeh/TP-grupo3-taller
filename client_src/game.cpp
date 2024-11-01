@@ -1,32 +1,25 @@
 #include "game.h"
 
-Game::Game() : gWindow(NULL), gRenderer(NULL), duck(NULL) {}
+Game::Game(std::make_shared<Queue<GameState>>  gameState, std::shared_ptr<Queue<uint8_t>> commandQueue) : gameStateQueue(gameState), commandQueue(commandQueue) ,gWindow(NULL), gRenderer(NULL), duck(NULL) {
 
-Game::~Game()
-{
-    close();
-}
-
-bool Game::init()
-{
     if (SDL_Init(SDL_INIT_VIDEO) < 0)
     {
         printf("SDL could not initialize! SDL Error: %s\n", SDL_GetError());
-        return false;
+        //CATCH EXP
     }
 
     gWindow = SDL_CreateWindow("Duck", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
     if (gWindow == NULL)
     {
         printf("Window could not be created! SDL Error: %s\n", SDL_GetError());
-        return false;
+        //CATCH EXP
     }
 
     gRenderer = SDL_CreateRenderer(gWindow, -1, SDL_RENDERER_ACCELERATED);
     if (gRenderer == NULL)
     {
         printf("Renderer could not be created! SDL Error: %s\n", SDL_GetError());
-        return false;
+        //CATCH EXP
     }
     SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
 
@@ -34,12 +27,15 @@ bool Game::init()
     if (!(IMG_Init(imgFlags) & imgFlags))
     {
         printf("SDL_image could not initialize! SDL_image Error: %s\n", IMG_GetError());
-        return false;
+        //CATCH EXP
     }
 
     duck = new Duck(gameState.levels[gameState.current_level].ducks[0], SCREEN_WIDTH, SCREEN_HEIGHT, gRenderer);
+}
 
-    return true;
+Game::~Game()
+{
+    close();
 }
 
 bool Game::loadMedia()
@@ -47,23 +43,63 @@ bool Game::loadMedia()
     return duck->loadTexture();
 }
 
+bool Game::processEvents() {
+    SDL_Event e;
+    while (SDL_PollEvent(&e) != 0)
+    {
+        if (e.type == SDL_QUIT)
+        {
+            return true;
+        }
+        else if (e.type == SDL_KEYDOWN)
+        {
+
+            /*
+            #define MOVE_LEFT 0x01
+            #define MOVE_RIGHT 0x02
+            #define JUMP 0x03
+            #define TAKE_WEAPON 0x04
+            #define SHOOT 0x05
+            #define LOOK_UP 0x06
+            #define FLOOR 0x07
+            */
+            switch (e.key.keysym.sym) 
+            {
+                case SDLK_UP:
+                    sendCommand(JUMP);
+                    break;
+                case SDLK_DOWN:
+                    sendCommand(FLOOR);
+                    break;
+                case SDLK_LEFT:
+                    sendCommand(MOVE_LEFT);
+                    break;
+                case SDLK_RIGHT:
+                    sendCommand(MOVE_RIGHT);
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+    return false;
+}
+
+void Game::sendCommand(const uint8_t command){
+    // Logica para cargar la cola de comandos
+    commandQueue.try_push(command);
+}
+
 void Game::run()
 {
     bool quit = false;
-    SDL_Event e;
     Uint32 frameDelay = 10;
 
     while (!quit)
     {
         Uint32 startTime = SDL_GetTicks();
 
-        while (SDL_PollEvent(&e) != 0)
-        {
-            if (e.type == SDL_QUIT)
-            {
-                quit = true;
-            }
-        }
+        quit = processEvents();
 
         SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
         SDL_RenderClear(gRenderer);
