@@ -7,7 +7,7 @@
 
 int main(int argc, char* args[])
 {
-    Client client(atoi(args[1]), args[2]);
+    Client client(args[1], args[2]);
     client.run();
 
     return 0;

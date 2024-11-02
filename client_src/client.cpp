@@ -9,8 +9,8 @@ void checkIfClose() {
     */
 }
 
-Client::Client(int server_port, const std::string& server_ip)
-        : socket(server_ip.c_str(), std::to_string(server_port).c_str()),
+Client::Client(const std::string& server_ip, const std::string& server_port)
+        : socket(server_ip.c_str(), server_port.c_str()),
           client_id(next_id++),
           clientprotocol(std::make_shared<ClientProtocol>(std::move(socket), client_id)), // Asumimos que ClientProtocol tiene un constructor que acepta socket y client_id
           gameStateQueue(std::make_shared<Queue<game_state_t>>(100)), // Inicializa la cola de estados del juego
@@ -24,11 +24,11 @@ Client::Client(int server_port, const std::string& server_ip)
 void Client::run() {
     gameThread.start();
     recvThread.start();
-    gameThread.start();
+    sendThread.start();
 
     gameThread.join();
     recvThread.join();
-    gameThread.join();
+    sendThread.join();
 
     checkIfClose();
 }

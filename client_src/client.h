@@ -25,7 +25,7 @@ class Client {
 
 
     public:
-    	Client(int server_port, const std::string& server_ip); 
+    	Client(const std::string& server_ip, const std::string& server_port); 
         void run();
         void stop();
 };

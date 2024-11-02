@@ -13,6 +13,7 @@ Accepter::Accepter(int port, Server& server, Monitor& monitor, GameLoop& gameLoo
 void Accepter::run() {
     while (_keep_running) {
         try {
+            std::cout << "Esperando conexiones" << std::endl;
             Socket socket_cliente = socket_servidor.accept();
             std::cout << "Cliente conectado\n";
             if (!_keep_running)
