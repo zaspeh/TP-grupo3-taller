@@ -70,7 +70,7 @@ void Game::sendCommand(const uint8_t command){
 void Game::run()
 {
     init();
-    loadMedia();
+    //loadMedia();
     bool quit = false;
     Uint32 frameDelay = 10;
 
@@ -83,9 +83,9 @@ void Game::run()
         SDL_SetRenderDrawColor(gRenderer.get(), 0xFF, 0xFF, 0xFF, 0xFF);
         SDL_RenderClear(gRenderer.get());
 
-        game_state_t game_state = gameStateQueue->pop();
-        update(game_state);
-        render();
+        /*game_state_t game_state = gameStateQueue->pop();
+        update(game_state);*/
+        //render();
 
         SDL_RenderPresent(gRenderer.get());
 
@@ -107,7 +107,7 @@ void Game::update(game_state_t game_state){
 
 void Game::init()
 {
-        if (SDL_Init(SDL_INIT_VIDEO) < 0)
+    if (SDL_Init(SDL_INIT_VIDEO) < 0)
     {
         printf("SDL could not initialize! SDL Error: %s\n", SDL_GetError());
         // Puedes lanzar una excepción aquí si es necesario
@@ -136,7 +136,7 @@ void Game::init()
     }
 
     // Crear la instancia de Duck
-    duck = std::make_unique<Duck>(gameState.level.ducks[0], SCREEN_WIDTH, SCREEN_HEIGHT, gRenderer.get());
+    //duck = std::make_unique<Duck>(gameState.level.ducks[0], SCREEN_WIDTH, SCREEN_HEIGHT, gRenderer.get());
 }
 
 void Game::stop()
