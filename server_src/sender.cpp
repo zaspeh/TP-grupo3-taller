@@ -7,19 +7,19 @@
 #include "server.h"
 
 Sender::Sender(Server& server, Monitor& monitor, std::shared_ptr<ServerProtocol> protocol,
-               std::shared_ptr<Queue<ClientMessage>> cola_mensajes):
-        server(server), monitor(monitor), protocol(protocol), cola_mensajes(cola_mensajes) {}
+               std::shared_ptr<Queue<game_state_t>> gameStateQueue):
+        server(server), monitor(monitor), protocol(protocol), gameStateQueue(gameStateQueue) {}
 
 void Sender::run() {
     while (_keep_running && server.esta_corriendo()) {
         try {
             bool wasClosed = false;
-            GameState mensaje = gameStateQueue->pop();
+            game_state_t mensaje = gameStateQueue->pop();
 
             if (!server.esta_corriendo())
                 break;
 
-            protocol->sendGameState(mensaje.info, wasClosed);
+            protocol->sendGameState(mensaje, wasClosed);
 
             if (wasClosed) {
                 break;
@@ -31,15 +31,15 @@ void Sender::run() {
     }
 }
 
-void Sender::broadcast_message_with_info(const std::vector<uint8_t>& info) {
-    cola_mensajes->push(ClientMessage{ClientMessage::MOVEMENT, info});
+void Sender::broadcast_message_with_info(game_state_t gameState) {
+    gameStateQueue->push(gameState);
 }
 
 void Sender::stop() {
     Thread::stop();
-    ClientMessage msg;
-    while (cola_mensajes->try_pop(msg)) {}
-    cola_mensajes->close();
+    game_state_t msg;
+    while (gameStateQueue->try_pop(msg)) {}
+    gameStateQueue->close();
 }
 
 Sender::~Sender() {
@@ -48,9 +48,9 @@ Sender::~Sender() {
 
     try {
         Thread::stop();
-        ClientMessage msg;
-        while (cola_mensajes->try_pop(msg)) {}
-        cola_mensajes->close();
+        game_state_t msg;
+        while (gameStateQueue->try_pop(msg)) {}
+        gameStateQueue->close();
     } catch (const std::exception& e) {
         std::cerr << EXCEPTION << e.what() << std::endl;
     }

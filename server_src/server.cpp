@@ -5,7 +5,7 @@
 
 constexpr const char* SALIR = "q";
 
-Server::Server(int port): accepter(port, *this, monitor), gameloop(*this), monitor(*this) {}
+Server::Server(int port): gameloop(*this, monitor), monitor(*this), accepter(port, *this, monitor, gameloop) {}
 
 std::vector<std::shared_ptr<Sender>>& Server::obtener_emisores() {
     return accepter.obtener_emisores();
@@ -43,10 +43,6 @@ void Server::run() {
 void Server::closeClients() { monitor.cerrar_clientes(); }
 
 void Server::addClient(std::shared_ptr<ServerProtocol> client) { monitor.agregar_cliente(client); }
-
-void doActionGameState(uint8_t player, uint8_t action) {
-    gameState.doAction(player, action);
-}
 
 void Server::removeClient(std::shared_ptr<ServerProtocol> client) {
     monitor.eliminar_cliente(client);

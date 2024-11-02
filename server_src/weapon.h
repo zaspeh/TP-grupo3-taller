@@ -1,0 +1,101 @@
+// Weapon.h
+#ifndef WEAPON_H
+#define WEAPON_H
+
+#include <string>
+#include "../common_src/game_state.h"
+#include "../common_src/utils.h"
+
+
+class Weapon {
+protected:
+    weapon_t weapon;
+    int id;
+    int range;
+    bool isReloading;
+
+public:
+    Weapon(int initialAmmo, int weaponRange, int id) :
+        id(id),
+        range(weaponRange), 
+        isReloading(false) {
+            weapon.ammo = initialAmmo;
+        }
+    
+    virtual ~Weapon() = default;
+    
+    virtual bool shoot() = 0;
+    virtual bool canShoot() const { return weapon.ammo > 0 && !isReloading; }
+    
+    int getAmmo() const { return weapon.ammo; }
+    void reload(uint8_t newAmmo) { weapon.ammo += newAmmo; }
+    void setAmmo(uint8_t newAmmo) { weapon.ammo = newAmmo; }
+    int getId() const { return id; }
+    int getRange() const { return range; }
+    
+    uint8_t getType() const { return id; }
+};
+
+// Armas específicas
+class Grenade : public Weapon {
+private:
+    bool pinPulled;
+    float timeToExplode;
+    static const int EXPLOSION_RADIUS = 5;
+
+public:
+    Grenade() : Weapon(1, 5, GRENADE_WEAPON), pinPulled(false), timeToExplode(4.0f) {}
+    
+    bool shoot() override {
+        if (!canShoot()) return false;
+        pinPulled = true;
+        return true;
+    }
+
+    void throw_grenade() {
+        if (pinPulled && getAmmo() > 0) {
+            setAmmo(getAmmo() - 1);
+            pinPulled = false;
+        }
+    }
+};
+
+class Banana : public Weapon {
+public:
+    Banana() : Weapon(1, 5, BANANA_WEAPON) {}
+    
+    bool shoot() override {
+        if (!canShoot()) return false;
+        setAmmo(getAmmo() - 1);
+        return true;
+    }
+};
+
+class PewPewLaser : public Weapon {
+private:
+    static const int SHOTS_PER_BURST = 3;
+
+public:
+    PewPewLaser() : Weapon(12, 35, PEWPEWLASER_WEAPON) {}
+    
+    bool shoot() override {
+        if (!canShoot()) return false;
+        setAmmo(getAmmo() - 1);
+        // Lógica para disparar 3 rayos con dispersión
+        return true;
+    }
+};
+
+class LaserRifle : public Weapon {
+public:
+    LaserRifle() : Weapon(10, 30, LASERRIFLE_WEAPON) {}
+    
+    bool shoot() override {
+        if (!canShoot()) return false;
+        setAmmo(getAmmo() - 1);
+        return true;
+    }
+}; 
+
+
+#endif // WEAPON_H

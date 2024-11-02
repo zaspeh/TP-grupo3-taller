@@ -4,21 +4,23 @@
 #include <memory>
 
 // Own libraries
-#include "common/thread.h"
-#include "common/queue.h"
-#include "common/game_state.h"
-#include "common/client_protocol.h"
+#include "../common_src/thread.h"
+#include "../common_src/queue.h"
+#include "../common_src/game_state.h"
+#include "client_protocol.h"
 
 class Receiver : public Thread
 {
     private:
         std::shared_ptr<ClientProtocol> protocol;
-        std::shared_ptr<Queue<GameState>> gameStateQueue;
+        std::shared_ptr<Queue<game_state_t>> gameStateQueue;
 
 public:
-    Receiver(std::shared_ptr<ClientProtocol> protocol, std::shared_ptr<Queue<GameState>> queue) : protocol(protocol), gameStateQueue(queue) {};
-    ~Receiver();
-    recvGameState();
+    Receiver(std::shared_ptr<ClientProtocol> protocol, std::shared_ptr<Queue<game_state_t>> queue);
+    
+    void run() override;
+    void stop() override;
+    //~Receiver();
 };
 
 #endif

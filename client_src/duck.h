@@ -6,7 +6,7 @@
 #include <string>
 #include <unordered_map>
 #include "ltexture.h"
-#include "game_state.h"
+#include "../common_src/game_state.h"
 #include "animation.h"
 #include <memory>
 
@@ -30,11 +30,11 @@ public:
 private:
     duck_t duckState;
     std::unordered_map<DuckAnimationType, std::unique_ptr<Animation>> animations;
-    DuckAnimationType currentAnimation;
     SDL_Renderer* gRenderer;
     SDL_Rect scaleRect;
     int screenWidth;
     int screenHeight;
+    DuckAnimationType currentAnimation;
 };
 
 #endif

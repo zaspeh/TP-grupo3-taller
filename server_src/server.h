@@ -19,10 +19,9 @@
 
 class Server: public Thread {
 private:
-    Accepter accepter;
     GameLoop gameloop;
     Monitor monitor;
-    GameState gameState;
+    Accepter accepter;
 
     // Cierra todas las conexiones de clientes activos.
     void closeClients();

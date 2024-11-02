@@ -5,15 +5,15 @@
 
 class Equipment {
 protected:
-    bool isEquipped;
+    bool equipped; // Cambié el nombre de isEquipped a equipped
 
 public:
-    Equipment() : isEquipped(false) {}
+    Equipment() : equipped(false) {}
+
+    virtual void equip() { equipped = true; }
+    virtual void unequip() { equipped = false; }
+    bool isEquipped() const { return equipped; } // El método ahora hace referencia a 'equipped'
     virtual ~Equipment() = default;
-    
-    virtual void equip() { isEquipped = true; }
-    virtual void unequip() { isEquipped = false; }
-    bool isEquipped() const { return isEquipped; }
 };
 
 class Armor : public Equipment {

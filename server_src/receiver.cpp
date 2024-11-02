@@ -4,25 +4,25 @@
 
 #include "server.h"
 
-Receiver::Receiver(Server& server, std::shared_ptr<ServerProtocol> protocol):
-        server(server), protocol(protocol) {}
+Receiver::Receiver(Server& server, std::shared_ptr<ServerProtocol> protocol, GameLoop& gameLoop) :
+        server(server), protocol(protocol), gameLoop(gameLoop) {}
 
 void Receiver::run() {
     bool wasClosed = false;
 
     while (_keep_running && !wasClosed && server.esta_corriendo()) {
         try {
-            std::vector<uint8_t> mensaje = protocol->recvMovement(wasClosed);
+            std::vector<uint8_t> mensaje = protocol->recvCommand(wasClosed);
             if (wasClosed) {
                 break;
             }
              
             server.obtener_gameloop().agregar_comando([this, mensaje]() {
                 //if(mensaje[1] == START_MATCH) {
-                //    server.startMatch();
-                //} else {
-                server.doActionGameState(mensaje[0], mensaje[1]);
-                //}
+                //if (gameLoop.firstTime(mensaje[0])) // if is the first msg from that client, returns true
+                    //gameLoop.initGame();
+                
+                gameLoop.doActionGameState(mensaje[0], mensaje[1]);
             });
 
             

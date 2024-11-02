@@ -24,12 +24,13 @@ private:
     Socket socket_servidor;
     Server& server;
     Monitor& monitor;
+    GameLoop & gameLoop;
     std::vector<std::shared_ptr<Sender>> emisores;
     std::vector<std::shared_ptr<Receiver>> receptores;
 
 
 public:
-    Accepter(int port, Server& server, Monitor& monitor);
+    Accepter(int port, Server& server, Monitor& monitor, GameLoop& gameLoop);
 
     // Devuelve el vector de emisores de los clientes.
     std::vector<std::shared_ptr<Sender>>& obtener_emisores() { return emisores; }

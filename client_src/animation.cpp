@@ -1,7 +1,12 @@
 #include "animation.h"
 
 Animation::Animation(int qAnimationFrames, int spriteWidth, int spriteHeight, SDL_Renderer* renderer, DuckAnimationType type)
-: gSpriteSheetTexture(renderer), qAnimationFrames(qAnimationFrames), spriteWidth(spriteWidth), spriteHeight(spriteHeight), type(type){
+: frame(0), // Inicialización del primer miembro
+  qAnimationFrames(qAnimationFrames), 
+  spriteWidth(spriteWidth), 
+  spriteHeight(spriteHeight), 
+  type(type), // Ahora esta línea está en el orden correcto
+  gSpriteSheetTexture(renderer) { // Inicializa el texture al final
 
     if (type == WALKING){
         for (int i = 0; i < qAnimationFrames; ++i){

@@ -13,29 +13,22 @@
 class Server;
 class Monitor;
 
-struct ClientMessage {
-    std::vector<uint8_t> info;
-};
-
 class Sender: public Thread {
 private:
     Server& server;
     Monitor& monitor;
     std::shared_ptr<ServerProtocol> protocol;
-    std::shared_ptr<Queue<ClientMessage>> cola_mensajes;
+    std::shared_ptr<Queue<game_state_t>> gameStateQueue;
 
 public:
     explicit Sender(Server& server, Monitor& monitor, std::shared_ptr<ServerProtocol> protocol,
-                    std::shared_ptr<Queue<ClientMessage>> cola_mensajes);
+                    std::shared_ptr<Queue<game_state_t>> gameStateQueue);
 
     // Ejecuta el hilo sender.
     void run() override;
 
-    // Envía un mensaje de reaparición de caja a todos los clientes conectados.
-    void broadcast_message();
-
     // Envía un mensaje con información a todos los clientes conectados.
-    void broadcast_message_with_info(const std::vector<uint8_t>& info);
+    void broadcast_message_with_info(game_state_t gameState);
 
     // Detiene el sender.
     void stop() override;

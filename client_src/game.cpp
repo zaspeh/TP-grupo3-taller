@@ -1,41 +1,18 @@
 #include "game.h"
 
-Game::Game(std::make_shared<Queue<GameState>>  gameState, std::shared_ptr<Queue<uint8_t>> commandQueue) : gameStateQueue(gameState), commandQueue(commandQueue) ,gWindow(NULL), gRenderer(NULL), duck(NULL) {
-
-    if (SDL_Init(SDL_INIT_VIDEO) < 0)
-    {
-        printf("SDL could not initialize! SDL Error: %s\n", SDL_GetError());
-        //CATCH EXP
-    }
-
-    gWindow = SDL_CreateWindow("Duck", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
-    if (gWindow == NULL)
-    {
-        printf("Window could not be created! SDL Error: %s\n", SDL_GetError());
-        //CATCH EXP
-    }
-
-    gRenderer = SDL_CreateRenderer(gWindow, -1, SDL_RENDERER_ACCELERATED);
-    if (gRenderer == NULL)
-    {
-        printf("Renderer could not be created! SDL Error: %s\n", SDL_GetError());
-        //CATCH EXP
-    }
-    SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
-
-    int imgFlags = IMG_INIT_PNG;
-    if (!(IMG_Init(imgFlags) & imgFlags))
-    {
-        printf("SDL_image could not initialize! SDL_image Error: %s\n", IMG_GetError());
-        //CATCH EXP
-    }
-
-    duck = new Duck(gameState.levels[gameState.current_level].ducks[0], SCREEN_WIDTH, SCREEN_HEIGHT, gRenderer);
+Game::Game(std::shared_ptr<Queue<game_state_t>> gameStateQueue, std::shared_ptr<Queue<uint8_t>> commandQueue)
+    : gameStateQueue(gameStateQueue),
+      commandQueue(commandQueue),
+      gWindow(nullptr, SDL_DestroyWindow),
+      gRenderer(nullptr, SDL_DestroyRenderer),
+      duck(nullptr)
+{
 }
+
 
 Game::~Game()
 {
-    close();
+    stop();
 }
 
 bool Game::loadMedia()
@@ -87,11 +64,13 @@ bool Game::processEvents() {
 
 void Game::sendCommand(const uint8_t command){
     // Logica para cargar la cola de comandos
-    commandQueue.try_push(command);
+    commandQueue->try_push(command);
 }
 
 void Game::run()
 {
+    init();
+    loadMedia();
     bool quit = false;
     Uint32 frameDelay = 10;
 
@@ -101,14 +80,14 @@ void Game::run()
 
         quit = processEvents();
 
-        SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
-        SDL_RenderClear(gRenderer);
+        SDL_SetRenderDrawColor(gRenderer.get(), 0xFF, 0xFF, 0xFF, 0xFF);
+        SDL_RenderClear(gRenderer.get());
 
-        //GameState game_state; //Esto lo tengo que recibir por server
-        //update(game_state);
+        game_state_t game_state = gameStateQueue->pop();
+        update(game_state);
         render();
 
-        SDL_RenderPresent(gRenderer);
+        SDL_RenderPresent(gRenderer.get());
 
         Uint32 frameTime = SDL_GetTicks() - startTime;
         if (frameDelay > frameTime)
@@ -122,18 +101,52 @@ void Game::render(){
    duck->render();
 }
 
-void Game::update(GameState game_state){
-    duck->updateState(game_state.levels[game_state.current_level].ducks[0]);
+void Game::update(game_state_t game_state){
+    duck->updateState(game_state.level.ducks[0]);
 }
 
-void Game::close()
+void Game::init()
 {
-    delete duck;
+        if (SDL_Init(SDL_INIT_VIDEO) < 0)
+    {
+        printf("SDL could not initialize! SDL Error: %s\n", SDL_GetError());
+        // Puedes lanzar una excepción aquí si es necesario
+    }
 
-    SDL_DestroyRenderer(gRenderer);
-    SDL_DestroyWindow(gWindow);
-    gWindow = NULL;
-    gRenderer = NULL;
+    gWindow.reset(SDL_CreateWindow("Duck", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN));
+    if (!gWindow)
+    {
+        printf("Window could not be created! SDL Error: %s\n", SDL_GetError());
+        // Puedes lanzar una excepción aquí si es necesario
+    }
+
+    gRenderer.reset(SDL_CreateRenderer(gWindow.get(), -1, SDL_RENDERER_ACCELERATED));
+    if (!gRenderer)
+    {
+        printf("Renderer could not be created! SDL Error: %s\n", SDL_GetError());
+        // Puedes lanzar una excepción aquí si es necesario
+    }
+    SDL_SetRenderDrawColor(gRenderer.get(), 0xFF, 0xFF, 0xFF, 0xFF);
+
+    int imgFlags = IMG_INIT_PNG;
+    if (!(IMG_Init(imgFlags) & imgFlags))
+    {
+        printf("SDL_image could not initialize! SDL_image Error: %s\n", IMG_GetError());
+        // Puedes lanzar una excepción aquí si es necesario
+    }
+
+    // Crear la instancia de Duck
+    duck = std::make_unique<Duck>(gameState.level.ducks[0], SCREEN_WIDTH, SCREEN_HEIGHT, gRenderer.get());
+}
+
+void Game::stop()
+{
+    //delete duck;
+
+    //SDL_DestroyRenderer(gRenderer);
+    //SDL_DestroyWindow(gWindow);
+    //gWindow = NULL;
+    //gRenderer = NULL;
 
     IMG_Quit();
     SDL_Quit();

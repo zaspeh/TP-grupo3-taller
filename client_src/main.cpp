@@ -3,24 +3,12 @@
 #include <stdio.h>
 #include <string>
 #include "game.h"
+#include "client.h"
 
 int main(int argc, char* args[])
 {
-    Game game;
-
-    if (!game.init())
-    {
-        printf("Failed to initialize!\n");
-        return -1;
-    }
-
-    if (!game.loadMedia())
-    {
-        printf("Failed to load media!\n");
-        return -1;
-    }
-
-    game.run();
+    Client client(atoi(args[1]), args[2]);
+    client.run();
 
     return 0;
 }

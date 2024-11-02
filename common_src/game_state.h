@@ -21,8 +21,7 @@ typedef struct {
 
 // Representa plataformas en el escenario
 typedef struct {
-    position_t start; // Posición inicial de la plataforma
-    position_t end;   // Posición final de la plataforma
+    position_t platform; // Posición de la plataforma
 } platform_t;
 
 // Representa un arma en el juego
@@ -74,7 +73,7 @@ typedef struct {
     bool isFalling;         // Si el jugador está en caída libre
     bool isFlaping;         // Si el jugador está en salto
     uint8_t health;             // Salud actual del pato
-    bool alive;             // Estado de vida del pato (vivo o muerto)
+    bool isAlive;             // Estado de vida del pato (vivo o muerto)
     uint8_t score;              // Puntaje acumulado del pato
     uint8_t color;              // Color asignado al pato   
     weapon_t equipped_weapon; // Arma equipada por el pato
@@ -101,6 +100,6 @@ typedef struct {
     uint8_t current_level;
     uint8_t round;         // Ronda actual en progreso
     uint8_t winning_score; // Puntaje necesario para ganar la partida
-} GameState;
+} game_state_t;
 
 #endif /* __GAME_STATE_H__ */

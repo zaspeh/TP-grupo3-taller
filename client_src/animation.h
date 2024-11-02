@@ -16,13 +16,13 @@ public:
     bool loadTexture(std::string path);
     void renderAnimation(float x, float y, SDL_Rect &scaleRect, bool faceLeft);
 private:
-    DuckAnimationType type;
-    SDL_Rect gSpriteClips[MAX_ANIMATIONS];
-    LTexture gSpriteSheetTexture;
     int frame;
     int qAnimationFrames;
     int spriteWidth;
     int spriteHeight;
+    DuckAnimationType type; // Cambiado de posición
+    SDL_Rect gSpriteClips[MAX_ANIMATIONS];
+    LTexture gSpriteSheetTexture; // Cambiado de posición
 };
 
 #endif

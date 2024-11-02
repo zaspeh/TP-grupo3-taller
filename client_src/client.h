@@ -2,27 +2,32 @@
 #define CLIENT_H
 #include <string>
 #include <memory>
+#include <iostream>
+#include <cstdint>
 //Own libraries
-#include "clientprotocol.h"
+#include "client_protocol.h"
+#include "../common_src/queue.h"
+#include "sender.h"
+#include "receiver.h"
+#include "game.h"
 
 class Client {
 	private:
-		uint8_t client_id;
-		static uint8_t next_id;
-		ClientProtocol clientprotocol;
-        std::make_shared<Queue<GameState>> gameStateQueue;
-        std::make_shared<Queue<uint8_t>> commandQueue;
-        Sender SendThread;
-        Receiver RecvThread;
-        Game GameThread;
+        Socket socket;
+        uint8_t client_id;
+        static uint8_t next_id;
+        std::shared_ptr<ClientProtocol> clientprotocol;
+        std::shared_ptr<Queue<game_state_t>> gameStateQueue;
+        std::shared_ptr<Queue<uint8_t>> commandQueue;
+        Sender sendThread;
+        Receiver recvThread;
+        Game gameThread;
 
 
     public:
-    	Client(uint16_t server_port, const std::string& server_ip) {} 
+    	Client(int server_port, const std::string& server_ip); 
         void run();
         void stop();
-}
-
-uint8_t Client::next_id = 1;
+};
 
 #endif

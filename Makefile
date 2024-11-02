@@ -40,7 +40,7 @@ CFLAGS += -O0
 CFLAGS += -ggdb -DDEBUG -fno-inline
 
 # Opciones del enlazador.
-#LDFLAGS =
+LDFLAGS = -lSDL2 -lSDL2_image  # Agregar bibliotecas SDL2 y SDL2_image
 
 # Estandar de C a usar
 CSTD = c17

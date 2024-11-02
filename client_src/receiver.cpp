@@ -1,22 +1,25 @@
 #include "receiver.h"
 
-void Receive::recvGameState(){
+void Receiver::run(){
     bool wasClosed = false;
-    while (!wasClosed && running.load(std::memory_order_acquire)) {
+    while (!wasClosed && _keep_running) {
         try {
-            GameState state = protocol.readFromServer( wasClosed);
+            game_state_t state = protocol->readFromServer(wasClosed);
             if (wasClosed)
                 break;
 
-            if (state) // tal vez alguna otra validacion 
-                gameStateQueue.push(state);
+            if (state.current_level > 0) // tal vez alguna otra validacion 
+                gameStateQueue->push(state);
         } catch (const std::exception& e) {
-            log_error(e);
+            std::cerr << EXCEPTION << e.what() << std::endl;
             break;
         }
     }
-    monitor.remove_client(client_socket);
+    //monitor.remove_client(protocol);
 }
 
+void Receiver::stop() {
+    _keep_running = false;
+}
 
-void Receive::Receive(ClientProtocol protocol) : protocol(protocol), recvGameState() {}
+Receiver::Receiver(std::shared_ptr<ClientProtocol> protocol, std::shared_ptr<Queue<game_state_t>> queue) : protocol(protocol), gameStateQueue(queue) {}

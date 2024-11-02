@@ -5,9 +5,13 @@
 #include <thread>
 
 #include "server.h"
-#include "common/utils.h"
+#include "../common_src/utils.h"
 
-GameLoop::GameLoop(Server& server): server(server), cola_comandos(100), iteraciones(0) {}
+GameLoop::GameLoop(Server& server, Monitor& monitor): server(server), cola_comandos(100), iteraciones(0), gameState(Level()), monitor(monitor) {}
+    
+bool GameLoop::firstTime(uint8_t id) {
+    return gameState.isPlayerConnected(id);
+}
 
 void GameLoop::agregar_comando(std::function<void()> command) {
     cola_comandos.push(std::move(command));
@@ -50,10 +54,15 @@ void GameLoop::run() {
 
         auto end = std::chrono::steady_clock::now();
         auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
-        if (duration.count() < SLEEP_DURATION_MS) {
-            std::this_thread::sleep_for(std::chrono::milliseconds(SLEEP_DURATION_MS) - duration);
+        if (duration.count() < 1/30) {
+            std::this_thread::sleep_for(std::chrono::milliseconds(1/30) - duration);
         }
     }
+}
+
+void GameLoop::doActionGameState(uint8_t player, uint8_t action) {
+    game_state_t gameStateStruct = gameState.doAction(player, action);
+    monitor.procesar_mensaje(gameStateStruct);
 }
 
 void GameLoop::stop() {

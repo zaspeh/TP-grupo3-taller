@@ -1,5 +1,5 @@
 {
-    "C_Cpp.errorSquiggles": "disabled",
+    "C_Cpp.errorSquiggles": "enabled",
     "files.associations": {
         "array": "cpp",
         "atomic": "cpp",
@@ -59,6 +59,13 @@
         "typeinfo": "cpp",
         "condition_variable": "cpp",
         "ctime": "cpp",
-        "iostream": "cpp"
+        "iostream": "cpp",
+        "any": "cpp",
+        "forward_list": "cpp",
+        "list": "cpp",
+        "set": "cpp",
+        "unordered_set": "cpp",
+        "iomanip": "cpp",
+        "variant": "cpp"
     }
 }

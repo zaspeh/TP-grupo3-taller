@@ -5,6 +5,7 @@
 #include <string>
 #include <vector>
 #include <iostream>
+#include <ostream>
 
 #include <arpa/inet.h>
 
@@ -30,7 +31,7 @@ protected:
     uint8_t recvUint8(bool &wasClosed);
     uint16_t recvUint16(bool &wasClosed);
     float recvFloat(bool &wasClosed);
-    float sendFloat(float num, bool &wasClosed);
+    void sendFloat(float num, bool &wasClosed);
 
 public:
 

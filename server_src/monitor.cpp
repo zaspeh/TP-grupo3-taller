@@ -19,8 +19,8 @@ Monitor::Monitor(Server& server): server(server) {}
     return false;
 } */
 
-void Monitor::procesar_mensaje(const std::vector<uint8_t>& info_recibida) {
-    std::vector<uint8_t> info_copia = info_recibida;
+void Monitor::procesar_mensaje(const game_state_t gameState) {
+    //game_state_t info_copia = gameState;
     //info_copia.establecer_id_recompensa(server.obtener_cajas());
     //info_copia.imprimir_informacion_servidor();
     std::lock_guard<std::mutex> lock(mutex_senders);
@@ -28,7 +28,7 @@ void Monitor::procesar_mensaje(const std::vector<uint8_t>& info_recibida) {
     if (!senders.empty()) {
         for (auto& sender: senders) {
             if (sender) {
-                sender->broadcast_message_with_info(info_recibida);
+                sender->broadcast_message_with_info(gameState);
             }
         }
     }

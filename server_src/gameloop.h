@@ -7,6 +7,8 @@
 
 #include "../common_src/queue.h"
 #include "../common_src/thread.h"
+#include "game_state.h"
+#include "monitor.h"
 
 class Server;
 
@@ -15,6 +17,8 @@ private:
     Server& server;
     Queue<std::function<void()>> cola_comandos;
     std::atomic<int> iteraciones;
+    GameState gameState;
+    Monitor& monitor;
 
     // Ejecuta los comandos pendientes en la cola de comandos.
     void ejecutar_comandos();
@@ -24,8 +28,12 @@ private:
 
 public:
     // Constructor que inicializa el bucle de juego con una referencia al servidor.
-    explicit GameLoop(Server& server);
+    explicit GameLoop(Server& server, Monitor& monitor);
 
+    void doActionGameState(uint8_t player, uint8_t action);
+
+    bool firstTime(uint8_t player);
+    
     // Método que contiene la lógica del bucle de juego y se ejecuta en un hilo separado.
     void run() override;
 

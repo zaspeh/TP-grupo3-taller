@@ -1,4 +1,3 @@
-// monitor.h
 #ifndef MONITOR_H
 #define MONITOR_H
 
@@ -8,7 +7,6 @@
 
 #include "sender.h"
 #include "../common_src/serverprotocol.h"
-
 
 class Monitor {
 private:
@@ -21,14 +19,13 @@ private:
 public:
     explicit Monitor(Server& server);
 
-    // Devuelve true si la caja pedida está disponible.
-    //bool verificar_disponibilidad_caja(const Informacion& info);
+    // Eliminar el constructor de copia
+    Monitor(const Monitor&) = delete;
+    Monitor& operator=(const Monitor&) = delete;
 
     // Procesa un mensaje recibido.
-    void procesar_mensaje(const std::vector<uint8_t>& info_recibida);
+    void procesar_mensaje(game_state_t gameState);
 
-    // Notifica a todos los clientes de la reaparición de una caja.
-    //void notificar_reaparicion_caja();
 
     // Métodos para manejar clientes
 

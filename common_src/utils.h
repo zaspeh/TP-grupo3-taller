@@ -7,13 +7,19 @@
 // Server side
 //#define MOVEMENT 0x15
 //#define NO_MOVEMENT 0x16
-#define SLEEP_DURATION_MS = 1/30;
-
+#define SLEEP_DURATION_MS = 0.03333
 #define MAX_CLIENTS_PER_QUEUE 100
+
+#define GRENADE_WEAPON 0x1
+#define BANANA_WEAPON 0x2
+#define PEWPEWLASER_WEAPON 0x3
+#define LASERRIFLE_WEAPON 0x4
+
 
 // Protocol side
 #define ERROR_READING_STRING "Error reading string from protocol"
 #define ERROR_READING_INT "Error reading int from protocol"
+#define ERROR_READING_FLOAT "Error reading float from protocol"
 #define EXCEPTION "Error: "
 
 // Shared
