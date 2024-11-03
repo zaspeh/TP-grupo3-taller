@@ -1,6 +1,6 @@
 #include "client.h"
 
-uint8_t Client::next_id = 1;
+uint8_t Client::next_id = 0;
 
 void checkIfClose() {
     /* -> con la variable de game y 1 candado

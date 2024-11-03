@@ -126,7 +126,6 @@ void ClientProtocol::readDucks(duck_t ducks[MAX_DUCKS], uint8_t numDucks, bool &
 */
 
 void ServerProtocol::sendDucks(duck_t ducks[MAX_DUCKS], uint8_t num_ducks, bool &wasClosed) {
-    sendUint8(num_ducks, wasClosed);
     for (int i = 0; i < num_ducks; i++) {
         sendDuck(ducks[i], wasClosed);
     }
@@ -141,7 +140,6 @@ void ClientProtocol::readPlatforms(platform_t platforms[MAX_PLATFORMS], uint8_t 
 */
 
 void ServerProtocol::sendPlatforms(platform_t platforms[MAX_PLATFORMS], uint8_t num_platforms, bool &wasClosed) {
-    sendUint8(num_platforms, wasClosed);
     for (int i = 0; i < num_platforms; i++) {
         sendPosition(platforms[i].platform, wasClosed);
     }
@@ -160,7 +158,6 @@ void ClientProtocol::readSpawnPlaces(spawn_place_t spawn_places[MAX_SPAWN_PLACES
 */
 
 void ServerProtocol::sendSpawnPlaces(spawn_place_t spawn_places[MAX_SPAWN_PLACES], uint8_t num_spawn_places, bool &wasClosed) {
-    sendUint8(num_spawn_places, wasClosed);
     for (int i = 0; i < num_spawn_places; i++) {
         sendPosition(spawn_places[i].pos, wasClosed);
         sendUint8(spawn_places[i].is_active, wasClosed);
@@ -182,7 +179,6 @@ void ClientProtocol::readBoxes(box_t boxes[MAX_BOXES], uint8_t numBoxes, bool &w
 */
 
 void ServerProtocol::sendBoxes(box_t boxes[MAX_BOXES], uint8_t num_boxes, bool &wasClosed) {
-    sendUint8(num_boxes, wasClosed);
     for (int i = 0; i < num_boxes; i++) {
         sendPosition(boxes[i].pos, wasClosed);
         sendUint8(boxes[i].is_explosive, wasClosed);
@@ -204,7 +200,6 @@ void ClientProtocol::readProjectiles(projectile_t projectiles[MAX_PROJECTILES], 
 */
 
 void ServerProtocol::sendProjectiles(projectile_t projectiles[MAX_PROJECTILES], uint8_t num_projectiles, bool &wasClosed) {
-    sendUint8(num_projectiles, wasClosed);
     for (int i = 0; i < num_projectiles; i++) {
         sendPosition(projectiles[i].pos, wasClosed);
         sendUint8(projectiles[i].type, wasClosed);

@@ -17,7 +17,7 @@ private:
     Server& server;
     Queue<std::function<void()>> cola_comandos;
     std::atomic<int> iteraciones;
-    GameState gameState;
+    std::unique_ptr<GameState> gameState;
     Monitor& monitor;
 
     // Ejecuta los comandos pendientes en la cola de comandos.
@@ -27,8 +27,11 @@ private:
     void simular_iteracion();
 
 public:
+    bool matchStarted = false;
     // Constructor que inicializa el bucle de juego con una referencia al servidor.
     explicit GameLoop(Server& server, Monitor& monitor);
+    
+    void initGame();
 
     void doActionGameState(uint8_t player, uint8_t action);
 

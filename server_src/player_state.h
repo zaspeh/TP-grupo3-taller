@@ -17,17 +17,18 @@ private:
 
 public:
     // Constructor por defecto
-    PlayerState() : 
+    PlayerState(float x, float y, float w, float h) : 
         weapon(nullptr), 
-        armor(), 
-        helmet(),
         verticalVelocity(0.0)
     {
-        duck.pos = {0, 0};
+        duck.pos = {x, y, w, h};
         duck.isAlive = true;
         duck.health = 100;
     }
 
+    duck_t getState() {
+        return duck;
+    }
 
 /* typedef struct {
     position_t pos; // Posición actual del pato en el nivel
@@ -76,7 +77,7 @@ public:
 
     uint8_t getFacingDirection() const { return duck.faceLeft; }
     void setFacingDirection(uint8_t direction) { duck.faceLeft = direction; }; 
-    void move(int dx, int dy);
+    void move(float dx, float dy);
 
     /* int getScore() const;
     void setScore(int newScore);

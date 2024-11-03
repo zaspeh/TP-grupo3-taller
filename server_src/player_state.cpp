@@ -1,7 +1,7 @@
 #include "player_state.h"
 
 // Other methods
-void PlayerState::move(int dx, int dy) {
+void PlayerState::move(float dx, float dy) {
     duck.pos.x += dx;
     duck.pos.y += dy;
 }

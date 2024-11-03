@@ -72,9 +72,12 @@ void Game::run()
 
         SDL_SetRenderDrawColor(gRenderer.get(), 0xFF, 0xFF, 0xFF, 0xFF);
         SDL_RenderClear(gRenderer.get());
+        game_state_t game_state; 
+        gameStateQueue->try_pop(game_state);
+        if(game_state.level.ducks[0].pos.x != 0)
+            std::cout << "nueva posicion: " << static_cast<int>(game_state.level.ducks[0].pos.x) << ", " << static_cast<int>(game_state.level.ducks[0].pos.y) << std::endl;
 
-        /*game_state_t game_state = gameStateQueue->pop();
-        update(game_state);*/
+        update(game_state);
         render();
 
         SDL_RenderPresent(gRenderer.get());
@@ -93,7 +96,9 @@ void Game::render(){
 }
 
 void Game::update(game_state_t game_state){
-    duck->updateState(game_state.level.ducks[0]);
+    for (int i = 0; i < game_state.level.num_ducks; i++){
+        duck->updateState(game_state.level.ducks[i]); // actualiza solo 1 pato xd
+    }
 }
 
 void Game::init()

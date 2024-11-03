@@ -7,10 +7,23 @@
 #include "server.h"
 #include "../common_src/utils.h"
 
-GameLoop::GameLoop(Server& server, Monitor& monitor): server(server), cola_comandos(100), iteraciones(0), gameState(Level()), monitor(monitor) {}
+GameLoop::GameLoop(Server& server, Monitor& monitor): server(server), cola_comandos(100), iteraciones(0), gameState(nullptr), monitor(monitor) {}
     
 bool GameLoop::firstTime(uint8_t id) {
-    return gameState.isPlayerConnected(id);
+    return gameState->isPlayerConnected(id);
+}
+
+
+                    /*
+                    game_state_t state;
+                    std::map<uint8_t, std::shared_ptr<PlayerState>> players;  
+                    std::vector<std::shared_ptr<level_t>> levels;
+                    Level level;
+                    mutable std::mutex mtx;
+                    */
+                    
+void GameLoop::initGame() {
+    gameState = std::unique_ptr<GameState>(new GameState());
 }
 
 void GameLoop::agregar_comando(std::function<void()> command) {
@@ -61,7 +74,7 @@ void GameLoop::run() {
 }
 
 void GameLoop::doActionGameState(uint8_t player, uint8_t action) {
-    game_state_t gameStateStruct = gameState.doAction(player, action);
+    game_state_t gameStateStruct = gameState->doAction(player, action);
     monitor.procesar_mensaje(gameStateStruct);
 }
 
