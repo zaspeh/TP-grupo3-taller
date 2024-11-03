@@ -30,16 +30,6 @@ bool Game::processEvents() {
         }
         else if (e.type == SDL_KEYDOWN)
         {
-
-            /*
-            #define MOVE_LEFT 0x01
-            #define MOVE_RIGHT 0x02
-            #define JUMP 0x03
-            #define TAKE_WEAPON 0x04
-            #define SHOOT 0x05
-            #define LOOK_UP 0x06
-            #define FLOOR 0x07
-            */
             switch (e.key.keysym.sym) 
             {
                 case SDLK_UP:
@@ -85,7 +75,7 @@ void Game::run()
 
         /*game_state_t game_state = gameStateQueue->pop();
         update(game_state);*/
-        //render();
+        render();
 
         SDL_RenderPresent(gRenderer.get());
 
@@ -95,6 +85,7 @@ void Game::run()
             SDL_Delay(frameDelay - frameTime);
         }
     }
+    stop(); //Cuando termina este loop se cierra la ventana, entonces tenemos que hacer que se cierren los demas hilos
 }
 
 void Game::render(){
@@ -136,7 +127,8 @@ void Game::init()
     }
 
     // Crear la instancia de Duck
-    //duck = std::make_unique<Duck>(gameState.level.ducks[0], SCREEN_WIDTH, SCREEN_HEIGHT, gRenderer.get());
+    duck = std::make_unique<Duck>(gameState.level.ducks[0], SCREEN_WIDTH, SCREEN_HEIGHT, gRenderer.get());
+    loadMedia();
 }
 
 void Game::stop()

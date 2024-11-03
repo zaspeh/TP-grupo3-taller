@@ -1,6 +1,6 @@
 #include "duck.h"
 
-Duck::Duck(duck_t duckState, int screenWidth, int screenHeight, SDL_Renderer* renderer)
+Duck::Duck(duck_t duckState, int screenWidth, int screenHeight,  SDL_Renderer* renderer)
     : duckState(duckState), gRenderer(renderer), screenWidth(screenWidth), screenHeight(screenHeight), currentAnimation(WALKING)
 {
     scaleRect.w = SPRITE_WIDTH * 2;
@@ -12,13 +12,13 @@ Duck::Duck(duck_t duckState, int screenWidth, int screenHeight, SDL_Renderer* re
 
 bool Duck::loadTexture(){
     bool allLoaded = true;
-    if (!animations[WALKING]->loadTexture("duckyellow.png")) {
+    if (!animations[WALKING]->loadTexture("client_src/duckyellow.png")) {
         allLoaded = false;
     }
-    if (!animations[JUMPING]->loadTexture("duckyellow.png")) {
+    if (!animations[JUMPING]->loadTexture("client_src/duckyellow.png")) {
         allLoaded = false;
     }
-    if (!animations[DUCKING]->loadTexture("duckyellow.png")) {
+    if (!animations[DUCKING]->loadTexture("client_src/duckyellow.png")) {
         allLoaded = false;
     }
     return allLoaded;
