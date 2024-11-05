@@ -7,10 +7,9 @@ void Receiver::run(){
             game_state_t state = protocol->readFromServer(wasClosed);
             if (wasClosed)
                 break;
-            std::cout << "Pusheamos el mensaje\n";
-            std::cout << "Position: " << state.level.ducks[0].pos.x << " " << state.level.ducks[0].pos.y << std::endl;
+            
             gameStateQueue->push(state);
-            std::cout << "PusheaDISIMO\n";
+
         } catch (const std::exception& e) {
             std::cerr << EXCEPTION << e.what() << std::endl;
             break;

@@ -20,15 +20,16 @@ Monitor::Monitor(Server& server): server(server) {}
 } */
 
 void Monitor::procesar_mensaje(const game_state_t gameState) {
-    //game_state_t info_copia = gameState;
+    game_state_t copia = gameState;
     //info_copia.establecer_id_recompensa(server.obtener_cajas());
     //info_copia.imprimir_informacion_servidor();
     std::lock_guard<std::mutex> lock(mutex_senders);
     auto senders = server.obtener_emisores();
+    //std::cout << "Posición pato: " << gameState.level.ducks[0].pos.x << " " << gameState.level.ducks[0].pos.y << std::endl;
     if (!senders.empty()) {
         for (auto& sender: senders) {
             if (sender) {
-                sender->broadcast_message_with_info(gameState);
+                sender->broadcast_message_with_info(copia);
             }
         }
     }

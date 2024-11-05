@@ -75,6 +75,7 @@ void GameLoop::run() {
 
 void GameLoop::doActionGameState(uint8_t player, uint8_t action) {
     game_state_t gameStateStruct = gameState->doAction(player, action);
+    //std::cout << "Posición del pato - gameloop: " << gameStateStruct.level.ducks[0].pos.x << " " << gameStateStruct.level.ducks[0].pos.y << std::endl;
     monitor.procesar_mensaje(gameStateStruct);
 }
 

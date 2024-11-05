@@ -24,10 +24,10 @@ weapon_t ClientProtocol::readWeapon(bool& wasClosed){
 
 position_t ClientProtocol::readPosition(bool& wasClosed){
     position_t position;
-    position.x = recvFloat(wasClosed);
-    position.y = recvFloat(wasClosed);
-    position.w = recvFloat(wasClosed);
-    position.h = recvFloat(wasClosed);
+    position.x = recvUint32(wasClosed);
+    position.y = recvUint32(wasClosed);
+    position.w = recvUint32(wasClosed);
+    position.h = recvUint32(wasClosed);
     return position;
 }
 
@@ -50,7 +50,7 @@ duck_t ClientProtocol::readDuck(bool& wasClosed){
 }
 
 void ClientProtocol::readDucks(duck_t ducks[MAX_DUCKS], uint8_t numDucks, bool &wasClosed) {
-    for (uint8_t i = 0; i < numDucks; i++) {
+    for (int i = 0; i < numDucks; i++) {
         ducks[i] = readDuck(wasClosed);
     }
 }
@@ -107,10 +107,13 @@ game_state_t ClientProtocol::readFromServer(bool &wasClosed) {
     game_state.current_level = recvUint8(wasClosed);    
     game_state.round = recvUint8(wasClosed);    
     game_state.winning_score = recvUint8(wasClosed);    
+    std::cout << "winning score: " << static_cast<int>(game_state.winning_score) << std::endl; // verifico si se envia bien, deberìa ser 10
     return game_state;
 }
 
 
 ClientProtocol::ClientProtocol(Socket&& socket, uint8_t client_id)
         : Protocol(std::move(socket)),  
-          client_identifier(client_id) {}  
+          client_identifier(client_id) {
+            std::cout << "Id inicializando en: " << static_cast<int>(client_identifier) << std::endl;
+          }  

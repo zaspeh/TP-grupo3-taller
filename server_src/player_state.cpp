@@ -1,9 +1,10 @@
 #include "player_state.h"
 
 // Other methods
-void PlayerState::move(float dx, float dy) {
+void PlayerState::move(uint32_t dx, uint32_t dy) {
     duck.pos.x += dx;
     duck.pos.y += dy;
+    //std::cout << "Posicion del pato: " << duck.pos.x << " " << duck.pos.y << std::endl;
 }
 
 void PlayerState::reload(uint8_t newAmmo) { 

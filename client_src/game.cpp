@@ -75,7 +75,8 @@ void Game::run()
         game_state_t game_state; 
         gameStateQueue->try_pop(game_state);
         if(game_state.level.ducks[0].pos.x != 0)
-            std::cout << "nueva posicion: " << static_cast<int>(game_state.level.ducks[0].pos.x) << ", " << static_cast<int>(game_state.level.ducks[0].pos.y) << std::endl;
+            
+        //std::cout << "nueva posicion: " << static_cast<int>(game_state.level.ducks[0].pos.x) << ", " << static_cast<int>(game_state.level.ducks[0].pos.y) << std::endl;
 
         update(game_state);
         render();
@@ -97,7 +98,7 @@ void Game::render(){
 
 void Game::update(game_state_t game_state){
     for (int i = 0; i < game_state.level.num_ducks; i++){
-        duck->updateState(game_state.level.ducks[i]); // actualiza solo 1 pato xd
+        duck->updateState(game_state.level.ducks[i]); // actualiza solo 1 pato xd 
     }
 }
 

@@ -69,6 +69,8 @@ typedef struct {
     void updateState(uint8_t id, std::shared_ptr<PlayerState> player) // habria que chequear si agarro una caja, y demas
     {
         state.level.ducks[id] = player->getState();
+        
+        std::cout << "Posicion del pato - updatestate: " << state.level.ducks[id].pos.x << " " << state.level.ducks[id].pos.y << std::endl;
     }
 
     game_state_t doAction(uint8_t id, uint8_t action) {
@@ -79,12 +81,13 @@ typedef struct {
         Weapon* weapon = nullptr;
         switch(action) {
             case MOVE_LEFT:
-                player->move(-1, 0);
-                player->setFacingDirection(-1);
+                player->move(-5, 0);
+                player->setFacingDirection(1);
                 break;
             case MOVE_RIGHT:
-                player->move(1, 0);
-                player->setFacingDirection(1);
+                std::cout << "Moving right" << std::endl;
+                player->move(5, 0);
+                player->setFacingDirection(0);
                 break;
             case JUMP:
                 player->jump();
@@ -101,8 +104,7 @@ typedef struct {
                 // Implementar lógica para mirar hacia arriba
                 break;
             case FLOOR:
-                // Implementar lógica para agacharse
-                //player->setCrouched(!player->isCrouched());
+                player->setCrouched(!player->isCrouched());
                 break;
             default:
                 std::cout << "Unknown action: " << action << std::endl;
@@ -124,8 +126,10 @@ typedef struct {
     bool isPlayerConnected(uint8_t id) {
         std::lock_guard<std::mutex> lock(mtx);
         if (players.count(id) == 0) {
+            std::cout << "Nuevo jugador: " << static_cast<int>(id) << std::endl;
             players[id] = std::make_shared<PlayerState>(0, 0, 32, 32);
             state.level.ducks[id] = players[id]->getState();
+            state.level.num_ducks++;
             return false;
         }
         return true;

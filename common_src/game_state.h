@@ -13,10 +13,10 @@
 #define MAX_BOXES 20
 
 typedef struct {
-    float x;
-    float y;
-    float w;
-    float h;
+    uint32_t x;
+    uint32_t y;
+    uint32_t w;
+    uint32_t h;
 } position_t;
 
 // Representa plataformas en el escenario

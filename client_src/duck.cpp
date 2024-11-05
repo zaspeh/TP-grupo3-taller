@@ -35,7 +35,10 @@ void Duck::updateState(const duck_t& newDuckState)
     duckState = newDuckState;
     if (duckState.isJumping) {
         currentAnimation = JUMPING;
-    } else {
+    } else if (duckState.isDucking){
+        currentAnimation = DUCKING;
+    }
+    else {
         currentAnimation = WALKING;
     }
 }
