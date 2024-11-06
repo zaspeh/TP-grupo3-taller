@@ -11,6 +11,7 @@
 #include "sender.h"
 #include "receiver.h"
 #include "game.h"
+#include "../common_src/utils.h"
 
 class Client {
 	private:

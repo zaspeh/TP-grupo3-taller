@@ -17,8 +17,15 @@ Client::Client(const std::string& server_ip, const std::string& server_port)
     {
         requestId();
         clientprotocol = std::make_shared<ClientProtocol>(std::move(socket), client_id);
+
         sendThread = std::make_unique<Sender>(clientprotocol, commandQueue); 
+        std::cout << "Sender: " << static_cast<int>(client_id) << std::endl;
+
         recvThread = std::make_unique<Receiver>(clientprotocol, gameStateQueue);
+        std::cout << "REceiver: " << static_cast<int>(client_id) << std::endl;
+        sendThread->start();
+
+
         gameThread = std::make_unique<Game>(gameStateQueue, commandQueue);
 
         std::cout << "Client ID: " << static_cast<int>(client_id) << std::endl;
@@ -36,12 +43,14 @@ void Client::requestId() {
     }
 
     client_id = static_cast<uint8_t>(id_input);
+    std::cerr << "ID inválido. Debe estar en el rango [0, 255]." << std::endl;
+    commandQueue->push(NEW_CLIENT); // para el servidor significa, 
+    std::cerr << "ID inválido. Debe estar en el rango [0, 255]." << std::endl;
 }
 
 void Client::run() {
-    gameThread->start();
     recvThread->start();
-    sendThread->start();
+    gameThread->start();
 
     gameThread->join();
     recvThread->join();

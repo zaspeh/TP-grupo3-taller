@@ -8,10 +8,6 @@
 #include "../common_src/utils.h"
 
 GameLoop::GameLoop(Server& server, Monitor& monitor): server(server), cola_comandos(100), iteraciones(0), gameState(nullptr), monitor(monitor) {}
-    
-game_state_t* GameLoop::firstTime(uint8_t id) {
-    return gameState->isPlayerConnected(id);
-}
                     
 void GameLoop::initGame() {
     gameState = std::unique_ptr<GameState>(new GameState());

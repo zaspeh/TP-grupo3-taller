@@ -32,4 +32,6 @@
 #define FLOOR 0x07
 #define START_MATCH 0x99
 
+
+#define NEW_CLIENT 0x77
 #endif

@@ -106,6 +106,10 @@ typedef struct {
             case FLOOR:
                 player->setCrouched(!player->isCrouched());
                 break;
+            case NEW_CLIENT:
+                std::cout << "Agregando nuevo cliente\n";
+                isPlayerConnected(id);
+                break;
             default:
                 std::cout << "Unknown action: " << action << std::endl;
                 break;
@@ -127,11 +131,10 @@ typedef struct {
             player->updatePosition(deltaTime);
             updateState(id, player);
         }
-        
         return state;
     }
 
-    game_state_t* firstTime(uint8_t id) {
+    void isPlayerConnected(uint8_t id) {
         std::lock_guard<std::mutex> lock(mtx);  // Garantiza seguridad en un entorno multihilo
         auto it = players.find(id);
         if (it == players.end()) {  // Si el jugador no existe
@@ -139,11 +142,8 @@ typedef struct {
             players[id] = std::make_shared<PlayerState>(100, 100, 32, 32);  // Inicializa el jugador
             state.level.ducks[id] = players[id]->getState();
             state.level.num_ducks++;  // Aumenta el número de "ducks" (jugadores)
-            return &state;  // Retorna el estado del juego para el cliente
         }
-        return nullptr;  // Si ya está conectado, no realiza nada
     }
-
 
 /*     game_state_t* isPlayerConnected(uint8_t id) {
         std::lock_guard<std::mutex> lock(mtx);

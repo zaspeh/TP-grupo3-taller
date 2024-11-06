@@ -11,22 +11,23 @@ Accepter::Accepter(int port, Server& server, Monitor& monitor, GameLoop& gameLoo
         socket_servidor(std::to_string(port).c_str()), server(server), monitor(monitor), gameLoop(gameLoop) {}
 
 void Accepter::run() {
+    gameLoop.initGame();
     while (_keep_running) {
         try {
             std::cout << "Esperando conexiones" << std::endl;
             Socket socket_cliente = socket_servidor.accept();
-            gameLoop.initGame();
             std::cout << "Cliente conectado\n";
             if (!_keep_running)
                 break;
             auto protocol = std::make_shared<ServerProtocol>(std::move(socket_cliente));
             server.addClient(protocol);
             auto client_queue = std::make_shared<Queue<game_state_t>>(MAX_CLIENTS_PER_QUEUE);
-            
+
             auto sender = std::make_shared<Sender>(server, monitor, protocol, client_queue);
             sender->start();
             emisores.push_back(sender);
-            auto receiver = std::make_shared<Receiver>(server, protocol, gameLoop);
+
+            auto receiver = std::make_shared<Receiver>(server, protocol, gameLoop, monitor);
             receiver->start();
             receptores.push_back(receiver);
         } catch (const std::exception& e) {

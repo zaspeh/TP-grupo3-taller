@@ -19,7 +19,7 @@ private:
 
     bool commandIsValid(uint8_t command);
 public:    
-    Sender(std::shared_ptr<ClientProtocol> protocol, std::shared_ptr<Queue<uint8_t>> &queue);
+    Sender(std::shared_ptr<ClientProtocol> protocol, std::shared_ptr<Queue<uint8_t>> queue);
 
     void run() override;
     void stop() override;

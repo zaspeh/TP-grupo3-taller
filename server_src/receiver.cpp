@@ -16,13 +16,9 @@ void Receiver::run() {
             if (wasClosed) {
                 break;
             }
+            
             std::cout << "Received command: " << std::to_string(mensaje[0]) << " " << std::to_string(mensaje[1]) << std::endl;
             server.obtener_gameloop().agregar_comando([this, mensaje]() {
-                //if(mensaje[1] == START_MATCH) {
-                    //gameLoop.initGame();
-                game_state_t* game = gameLoop.firstTime(mensaje[0]);
-                if (game != nullptr) // if is the first msg from that client, returns true
-                    monitor.procesar_mensaje(*game);
                 gameLoop.doActionGameState(mensaje[0], mensaje[1]);
             });
 
