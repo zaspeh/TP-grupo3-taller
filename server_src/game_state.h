@@ -116,25 +116,32 @@ typedef struct {
         return state;
     }
 
-    void updatePlayers(float deltaTime) {
+    game_state_t updatePlayers(float deltaTime) {
         std::lock_guard<std::mutex> lock(mtx);
+        
+        // Limitar deltaTime para la física
+        deltaTime = std::min(deltaTime, 0.033f); // Máximo ~30 FPS
+        
+        // Actualizar cada jugador
         for (auto& [id, player] : players) {
             player->updatePosition(deltaTime);
+            updateState(id, player);
         }
+        
+        return state;
     }
 
     bool isPlayerConnected(uint8_t id) {
         std::lock_guard<std::mutex> lock(mtx);
         if (players.count(id) == 0) {
             std::cout << "Nuevo jugador: " << static_cast<int>(id) << std::endl;
-            players[id] = std::make_shared<PlayerState>(0, 0, 32, 32);
+            players[id] = std::make_shared<PlayerState>(100, 100, 32, 32);
             state.level.ducks[id] = players[id]->getState();
             state.level.num_ducks++;
             return false;
         }
         return true;
     }
-
 
     level_t instanceLevel() {
         std::lock_guard<std::mutex> lock(mtx);

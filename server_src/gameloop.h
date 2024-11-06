@@ -51,6 +51,12 @@ public:
 
     // Destruye el gameloop, liberando todos los recursos reservados.
     ~GameLoop();
+
+    float getCurrentTime(){
+        return std::chrono::duration<float>(
+            std::chrono::steady_clock::now().time_since_epoch()
+        ).count();
+     }
 };
 
 #endif  // GAMELOOP_H
