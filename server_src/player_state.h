@@ -19,7 +19,7 @@ private:
 
 public:
     // Constructor por defecto
-    PlayerState(uint32_t x, uint32_t y, uint32_t w, uint32_t h) : 
+    PlayerState(int x, int y, int w, int h) : 
         weapon(nullptr), 
         verticalVelocity(0.0)
     {
@@ -63,7 +63,7 @@ public:
 
     uint8_t getFacingDirection() const { return duck.faceLeft; }
     void setFacingDirection(uint8_t direction) { duck.faceLeft = direction; }; 
-    void move(uint32_t dx, uint32_t dy);
+    void move(int dx, int dy);
 
     /* int getScore() const;
     void setScore(int newScore);
@@ -77,9 +77,10 @@ public:
 
     // Simulación de salto
     void jump() {
-        if (!duck.isFalling) {
-            verticalVelocity = jumpStrength;
+        if(!duck.isJumping){
+            duck.isJumping = true;
             duck.isFalling = true;
+            verticalVelocity = jumpStrength;
         }
     }
     //void crouch() { duck.isCrouched = true; }

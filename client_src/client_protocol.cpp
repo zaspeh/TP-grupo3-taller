@@ -24,9 +24,9 @@ weapon_t ClientProtocol::readWeapon(bool& wasClosed){
 
 position_t ClientProtocol::readPosition(bool& wasClosed){
     position_t position;
-    position.x = recvUint32(wasClosed);
-    position.y = recvUint32(wasClosed);
-    position.w = recvUint32(wasClosed);
+    position.x = recvInt(wasClosed);
+    position.y = recvInt(wasClosed);
+    position.w = recvInt(wasClosed);
     position.h = recvUint32(wasClosed);
     return position;
 }

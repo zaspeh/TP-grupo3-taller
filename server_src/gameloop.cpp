@@ -12,15 +12,6 @@ GameLoop::GameLoop(Server& server, Monitor& monitor): server(server), cola_coman
 bool GameLoop::firstTime(uint8_t id) {
     return gameState->isPlayerConnected(id);
 }
-
-
-                    /*
-                    game_state_t state;
-                    std::map<uint8_t, std::shared_ptr<PlayerState>> players;  
-                    std::vector<std::shared_ptr<level_t>> levels;
-                    Level level;
-                    mutable std::mutex mtx;
-                    */
                     
 void GameLoop::initGame() {
     gameState = std::unique_ptr<GameState>(new GameState());
@@ -37,41 +28,36 @@ void GameLoop::ejecutar_comandos() {
     }
 }
 
-/* void GameLoop::simular_iteracion() {
-    try {
-
-        auto& cajas = server.obtener_cajas();
-
-        for (auto& par: cajas) {
-            auto& caja = par.second;
-            if (!_keep_running) {
-                break;
-            }
-            if (caja.esta_disponible(iteraciones) && caja.fue_caja_recogida()) {
-                caja.actualizar_estado();
-                server.obtener_monitor().notificar_reaparicion_caja();
-            }
-        }
-
-        iteraciones++;
-    } catch (const std::exception& e) {
-        std::cerr << EXCEPTION << e.what() << std::endl;
-    }
-} */
-
 void GameLoop::run() {
+    constexpr float target_frame_duration = 1.0f / 30.0f; // Duración del frame objetivo (30 FPS)
+    auto next_frame = std::chrono::steady_clock::now();   // Tiempo del próximo frame
+
     while (_keep_running) {
         auto start = std::chrono::steady_clock::now();
+
+        // Ejecutar comandos en cola
         ejecutar_comandos();
-        //simular_iteracion();
+
+        // Calcular deltaTime para actualizar el estado de los jugadores
+        std::chrono::duration<float> deltaTime = start - next_frame;
+        //gameState->updatePlayers(deltaTime.count());
+
+        // Calcular el tiempo de finalización y duración de la iteración
+        next_frame += std::chrono::duration_cast<std::chrono::steady_clock::duration>(
+            std::chrono::duration<float>(target_frame_duration)
+        );  // Conversión a la duración del reloj
 
         auto end = std::chrono::steady_clock::now();
-        auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
-        if (duration.count() < 1/30) {
-            std::this_thread::sleep_for(std::chrono::milliseconds(1/30) - duration);
+
+        // Tiempo restante para completar el frame a 30 FPS
+        auto remaining_time = std::chrono::duration_cast<std::chrono::milliseconds>(next_frame - end);
+        if (remaining_time.count() > 0) {
+            std::this_thread::sleep_for(remaining_time);
         }
     }
 }
+
+
 
 void GameLoop::doActionGameState(uint8_t player, uint8_t action) {
     game_state_t gameStateStruct = gameState->doAction(player, action);

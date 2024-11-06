@@ -75,10 +75,10 @@ position_t ClientProtocol::readPosition(bool& wasClosed){
 */
 
 void ServerProtocol::sendPosition(position_t position, bool &wasClosed) {
-    sendUint32(position.x, wasClosed);
-    sendUint32(position.y, wasClosed);
-    sendUint32(position.w, wasClosed);
-    sendUint32(position.h, wasClosed);
+    sendInt(position.x, wasClosed);
+    sendInt(position.y, wasClosed);
+    sendInt(position.w, wasClosed);
+    sendInt(position.h, wasClosed);
 }
 
 

@@ -59,6 +59,19 @@ uint32_t Protocol::recvUint32(bool& wasClosed) {
     return ntohs(network_num);
 }
 
+void Protocol::sendInt(int num, bool& wasClosed) {
+    int network_num = htonl(num);
+    this->socket.sendall(reinterpret_cast<char*>(&network_num), sizeof(network_num), &wasClosed);
+}
+
+int Protocol::recvInt(bool& wasClosed) {
+    int network_num;
+    int receivedBytes = this->socket.recvall(&network_num, sizeof(network_num), &wasClosed);
+    checkReceivedStatus(receivedBytes, wasClosed, ERROR_READING_INT);
+    return ntohl(network_num);
+}
+
+
 Protocol::Protocol(Socket socket) : socket(std::move(socket)) {}
 
 void Protocol::closeSocket() {

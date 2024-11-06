@@ -1,6 +1,6 @@
 #ifndef GAME_H
 #define GAME_H
-
+#include <chrono>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <string>
@@ -11,6 +11,8 @@
 #include "../common_src/game_state.h"
 #include "../common_src/queue.h"
 #include "../common_src/utils.h"
+
+constexpr float FRAME_DURATION_MS = 16.67f;
 
 class Game : public Thread
 {
@@ -30,7 +32,7 @@ class Game : public Thread
         Game(std::shared_ptr<Queue<game_state_t>> gameState, std::shared_ptr<Queue<uint8_t>> commandQueue);
         ~Game();
 
-        void init();
+        bool init();
         bool loadMedia();
         void run() override;
         //void close();
@@ -38,4 +40,4 @@ class Game : public Thread
         
 };
 
-#endif
+#endif // GAME_H

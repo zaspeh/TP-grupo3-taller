@@ -59,41 +59,49 @@ void Game::sendCommand(const uint8_t command){
 
 void Game::run()
 {
-    init();
-    //loadMedia();
-    bool quit = false;
-    Uint32 frameDelay = 10;
+    if (!init() || !loadMedia()) {
+        printf("Failed to initialize game or load media.\n");
+        return;
+    }
 
-    while (!quit)
-    {
-        Uint32 startTime = SDL_GetTicks();
+    bool quit = false;
+
+    auto next_frame = std::chrono::steady_clock::now();
+
+    while (!quit) {
 
         quit = processEvents();
 
         SDL_SetRenderDrawColor(gRenderer.get(), 0xFF, 0xFF, 0xFF, 0xFF);
         SDL_RenderClear(gRenderer.get());
-        game_state_t game_state; 
-        gameStateQueue->try_pop(game_state);
-        if(game_state.level.ducks[0].pos.x != 0)
-            
-        //std::cout << "nueva posicion: " << static_cast<int>(game_state.level.ducks[0].pos.x) << ", " << static_cast<int>(game_state.level.ducks[0].pos.y) << std::endl;
+
+        game_state_t game_state;
+        while (gameStateQueue->try_pop(game_state)) {
+            continue;
+        }
 
         update(game_state);
         render();
 
         SDL_RenderPresent(gRenderer.get());
 
-        Uint32 frameTime = SDL_GetTicks() - startTime;
-        if (frameDelay > frameTime)
-        {
-            SDL_Delay(frameDelay - frameTime);
+        // Control de tiempo para limitar el FPS
+        next_frame += std::chrono::milliseconds(static_cast<int>(FRAME_DURATION_MS));
+        std::this_thread::sleep_until(next_frame);
+
+        // Ajustar el tiempo en caso de desfasaje
+        auto frame_end = std::chrono::steady_clock::now();
+        if (frame_end > next_frame) {
+            next_frame = frame_end;
         }
     }
-    stop(); //Cuando termina este loop se cierra la ventana, entonces tenemos que hacer que se cierren los demas hilos
+    stop();
 }
 
-void Game::render(){
-   duck->render();
+void Game::render() {
+    if (duck) {
+        duck->render();
+    }
 }
 
 void Game::update(game_state_t game_state){
@@ -102,39 +110,35 @@ void Game::update(game_state_t game_state){
     }
 }
 
-void Game::init()
+bool Game::init()
 {
-    if (SDL_Init(SDL_INIT_VIDEO) < 0)
-    {
+    if (SDL_Init(SDL_INIT_VIDEO) < 0) {
         printf("SDL could not initialize! SDL Error: %s\n", SDL_GetError());
-        // Puedes lanzar una excepción aquí si es necesario
+        return false;
     }
 
     gWindow.reset(SDL_CreateWindow("Duck", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN));
-    if (!gWindow)
-    {
+    if (!gWindow) {
         printf("Window could not be created! SDL Error: %s\n", SDL_GetError());
-        // Puedes lanzar una excepción aquí si es necesario
+        return false;
     }
 
     gRenderer.reset(SDL_CreateRenderer(gWindow.get(), -1, SDL_RENDERER_ACCELERATED));
-    if (!gRenderer)
-    {
+    if (!gRenderer) {
         printf("Renderer could not be created! SDL Error: %s\n", SDL_GetError());
-        // Puedes lanzar una excepción aquí si es necesario
+        return false;
     }
+
     SDL_SetRenderDrawColor(gRenderer.get(), 0xFF, 0xFF, 0xFF, 0xFF);
 
     int imgFlags = IMG_INIT_PNG;
-    if (!(IMG_Init(imgFlags) & imgFlags))
-    {
+    if (!(IMG_Init(imgFlags) & imgFlags)) {
         printf("SDL_image could not initialize! SDL_image Error: %s\n", IMG_GetError());
-        // Puedes lanzar una excepción aquí si es necesario
+        return false;
     }
 
-    // Crear la instancia de Duck
     duck = std::make_unique<Duck>(gameState.level.ducks[0], SCREEN_WIDTH, SCREEN_HEIGHT, gRenderer.get());
-    loadMedia();
+    return true;
 }
 
 void Game::stop()
