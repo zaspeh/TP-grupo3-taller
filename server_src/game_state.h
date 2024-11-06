@@ -70,7 +70,7 @@ typedef struct {
     {
         state.level.ducks[id] = player->getState();
         
-        std::cout << "Posicion del pato - updatestate: " << state.level.ducks[id].pos.x << " " << state.level.ducks[id].pos.y << std::endl;
+        //std::cout << "Posicion del pato - updatestate: " << state.level.ducks[id].pos.x << " " << state.level.ducks[id].pos.y << std::endl;
     }
 
     game_state_t doAction(uint8_t id, uint8_t action) {

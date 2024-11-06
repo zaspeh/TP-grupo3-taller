@@ -15,6 +15,7 @@ void Accepter::run() {
         try {
             std::cout << "Esperando conexiones" << std::endl;
             Socket socket_cliente = socket_servidor.accept();
+            gameLoop.initGame();
             std::cout << "Cliente conectado\n";
             if (!_keep_running)
                 break;

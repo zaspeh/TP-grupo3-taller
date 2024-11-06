@@ -20,7 +20,7 @@ void Receiver::run() {
             server.obtener_gameloop().agregar_comando([this, mensaje]() {
                 //if(mensaje[1] == START_MATCH) {
                 if(!gameLoop.matchStarted) {
-                    gameLoop.initGame();
+                    //gameLoop.initGame();
                     gameLoop.firstTime(mensaje[0]); // if is the first msg from that client, returns true
                     gameLoop.matchStarted = true;
                 }

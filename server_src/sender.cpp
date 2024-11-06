@@ -19,9 +19,8 @@ void Sender::run() {
             if (!server.esta_corriendo())
                 break;
             std::cout << "Cantidad de jugadores: "<< static_cast<int>(mensaje.level.num_ducks) << std::endl;
-            std::cout << "enviando posicion: "<< mensaje.level.ducks[0].pos.x << " "<< mensaje.level.ducks[0].pos.y << std::endl;
+            //std::cout << "enviando posicion: "<< mensaje.level.ducks[0].pos.x << " "<< mensaje.level.ducks[0].pos.y << std::endl;
             protocol->sendGameState(mensaje, wasClosed);
-            std::cout << "Winning score: " << static_cast<int>(mensaje.winning_score) << std::endl;
 
             if (wasClosed) {
                 break;

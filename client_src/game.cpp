@@ -4,11 +4,9 @@ Game::Game(std::shared_ptr<Queue<game_state_t>> gameStateQueue, std::shared_ptr<
     : gameStateQueue(gameStateQueue),
       commandQueue(commandQueue),
       gWindow(nullptr, SDL_DestroyWindow),
-      gRenderer(nullptr, SDL_DestroyRenderer),
-      duck(nullptr)
+      gRenderer(nullptr, SDL_DestroyRenderer)
 {
 }
-
 
 Game::~Game()
 {
@@ -17,38 +15,59 @@ Game::~Game()
 
 bool Game::loadMedia()
 {
-    return duck->loadTexture();
+    if(!ducks.empty()){
+        
+        return ducks[0]->loadTexture();
+    }
+    return false;
 }
+
+#include <chrono>
+
+// Variables para limitar la frecuencia de envío de comandos
+const std::chrono::milliseconds COMMAND_INTERVAL(50); // Intervalo mínimo de 50 ms
+std::chrono::steady_clock::time_point lastCommandTime = std::chrono::steady_clock::now();
+
+bool leftPressed = false;
+bool rightPressed = false;
 
 bool Game::processEvents() {
     SDL_Event e;
-    while (SDL_PollEvent(&e) != 0)
-    {
-        if (e.type == SDL_QUIT)
-        {
+    bool eventDetected = false;
+
+    while (SDL_PollEvent(&e) != 0) {
+        eventDetected = true;
+        if (e.type == SDL_QUIT) {
             return true;
-        }
-        else if (e.type == SDL_KEYDOWN)
-        {
-            switch (e.key.keysym.sym) 
-            {
-                case SDLK_UP:
-                    sendCommand(JUMP);
-                    break;
-                case SDLK_DOWN:
-                    sendCommand(FLOOR);
-                    break;
-                case SDLK_LEFT:
-                    sendCommand(MOVE_LEFT);
-                    break;
-                case SDLK_RIGHT:
-                    sendCommand(MOVE_RIGHT);
-                    break;
-                default:
-                    break;
+        } else if (e.type == SDL_KEYDOWN) {
+            switch (e.key.keysym.sym) {
+                case SDLK_UP: sendCommand(JUMP); break;
+                case SDLK_DOWN: sendCommand(FLOOR); break;
+                case SDLK_LEFT: leftPressed = true; break;
+                case SDLK_RIGHT: rightPressed = true; break;
+                default: break;
+            }
+        } else if (e.type == SDL_KEYUP) {
+            switch (e.key.keysym.sym) {
+                case SDLK_LEFT: leftPressed = false; break;
+                case SDLK_RIGHT: rightPressed = false; break;
+                default: break;
             }
         }
     }
+
+    // Control de la frecuencia de envío de comandos
+    auto currentTime = std::chrono::steady_clock::now();
+    if (currentTime - lastCommandTime >= COMMAND_INTERVAL) {
+        if (leftPressed) sendCommand(MOVE_LEFT);
+        if (rightPressed) sendCommand(MOVE_RIGHT);
+        lastCommandTime = currentTime; // Actualizar el último envío
+    }
+
+    if (!eventDetected) {
+        std::this_thread::sleep_for(std::chrono::milliseconds(1));
+    }
+
     return false;
 }
 
@@ -65,22 +84,20 @@ void Game::run()
     }
 
     bool quit = false;
-
     auto next_frame = std::chrono::steady_clock::now();
 
     while (!quit) {
-
         quit = processEvents();
 
         SDL_SetRenderDrawColor(gRenderer.get(), 0xFF, 0xFF, 0xFF, 0xFF);
         SDL_RenderClear(gRenderer.get());
 
         game_state_t game_state;
-        while (gameStateQueue->try_pop(game_state)) {
-            continue;
+        // Intentamos obtener el último estado disponible, sin necesidad de vaciar la cola
+        if (gameStateQueue->try_pop(game_state)) {  
+            update(game_state);
         }
 
-        update(game_state);
         render();
 
         SDL_RenderPresent(gRenderer.get());
@@ -89,24 +106,25 @@ void Game::run()
         next_frame += std::chrono::milliseconds(static_cast<int>(FRAME_DURATION_MS));
         std::this_thread::sleep_until(next_frame);
 
-        // Ajustar el tiempo en caso de desfasaje
+        // Ajuste de tiempo para evitar desfasajes
         auto frame_end = std::chrono::steady_clock::now();
         if (frame_end > next_frame) {
             next_frame = frame_end;
         }
     }
+
     stop();
 }
 
 void Game::render() {
-    if (duck) {
+    for (auto& duck: ducks) {
         duck->render();
     }
 }
 
-void Game::update(game_state_t game_state){
-    for (int i = 0; i < game_state.level.num_ducks; i++){
-        duck->updateState(game_state.level.ducks[i]); // actualiza solo 1 pato xd 
+void Game::update(game_state_t game_state) {
+    for (int i = 0; i < game_state.level.num_ducks; i++) {
+        ducks[i]->updateState(game_state.level.ducks[i]);
     }
 }
 
@@ -137,7 +155,9 @@ bool Game::init()
         return false;
     }
 
-    duck = std::make_unique<Duck>(gameState.level.ducks[0], SCREEN_WIDTH, SCREEN_HEIGHT, gRenderer.get());
+    ducks.emplace_back(std::make_unique<Duck>(gameState.level.ducks[0], SCREEN_WIDTH, SCREEN_HEIGHT, gRenderer.get())); // inicializo en el pato 0
+
+    //duck = std::make_unique<Duck>(gameState.level.ducks[0], SCREEN_WIDTH, SCREEN_HEIGHT, gRenderer.get());
     return true;
 }
 

@@ -21,7 +21,8 @@ class Game : public Thread
         std::shared_ptr<Queue<uint8_t>> commandQueue;
         std::unique_ptr<SDL_Window, decltype(&SDL_DestroyWindow)> gWindow;
         std::unique_ptr<SDL_Renderer, decltype(&SDL_DestroyRenderer)> gRenderer;
-        std::unique_ptr<Duck> duck;
+        std::vector<std::unique_ptr<Duck>> ducks;
+        
         game_state_t gameState;
         void render();
         bool processEvents();
