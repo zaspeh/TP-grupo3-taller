@@ -6,6 +6,7 @@ Game::Game(std::shared_ptr<Queue<game_state_t>> gameStateQueue, std::shared_ptr<
       gWindow(nullptr, SDL_DestroyWindow),
       gRenderer(nullptr, SDL_DestroyRenderer)
 {
+    gameState = gameStateQueue->pop();
 }
 
 Game::~Game()
@@ -15,11 +16,12 @@ Game::~Game()
 
 bool Game::loadMedia()
 {
-    if(!ducks.empty()){
-        
-        return ducks[0]->loadTexture();
+    bool charged = true;
+    int i = 0;
+    while(i < gameState.level.num_ducks && charged){
+        charged = ducks[i]->loadTexture();
     }
-    return false;
+    return charged;
 }
 
 #include <chrono>
@@ -76,8 +78,17 @@ void Game::sendCommand(const uint8_t command){
     commandQueue->try_push(command);
 }
 
+/*void Game::initializeGame(game_state_t game_state){
+
+}*/
+
 void Game::run()
 {
+    //Recibir estado juego
+    //game_state_t game_state = gameStateQueue->pop();
+    //cargar juego
+    //initializeGame(game_state);
+
     if (!init() || !loadMedia()) {
         printf("Failed to initialize game or load media.\n");
         return;
@@ -92,10 +103,9 @@ void Game::run()
         SDL_SetRenderDrawColor(gRenderer.get(), 0xFF, 0xFF, 0xFF, 0xFF);
         SDL_RenderClear(gRenderer.get());
 
-        game_state_t game_state;
         // Intentamos obtener el último estado disponible, sin necesidad de vaciar la cola
-        if (gameStateQueue->try_pop(game_state)) {  
-            update(game_state);
+        if (gameStateQueue->try_pop(gameState)) {  
+            update(gameState);
         }
 
         render();
@@ -117,14 +127,14 @@ void Game::run()
 }
 
 void Game::render() {
-    for (auto& duck: ducks) {
-        duck->render();
+    for (int i = 0; i < gameState.level.num_ducks; i++) {
+        ducks[i]->render();
     }
 }
 
-void Game::update(game_state_t game_state) {
-    for (int i = 0; i < game_state.level.num_ducks; i++) {
-        ducks[i]->updateState(game_state.level.ducks[i]);
+void Game::update(game_state_t gameState) {
+    for (int i = 0; i < gameState.level.num_ducks; i++) {
+        ducks[i]->updateState(gameState.level.ducks[i]);
     }
 }
 
@@ -155,9 +165,11 @@ bool Game::init()
         return false;
     }
 
-    ducks.emplace_back(std::make_unique<Duck>(gameState.level.ducks[0], SCREEN_WIDTH, SCREEN_HEIGHT, gRenderer.get())); // inicializo en el pato 0
-
+    //ducks.emplace_back(std::make_unique<Duck>(gameState.level.ducks[0], SCREEN_WIDTH, SCREEN_HEIGHT, gRenderer.get())); // inicializo en el pato 0
     //duck = std::make_unique<Duck>(gameState.level.ducks[0], SCREEN_WIDTH, SCREEN_HEIGHT, gRenderer.get());
+    for(int i = 0; i < gameState.level.num_ducks; i++){
+        ducks[i] = std::make_unique<Duck>(gameState.level.ducks[i], SCREEN_WIDTH, SCREEN_HEIGHT, gRenderer.get()); //agarra el vec patos del gamestate comun y lo carga en el vec patos local del cliente
+    }
     return true;
 }
 

@@ -9,7 +9,7 @@
 
 GameLoop::GameLoop(Server& server, Monitor& monitor): server(server), cola_comandos(100), iteraciones(0), gameState(nullptr), monitor(monitor) {}
     
-bool GameLoop::firstTime(uint8_t id) {
+game_state_t* GameLoop::firstTime(uint8_t id) {
     return gameState->isPlayerConnected(id);
 }
                     

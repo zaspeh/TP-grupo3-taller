@@ -22,6 +22,7 @@ void Accepter::run() {
             auto protocol = std::make_shared<ServerProtocol>(std::move(socket_cliente));
             server.addClient(protocol);
             auto client_queue = std::make_shared<Queue<game_state_t>>(MAX_CLIENTS_PER_QUEUE);
+            
             auto sender = std::make_shared<Sender>(server, monitor, protocol, client_queue);
             sender->start();
             emisores.push_back(sender);

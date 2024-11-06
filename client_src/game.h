@@ -22,7 +22,8 @@ class Game : public Thread
         std::unique_ptr<SDL_Window, decltype(&SDL_DestroyWindow)> gWindow;
         std::unique_ptr<SDL_Renderer, decltype(&SDL_DestroyRenderer)> gRenderer;
         std::vector<std::unique_ptr<Duck>> ducks;
-        
+        //std::unique_ptr<Duck> duckPrimitive;
+        //Duck ducks[MAX_DUCKS];
         game_state_t gameState;
         void render();
         bool processEvents();
@@ -30,7 +31,7 @@ class Game : public Thread
         void update(game_state_t game_state);
 
     public:
-        Game(std::shared_ptr<Queue<game_state_t>> gameState, std::shared_ptr<Queue<uint8_t>> commandQueue);
+        Game(std::shared_ptr<Queue<game_state_t>> gameStateQueue, std::shared_ptr<Queue<uint8_t>> commandQueue);
         ~Game();
 
         bool init();

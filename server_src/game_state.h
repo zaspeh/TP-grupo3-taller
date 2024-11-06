@@ -131,17 +131,31 @@ typedef struct {
         return state;
     }
 
-    bool isPlayerConnected(uint8_t id) {
+    game_state_t* firstTime(uint8_t id) {
+        std::lock_guard<std::mutex> lock(mtx);  // Garantiza seguridad en un entorno multihilo
+        auto it = players.find(id);
+        if (it == players.end()) {  // Si el jugador no existe
+            std::cout << "Nuevo jugador: " << static_cast<int>(id) << std::endl;
+            players[id] = std::make_shared<PlayerState>(100, 100, 32, 32);  // Inicializa el jugador
+            state.level.ducks[id] = players[id]->getState();
+            state.level.num_ducks++;  // Aumenta el número de "ducks" (jugadores)
+            return &state;  // Retorna el estado del juego para el cliente
+        }
+        return nullptr;  // Si ya está conectado, no realiza nada
+    }
+
+
+/*     game_state_t* isPlayerConnected(uint8_t id) {
         std::lock_guard<std::mutex> lock(mtx);
         if (players.count(id) == 0) {
             std::cout << "Nuevo jugador: " << static_cast<int>(id) << std::endl;
             players[id] = std::make_shared<PlayerState>(100, 100, 32, 32);
             state.level.ducks[id] = players[id]->getState();
             state.level.num_ducks++;
-            return false;
+            return &state;
         }
-        return true;
-    }
+        return nullptr;
+    } */
 
     level_t instanceLevel() {
         std::lock_guard<std::mutex> lock(mtx);

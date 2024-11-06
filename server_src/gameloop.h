@@ -23,9 +23,6 @@ private:
     // Ejecuta los comandos pendientes en la cola de comandos.
     void ejecutar_comandos();
 
-    // Simula una iteración del bucle de juego.
-    void simular_iteracion();
-
 public:
     bool matchStarted = false;
     // Constructor que inicializa el bucle de juego con una referencia al servidor.
@@ -35,7 +32,7 @@ public:
 
     void doActionGameState(uint8_t player, uint8_t action);
 
-    bool firstTime(uint8_t player);
+    game_state_t* firstTime(uint8_t player);
     
     // Método que contiene la lógica del bucle de juego y se ejecuta en un hilo separado.
     void run() override;
