@@ -141,7 +141,7 @@ typedef struct {
         // si no existe lo agrego
         std::cout << "Nuevo jugador: " << static_cast<int>(id) << std::endl;
         players[id] = std::make_shared<PlayerState>(100, 100, 32, 32);  
-        state.level.ducks[state.level.num_ducks] = players[id]->getState();
+        state.level.ducks[id] = players[id]->getState(); // solo funciona con los id de forma incremental
         state.level.num_ducks++;  
 
         std::cout << "Cantidad de jugadores: "<< static_cast<int>(state.level.num_ducks) << std::endl;

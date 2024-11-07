@@ -103,11 +103,14 @@ void Game::run()
         SDL_SetRenderDrawColor(gRenderer.get(), 0xFF, 0xFF, 0xFF, 0xFF);
         SDL_RenderClear(gRenderer.get());
 
-        if (gameStateQueue->try_pop(gameState)) {
-            printf("Game state updated.\n");
-            std::cout << "Posicion del pato: " << static_cast<int>(gameState.level.ducks[0].pos.x) << " " << static_cast<int>(gameState.level.ducks[0].pos.y) << std::endl; 
-            update(gameState);
+
+        while (gameStateQueue->try_pop(gameState)) {
+            continue;
         }
+
+        printf("Game state updated.\n");
+        std::cout << "Posicion del pato: " << static_cast<int>(gameState.level.ducks[0].pos.x) << " " << static_cast<int>(gameState.level.ducks[0].pos.y) << std::endl; 
+        update(gameState);
 
         render();
 
@@ -126,7 +129,9 @@ void Game::run()
     printf("Game loop ended.\n");
 }
 
-void Game::render() {
+ 
+
+void Game::render() {  
     for (size_t i = 0; i < ducks.size(); i++) {
         if (ducks[i]) {
             ducks[i]->render();
@@ -136,13 +141,17 @@ void Game::render() {
 
 void Game::update(game_state_t gameState) {
     // Ajustar el tamaño del vector 'ducks' para que coincida con el número total de patos en el 'gameState'
-    while (ducks.size() < gameState.level.num_ducks) {
-        int i = ducks.size();
-        ducks.push_back(std::make_unique<Duck>(gameState.level.ducks[i], SCREEN_WIDTH, SCREEN_HEIGHT, gRenderer.get()));
+    if (ducks.size() < gameState.level.num_ducks) {
+        ducks.resize(gameState.level.num_ducks);
+        for (int i = static_cast<int>(ducks.size()) - static_cast<int>(gameState.level.num_ducks); i < static_cast<int>(ducks.size()); i++) {
+            ducks[i] = std::make_unique<Duck>(gameState.level.ducks[i], SCREEN_WIDTH, SCREEN_HEIGHT, gRenderer.get());
+            ducks[i]->loadTexture();
+            std::cout << "New duck initialized at index " << i << std::endl;
+        }
     }
 
     // Si hay menos patos en el 'gameState', eliminar los que sobran (en caso de desconexión de patos)
-    while (ducks.size() > gameState.level.num_ducks) {
+    while (ducks.size() > gameState.level.num_ducks) { // esto creo que no nos interesa
         ducks.pop_back();
     }
 
@@ -179,7 +188,7 @@ bool Game::init()
         return false;
     }
 
-    ducks.resize(0);  // Inicializa el vector con el tamaño correcto
+    ducks.resize(gameState.level.num_ducks);  // Inicializa el vector con el tamaño correcto
     printf("Initialized ducks vector with %d ducks.\n", gameState.level.num_ducks);
 
     return true;
