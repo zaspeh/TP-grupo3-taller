@@ -1,10 +1,12 @@
 #ifndef GAME_H
 #define GAME_H
+
 #include <chrono>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <string>
 #include <memory>
+#include <vector>
 #include "ltexture.h"
 #include "duck.h"
 #include "../common_src/thread.h"
@@ -22,8 +24,6 @@ class Game : public Thread
         std::unique_ptr<SDL_Window, decltype(&SDL_DestroyWindow)> gWindow;
         std::unique_ptr<SDL_Renderer, decltype(&SDL_DestroyRenderer)> gRenderer;
         std::vector<std::unique_ptr<Duck>> ducks;
-        //std::unique_ptr<Duck> duckPrimitive;
-        //Duck ducks[MAX_DUCKS];
         game_state_t gameState;
         void render();
         bool processEvents();
@@ -37,9 +37,7 @@ class Game : public Thread
         bool init();
         bool loadMedia();
         void run() override;
-        //void close();
         void stop() override;
-        
 };
 
 #endif // GAME_H

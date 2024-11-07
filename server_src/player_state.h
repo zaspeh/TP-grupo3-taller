@@ -34,6 +34,7 @@ public:
     }
 
     duck_t getState() {
+        
         return duck;
     }
 

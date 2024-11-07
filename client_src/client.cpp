@@ -18,15 +18,17 @@ Client::Client(const std::string& server_ip, const std::string& server_port)
         requestId();
         clientprotocol = std::make_shared<ClientProtocol>(std::move(socket), client_id);
 
-        sendThread = std::make_unique<Sender>(clientprotocol, commandQueue); 
-        std::cout << "Sender: " << static_cast<int>(client_id) << std::endl;
-
         recvThread = std::make_unique<Receiver>(clientprotocol, gameStateQueue);
         std::cout << "REceiver: " << static_cast<int>(client_id) << std::endl;
+        recvThread->start();
+        
+        sendThread = std::make_unique<Sender>(clientprotocol, commandQueue); 
+        std::cout << "Sender: " << static_cast<int>(client_id) << std::endl;
         sendThread->start();
 
 
         gameThread = std::make_unique<Game>(gameStateQueue, commandQueue);
+        gameThread->start();
 
         std::cout << "Client ID: " << static_cast<int>(client_id) << std::endl;
     }
@@ -49,13 +51,14 @@ void Client::requestId() {
 }
 
 void Client::run() {
-    recvThread->start();
-    gameThread->start();
+    //recvThread->start();
+    //sendThread->start();
+    //gameThread->start();
 
-    gameThread->join();
     recvThread->join();
     sendThread->join();
-
+    gameThread->join();
+    
     checkIfClose();
 }
 

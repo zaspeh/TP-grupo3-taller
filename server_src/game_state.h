@@ -68,8 +68,9 @@ typedef struct {
 
     void updateState(uint8_t id, std::shared_ptr<PlayerState> player) // habria que chequear si agarro una caja, y demas
     {
+        std::cout << "Devuelvo el pato" << std::endl;
         state.level.ducks[id] = player->getState();
-        
+        std::cout << "Devolvì el pato" << std::endl;
         //std::cout << "Posicion del pato - updatestate: " << state.level.ducks[id].pos.x << " " << state.level.ducks[id].pos.y << std::endl;
     }
 
@@ -77,6 +78,7 @@ typedef struct {
         std::lock_guard<std::mutex> lock(mtx);
         auto player = players[id];
         
+
         //if (!player) return;
         Weapon* weapon = nullptr;
         switch(action) {
@@ -108,7 +110,7 @@ typedef struct {
                 break;
             case NEW_CLIENT:
                 std::cout << "Agregando nuevo cliente\n";
-                isPlayerConnected(id);
+                player = isPlayerConnected(id);
                 break;
             default:
                 std::cout << "Unknown action: " << action << std::endl;
@@ -134,15 +136,16 @@ typedef struct {
         return state;
     }
 
-    void isPlayerConnected(uint8_t id) {
-        std::lock_guard<std::mutex> lock(mtx);  // Garantiza seguridad en un entorno multihilo
-        auto it = players.find(id);
-        if (it == players.end()) {  // Si el jugador no existe
-            std::cout << "Nuevo jugador: " << static_cast<int>(id) << std::endl;
-            players[id] = std::make_shared<PlayerState>(100, 100, 32, 32);  // Inicializa el jugador
-            state.level.ducks[id] = players[id]->getState();
-            state.level.num_ducks++;  // Aumenta el número de "ducks" (jugadores)
-        }
+    std::shared_ptr<PlayerState> isPlayerConnected(uint8_t id) {
+        std::cout << "Nuevo jugador" << std::endl;
+        // si no existe lo agrego
+        std::cout << "Nuevo jugador: " << static_cast<int>(id) << std::endl;
+        players[id] = std::make_shared<PlayerState>(100, 100, 32, 32);  
+        state.level.ducks[state.level.num_ducks] = players[id]->getState();
+        state.level.num_ducks++;  
+
+        std::cout << "Cantidad de jugadores: "<< static_cast<int>(state.level.num_ducks) << std::endl;
+        return players[id];
     }
 
 /*     game_state_t* isPlayerConnected(uint8_t id) {

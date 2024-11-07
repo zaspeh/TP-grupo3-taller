@@ -11,7 +11,6 @@ void Sender::run() {
         try {
             std::cout << "Popeando el mensaje" << std::endl;
             uint8_t command = commandQueue->pop();
-            std::cout << "mensaje popeado" << std::endl;
 
             if (wasClosed)
                 break;

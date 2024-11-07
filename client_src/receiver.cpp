@@ -7,7 +7,7 @@ void Receiver::run(){
             game_state_t state = protocol->readFromServer(wasClosed);
             if (wasClosed)
                 break;
-            
+
             gameStateQueue->push(state);
 
         } catch (const std::exception& e) {
