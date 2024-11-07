@@ -16,8 +16,8 @@ private:
     float verticalVelocity;  // Velocidad vertical para el salto
     //const float gravity = -9.8;  // Valor de gravedad (ejemplo)
     //const float jumpStrength = 15.0;  // Fuerza del salto
-    const float gravity = 980.0f;  // Gravedad positiva (hacia abajo)
-    const float jumpStrength = -450.0f;  // Fuerza del salto negativa (hacia arriba)
+    const float gravity = 3000.0f;  // Gravedad positiva (hacia abajo)
+    const float jumpStrength = -800.0f;  // Fuerza del salto negativa (hacia arriba)
     const float groundLevel = 100.0f;  // Ejemplo de nivel del suelo
 
 public:
