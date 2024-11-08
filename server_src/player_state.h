@@ -22,7 +22,7 @@ private:
 
 public:
     // Constructor por defecto
-    PlayerState(int x, int y, int w, int h) : 
+    PlayerState(uint8_t id, int x, int y, int w, int h) : 
         weapon(nullptr), 
         verticalVelocity(0.0)
     {
@@ -31,6 +31,7 @@ public:
         duck.health = 100;
         duck.isJumping = false;
         duck.isFalling = false;  // Aseguramos que inicie en false
+        duck.id = id;
     }
 
     duck_t getState() {

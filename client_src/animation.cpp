@@ -54,7 +54,7 @@ void Animation::renderAnimation(float x, float y, SDL_Rect &scaleRect, bool face
         frame = (frame + 1) % qAnimationFrames;
         lastFrameTime = currentTime;
     }
-
+    
     SDL_Rect* currentClip = &gSpriteClips[frame]; 
 
     SDL_RendererFlip flip = faceLeft ? SDL_FLIP_HORIZONTAL : SDL_FLIP_NONE;

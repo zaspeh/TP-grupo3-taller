@@ -19,18 +19,29 @@ Duck::Duck(duck_t duckState, int screenWidth, int screenHeight, SDL_Renderer* re
 
 bool Duck::loadTexture() {
     bool allLoaded = true;
+    std::string path = "client_src/duckyellow.png";
 
-    if (!animations[WALKING]->loadTexture("client_src/duckyellow.png")) {
+    if(duckState.id == 0){
+        path = "client_src/duckyellow.png";
+    }else if(duckState.id == 1){
+        path = "client_src/duckgray.png";
+    }else if(duckState.id == 2){
+        path = "client_src/duckorange.png";
+    }else{
+        path = "client_src/duckwhite.png";
+    }
+
+    if (!animations[WALKING]->loadTexture(path)) {
         std::cerr << "Failed to load WALKING texture." << std::endl;
         allLoaded = false;
     }
 
-    if (!animations[JUMPING]->loadTexture("client_src/duckyellow.png")) {
+    if (!animations[JUMPING]->loadTexture(path)) {
         std::cerr << "Failed to load JUMPING texture." << std::endl;
         allLoaded = false;
     }
 
-    if (!animations[DUCKING]->loadTexture("client_src/duckyellow.png")) {
+    if (!animations[DUCKING]->loadTexture(path)) {
         std::cerr << "Failed to load DUCKING texture." << std::endl;
         allLoaded = false;
     }
