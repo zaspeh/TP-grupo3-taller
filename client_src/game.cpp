@@ -1,5 +1,5 @@
 #include "game.h"
-
+#include <algorithm>  // Añadir este include al principio del archivo
 Game::Game(std::shared_ptr<Queue<game_state_t>> gameStateQueue, std::shared_ptr<Queue<uint8_t>> commandQueue)
     : gameStateQueue(gameStateQueue),
       commandQueue(commandQueue),
@@ -140,25 +140,39 @@ void Game::render() {
 }
 
 void Game::update(game_state_t gameState) {
-    // Ajustar el tamaño del vector 'ducks' para que coincida con el número total de patos en el 'gameState'
-    if (ducks.size() < gameState.level.num_ducks) {
-        ducks.resize(gameState.level.num_ducks);
-        for (int i = static_cast<int>(ducks.size()) - static_cast<int>(gameState.level.num_ducks); i < static_cast<int>(ducks.size()); i++) {
-            ducks[i] = std::make_unique<Duck>(gameState.level.ducks[i], SCREEN_WIDTH, SCREEN_HEIGHT, gRenderer.get());
-            ducks[i]->loadTexture();
-            std::cout << "New duck initialized at index " << i << std::endl;
+    // Vector temporal para los nuevos patos
+    std::vector<std::unique_ptr<Duck>> newDucks;
+    newDucks.reserve(gameState.level.num_ducks);
+
+    // Para cada pato en el gameState
+    for (int i = 0; i < gameState.level.num_ducks; i++) {
+        // Buscar si ya existe un pato con este ID
+        auto duck_id = gameState.level.ducks[i].id;
+        auto it = std::find_if(ducks.begin(), ducks.end(),
+            [duck_id](const std::unique_ptr<Duck>& duck) {
+                return duck && duck->getId() == duck_id;
+            });
+
+        if (it != ducks.end()) {
+            // Si el pato existe, actualizar su estado y moverlo al nuevo vector
+            (*it)->updateState(gameState.level.ducks[i]);
+            newDucks.push_back(std::move(*it));
+        } else {
+            // Si no existe, crear uno nuevo
+            auto newDuck = std::make_unique<Duck>(
+                gameState.level.ducks[i],
+                SCREEN_WIDTH,
+                SCREEN_HEIGHT,
+                gRenderer.get()
+            );
+            newDuck->loadTexture();
+            newDucks.push_back(std::move(newDuck));
+            std::cout << "New duck initialized with ID " << duck_id << std::endl;
         }
     }
 
-    // Si hay menos patos en el 'gameState', eliminar los que sobran (en caso de desconexión de patos)
-    while (ducks.size() > gameState.level.num_ducks) { 
-        ducks.pop_back();
-    }
-
-    // Actualizar el estado de cada pato en el vector
-    for (int i = 0; i < gameState.level.num_ducks; i++) {
-        ducks[i]->updateState(gameState.level.ducks[i]);
-    }
+    // Reemplazar el vector antiguo con el nuevo
+    ducks = std::move(newDucks);
 }
 
 bool Game::init()

@@ -31,8 +31,8 @@ void Receiver::run() {
     }
 
     try {
-        server.removeClient(protocol);  // Eliminar del servidor
-        gameLoop.removePlayer(idPlayer); // Eliminar del gameloop y el estado del juego
+        server.removeClient(protocol);
+        gameLoop.removePlayer(idPlayer); 
     } catch (const std::exception& e) {
         std::cerr << "Error al remover jugador: " << e.what() << std::endl;
     }

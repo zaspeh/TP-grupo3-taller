@@ -16,6 +16,10 @@ void Sender::run() {
             bool wasClosed = false;
             game_state_t mensaje = gameStateQueue->pop();
 
+            if (protocol == nullptr) {
+                break;
+            }
+
             if (!server.esta_corriendo())
                 break;
             std::cout << "Cantidad de jugadores: "<< static_cast<int>(mensaje.level.num_ducks) << std::endl;

@@ -26,6 +26,7 @@ public:
     void render();
     bool loadTexture();
     void updateState(const duck_t& newDuckState);
+    int getId() const { return duckState.id; }
 
 private:
     duck_t duckState;
