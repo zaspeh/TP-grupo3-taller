@@ -20,6 +20,8 @@ public:
     // Renderiza la textura en las coordenadas especificadas
     void render(int x, int y, SDL_Rect* clip = NULL, SDL_Rect* scaleRect = NULL, SDL_RendererFlip flip = SDL_FLIP_NONE);
 
+    void setColor( Uint8 red, Uint8 green, Uint8 blue );
+
     // Devuelve el ancho y alto de la textura
     int getWidth();
     int getHeight();

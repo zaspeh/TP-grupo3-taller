@@ -29,9 +29,7 @@ void Server::handleInput() {
 void Server::run() {
     try {
         accepter.start();
-        std::cout << "Accepter iniciado" << std::endl;
         gameloop.start();
-        std::cout << "GAmeloop iniciado" << std::endl;
         handleInput();
 
         accepter.join();

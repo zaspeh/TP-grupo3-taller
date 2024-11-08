@@ -8,7 +8,6 @@ Duck::Duck(duck_t duckState, int screenWidth, int screenHeight, SDL_Renderer* re
     scaleRect.w = SPRITE_WIDTH * 2;
     scaleRect.h = SPRITE_HEIGHT * 2;
 
-    // Crear animaciones y verificar que estén inicializadas
     try {
         animations.emplace(WALKING, std::make_unique<Animation>(WALKING_ANIMATION_FRAMES, SPRITE_WIDTH, SPRITE_HEIGHT, renderer, WALKING));
         animations.emplace(JUMPING, std::make_unique<Animation>(JUMPING_ANIMATION_FRAMES, SPRITE_WIDTH, SPRITE_HEIGHT, renderer, JUMPING));
@@ -25,15 +24,17 @@ bool Duck::loadTexture() {
         std::cerr << "Failed to load WALKING texture." << std::endl;
         allLoaded = false;
     }
+
     if (!animations[JUMPING]->loadTexture("client_src/duckyellow.png")) {
         std::cerr << "Failed to load JUMPING texture." << std::endl;
         allLoaded = false;
     }
+
     if (!animations[DUCKING]->loadTexture("client_src/duckyellow.png")) {
         std::cerr << "Failed to load DUCKING texture." << std::endl;
         allLoaded = false;
     }
-
+    
     return allLoaded;
 }
 

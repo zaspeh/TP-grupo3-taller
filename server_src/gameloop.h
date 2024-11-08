@@ -43,8 +43,7 @@ public:
     // Agrega un comando a la cola de comandos para su ejecución posterior.
     void agregar_comando(std::function<void()> command);
 
-    // Retorna el número de iteraciones que ha realizado el bucle de juego.
-    int obtener_iteraciones() const { return iteraciones; }
+    void removePlayer(uint8_t idPlayer);
 
     // Destruye el gameloop, liberando todos los recursos reservados.
     ~GameLoop();

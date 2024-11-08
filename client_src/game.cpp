@@ -151,7 +151,7 @@ void Game::update(game_state_t gameState) {
     }
 
     // Si hay menos patos en el 'gameState', eliminar los que sobran (en caso de desconexión de patos)
-    while (ducks.size() > gameState.level.num_ducks) { // esto creo que no nos interesa
+    while (ducks.size() > gameState.level.num_ducks) { 
         ducks.pop_back();
     }
 

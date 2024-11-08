@@ -7,8 +7,6 @@
 #include <mutex>
 #include "player_state.h"
 #include "../common_src/utils.h"
-//#include "box.h"
-//#include "spawnPoint.h"
 
 class GameState {
 private:
@@ -22,20 +20,6 @@ public:
     GameState() {
         players = std::map<uint8_t, std::shared_ptr<PlayerState>>();
         //levels = std::vector<std::shared_ptr<level_t>>(); // almacena todos los niveles del juego
-        /*
-typedef struct {
-    uint8_t num_ducks;
-    duck_t ducks[MAX_DUCKS];
-    uint8_t num_platforms;
-    platform_t platforms[MAX_PLATFORMS];
-    uint8_t num_spawn_places;
-    spawn_place_t spawn_places[MAX_SPAWN_PLACES];
-    uint8_t num_boxes;
-    box_t boxes[MAX_BOXES];
-    uint8_t num_projectiles;
-    projectile_t projectiles[MAX_PROJECTILES];
-} level_t;
-*/
 
         level_t currentLevel = instanceLevel(); // posteriormente deberìa agarrar uno random de arriba.
         state = {
@@ -66,20 +50,25 @@ typedef struct {
         players.erase(id);
     }
 
-    void updateState(uint8_t id, std::shared_ptr<PlayerState> player) // habria que chequear si agarro una caja, y demas
+    void updateState(uint8_t id, std::shared_ptr<PlayerState> player) 
     {
-        std::cout << "Devuelvo el pato" << std::endl;
         state.level.ducks[id] = player->getState();
-        std::cout << "Devolvì el pato" << std::endl;
-        //std::cout << "Posicion del pato - updatestate: " << state.level.ducks[id].pos.x << " " << state.level.ducks[id].pos.y << std::endl;
+    }
+
+    std::shared_ptr<PlayerState> connectPlayer(uint8_t id) {
+        std::cout << "Nuevo jugador: " << static_cast<int>(id) << std::endl;
+        players[id] = std::make_shared<PlayerState>(100, 100, 32, 32);  
+        state.level.ducks[id] = players[id]->getState();
+        state.level.num_ducks++;  
+
+        std::cout << "Cantidad de jugadores: "<< static_cast<int>(state.level.num_ducks) << std::endl;
+        return players[id];
     }
 
     game_state_t doAction(uint8_t id, uint8_t action) {
         std::lock_guard<std::mutex> lock(mtx);
         auto player = players[id];
         
-
-        //if (!player) return;
         Weapon* weapon = nullptr;
         switch(action) {
             case MOVE_LEFT:
@@ -110,7 +99,7 @@ typedef struct {
                 break;
             case NEW_CLIENT:
                 std::cout << "Agregando nuevo cliente\n";
-                player = isPlayerConnected(id);
+                player = connectPlayer(id);
                 break;
             default:
                 std::cout << "Unknown action: " << action << std::endl;
@@ -135,31 +124,7 @@ typedef struct {
         }
         return state;
     }
-
-    std::shared_ptr<PlayerState> isPlayerConnected(uint8_t id) {
-        std::cout << "Nuevo jugador" << std::endl;
-        // si no existe lo agrego
-        std::cout << "Nuevo jugador: " << static_cast<int>(id) << std::endl;
-        players[id] = std::make_shared<PlayerState>(100, 100, 32, 32);  
-        state.level.ducks[id] = players[id]->getState(); // solo funciona con los id de forma incremental
-        state.level.num_ducks++;  
-
-        std::cout << "Cantidad de jugadores: "<< static_cast<int>(state.level.num_ducks) << std::endl;
-        return players[id];
-    }
-
-/*     game_state_t* isPlayerConnected(uint8_t id) {
-        std::lock_guard<std::mutex> lock(mtx);
-        if (players.count(id) == 0) {
-            std::cout << "Nuevo jugador: " << static_cast<int>(id) << std::endl;
-            players[id] = std::make_shared<PlayerState>(100, 100, 32, 32);
-            state.level.ducks[id] = players[id]->getState();
-            state.level.num_ducks++;
-            return &state;
-        }
-        return nullptr;
-    } */
-
+    
     level_t instanceLevel() {
         std::lock_guard<std::mutex> lock(mtx);
 

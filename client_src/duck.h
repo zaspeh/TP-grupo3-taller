@@ -30,6 +30,7 @@ public:
 private:
     duck_t duckState;
     bool isMoving;
+    int color;
     std::unordered_map<DuckAnimationType, std::unique_ptr<Animation>> animations;
     SDL_Renderer* gRenderer;
     SDL_Rect scaleRect;
