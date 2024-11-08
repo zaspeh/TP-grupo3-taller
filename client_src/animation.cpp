@@ -42,14 +42,19 @@ bool Animation::loadTexture(std::string path){
     return gSpriteSheetTexture.loadFromFile(path);
 }
 
-void Animation::renderAnimation(float x, float y, SDL_Rect &scaleRect, bool faceLeft){
-    SDL_Rect* currentClip;
-    currentClip = &gSpriteClips[frame / qAnimationFrames];
+
+void Animation::renderAnimation(float x, float y, SDL_Rect &scaleRect, bool faceLeft, bool motion) {
+    static Uint32 lastFrameTime = 0;
+    Uint32 currentTime = SDL_GetTicks();
+
+    if (motion && (currentTime - lastFrameTime) > 100) {
+        frame = (frame + 1) % qAnimationFrames;
+        lastFrameTime = currentTime;
+    }
+
+    SDL_Rect* currentClip = &gSpriteClips[frame]; 
 
     SDL_RendererFlip flip = faceLeft ? SDL_FLIP_HORIZONTAL : SDL_FLIP_NONE;
     gSpriteSheetTexture.render(x, y, currentClip, &scaleRect, flip);
-    frame++;
-    if (frame / qAnimationFrames >= qAnimationFrames){
-        frame = 0;
-    }
 }
+

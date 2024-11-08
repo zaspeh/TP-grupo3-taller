@@ -14,7 +14,7 @@ class Animation {
 public:
     Animation(int qAnimationFrames, int spriteWidth, int spriteHeight, SDL_Renderer* renderer, DuckAnimationType type);
     bool loadTexture(std::string path);
-    void renderAnimation(float x, float y, SDL_Rect &scaleRect, bool faceLeft);
+    void renderAnimation(float x, float y, SDL_Rect &scaleRect, bool faceLeft, bool motion);
 private:
     int frame;
     int qAnimationFrames;
