@@ -8,7 +8,7 @@
 
 #define MAX_ANIMATIONS 10
 
-enum DuckAnimationType { WALKING, JUMPING, DUCKING };
+enum DuckAnimationType { WALKING, JUMPING, DUCKING, FLAPPING };
 
 class Animation {
 public:

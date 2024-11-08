@@ -1,12 +1,12 @@
 #include "animation.h"
 
 Animation::Animation(int qAnimationFrames, int spriteWidth, int spriteHeight, SDL_Renderer* renderer, DuckAnimationType type)
-: frame(0), // Inicialización del primer miembro
+: frame(0),
   qAnimationFrames(qAnimationFrames), 
   spriteWidth(spriteWidth), 
   spriteHeight(spriteHeight), 
-  type(type), // Ahora esta línea está en el orden correcto
-  gSpriteSheetTexture(renderer) { // Inicializa el texture al final
+  type(type),
+  gSpriteSheetTexture(renderer) {
 
     if (type == WALKING){
         for (int i = 0; i < qAnimationFrames; ++i){
@@ -30,6 +30,15 @@ Animation::Animation(int qAnimationFrames, int spriteWidth, int spriteHeight, SD
         for (int i = 0; i < qAnimationFrames; ++i){
             gSpriteClips[i].x = i * spriteWidth;
             gSpriteClips[i].y = spriteHeight*2;
+            gSpriteClips[i].w = spriteWidth;
+            gSpriteClips[i].h = spriteHeight;
+        }
+    }
+
+    if (type == FLAPPING){
+        for (int i = 0; i < qAnimationFrames; ++i){
+            gSpriteClips[i].x = i * spriteWidth;
+            gSpriteClips[i].y = spriteHeight;
             gSpriteClips[i].w = spriteWidth;
             gSpriteClips[i].h = spriteHeight;
         }

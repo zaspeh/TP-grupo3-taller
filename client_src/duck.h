@@ -12,11 +12,14 @@
 
 const int SCREEN_WIDTH = 640;
 const int SCREEN_HEIGHT = 480;
+const int SPRITE_FLAP_WIDTH = 16;
+const int SPRITE_FLAP_HEIGHT = 16;
 const int SPRITE_WIDTH = 32;
 const int SPRITE_HEIGHT = 32;
 const int WALKING_ANIMATION_FRAMES = 6;
 const int JUMPING_ANIMATION_FRAMES = 6;
 const int DUCKING_ANIMATION_FRAMES = 5;
+const int FLAPPING_ANIMATION_FRAMES = 6;
 const float DUCK_SPEED = 1.0f;
 
 class Duck
@@ -38,6 +41,7 @@ private:
     int screenWidth;
     int screenHeight;
     DuckAnimationType currentAnimation;
+    std::unique_ptr<Animation> wings;
 };
 
 #endif
