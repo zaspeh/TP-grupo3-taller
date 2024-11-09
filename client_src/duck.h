@@ -8,6 +8,7 @@
 #include "ltexture.h"
 #include "../common_src/game_state.h"
 #include "animation.h"
+#include "weapon.h"
 #include <memory>
 
 const int SCREEN_WIDTH = 640;
@@ -42,6 +43,7 @@ private:
     int screenHeight;
     DuckAnimationType currentAnimation;
     std::unique_ptr<Animation> wings;
+    std::unique_ptr<Weapon> weapon;
 };
 
 #endif

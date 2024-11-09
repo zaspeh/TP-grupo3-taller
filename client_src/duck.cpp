@@ -17,39 +17,55 @@ Duck::Duck(duck_t duckState, int screenWidth, int screenHeight, SDL_Renderer* re
     }
 
     wings = std::make_unique<Animation>(FLAPPING_ANIMATION_FRAMES, SPRITE_FLAP_WIDTH, SPRITE_FLAP_HEIGHT, renderer, FLAPPING);
+    weapon = std::make_unique<Weapon>(duckState.equipped_weapon, renderer);
 }
 
 bool Duck::loadTexture() {
     bool allLoaded = true;
-    std::string path = "client_src/duckyellow.png";
+    std::string pathDuck = "client_src/duckyellow.png";
+    std::string pathWings = "client_src/duckyellowflap.png";
 
-    if(duckState.id == 0){
-        path = "client_src/duckyellow.png";
-    }else if(duckState.id == 1){
-        path = "client_src/duckgray.png";
-    }else if(duckState.id == 2){
-        path = "client_src/duckorange.png";
-    }else{
-        path = "client_src/duckwhite.png";
+    switch (duckState.id) {
+    case 0:
+        pathDuck = "client_src/duckyellow.png";
+        pathWings = "client_src/duckyellowflap.png";
+        break;
+    case 1:
+        pathDuck = "client_src/duckgray.png";
+        pathWings = "client_src/duckgrayflap.png";
+        break;
+    case 2:
+        pathDuck = "client_src/duckorange.png";
+        pathWings = "client_src/duckorangeflap.png";
+        break;
+    default:
+        pathDuck = "client_src/duckwhite.png";
+        pathWings = "client_src/duckwhiteflap.png";
+        break;
     }
 
-    if (!animations[WALKING]->loadTexture(path)) {
+    if (!animations[WALKING]->loadTexture(pathDuck)) {
         std::cerr << "Failed to load WALKING texture." << std::endl;
         allLoaded = false;
     }
 
-    if (!animations[JUMPING]->loadTexture(path)) {
+    if (!animations[JUMPING]->loadTexture(pathDuck)) {
         std::cerr << "Failed to load JUMPING texture." << std::endl;
         allLoaded = false;
     }
 
-    if (!animations[DUCKING]->loadTexture(path)) {
+    if (!animations[DUCKING]->loadTexture(pathDuck)) {
         std::cerr << "Failed to load DUCKING texture." << std::endl;
         allLoaded = false;
     }
 
-    if(!wings->loadTexture("client_src/duckyellowflap.png")){
+    if(!wings->loadTexture(pathWings)){
         std::cerr << "Failed to load DUCKING texture." << std::endl;
+        allLoaded = false;
+    }
+
+    if(!weapon->loadTexture()){
+        std::cerr << "Failed to load WEAPON texture." << std::endl;
         allLoaded = false;
     }
     
@@ -61,7 +77,7 @@ void Duck::render() {
 
     if (animations[currentAnimation]) {
         animations[currentAnimation]->renderAnimation(duckState.pos.x, duckState.pos.y, scaleRect, faceLeft, isMoving);
-        SDL_Rect scaleFlap;
+        /*SDL_Rect scaleFlap;
         scaleFlap.h = SPRITE_FLAP_HEIGHT*2;
         scaleFlap.w = SPRITE_FLAP_WIDTH*2;
         float posY = duckState.pos.y + 25;
@@ -69,7 +85,8 @@ void Duck::render() {
         if (faceLeft){
             posX = posX + 10;
         }
-        wings->renderAnimation(posX, posY, scaleFlap, faceLeft, true);
+        wings->renderAnimation(posX, posY, scaleFlap, faceLeft, true);*/
+        weapon->render(duckState.pos.x, duckState.pos.y, faceLeft);
     } else {
         std::cerr << "Attempted to render an uninitialized animation." << std::endl;
     }

@@ -47,10 +47,6 @@ Animation::Animation(int qAnimationFrames, int spriteWidth, int spriteHeight, SD
     frame = 0;
 }
 
-void Animation::setAnimationColor(Uint8 red, Uint8 green, Uint8 blue){
-    gSpriteSheetTexture.setColor(red, green, blue);
-}
-
 bool Animation::loadTexture(std::string path){
     return gSpriteSheetTexture.loadFromFile(path);
 }
