@@ -29,6 +29,16 @@ bool Game::loadMedia()
             charged = false;
         }
     }
+    platforms.resize(gameState.level.num_platforms);  // Ajuste: asegurar el tamaño correcto del vector ducks
+    for (int i = 0; i < gameState.level.num_platforms && charged; i++) {
+        if (!platforms[i]) {
+            platforms[i] = std::make_unique<Platform>(gameState.level.platforms[i].platform, gRenderer.get());
+        }
+        if (!platforms[i]->loadTexture()) {
+            printf("Failed to load texture for duck %d.\n", i);
+            charged = false;
+        }
+    }
     return charged;
 }
 
@@ -132,6 +142,11 @@ void Game::run()
  
 
 void Game::render() {  
+    for (size_t i = 0; i < platforms.size(); i++) {
+        if (platforms[i]) {
+            platforms[i]->render();
+        }
+    }
     for (size_t i = 0; i < ducks.size(); i++) {
         if (ducks[i]) {
             ducks[i]->render();
