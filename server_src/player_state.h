@@ -23,11 +23,7 @@ private:
 
 public:
     // Constructor por defecto
-<<<<<<< HEAD
-    PlayerState(uint8_t id, int x, int y, int w, int h) : 
-=======
     PlayerState(uint8_t clientID, int x, int y, int w, int h) : 
->>>>>>> origin/Server_2
         weapon(nullptr), 
         verticalVelocity(0.0)
     {
@@ -36,11 +32,7 @@ public:
         duck.health = 100;
         duck.isJumping = false;
         duck.isFalling = false;  // Aseguramos que inicie en false
-<<<<<<< HEAD
-        duck.id = id;
-=======
         duck.id = clientID;
->>>>>>> origin/Server_2
     }
 
     duck_t getState() {

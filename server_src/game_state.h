@@ -71,11 +71,7 @@ public:
 
     std::shared_ptr<PlayerState> connectPlayer(uint8_t id) {
         std::cout << "Nuevo jugador: " << static_cast<int>(id) << std::endl;
-<<<<<<< HEAD
-        players[id] = std::make_shared<PlayerState>(id, 100, 100, 32, 32);  
-=======
         players[id] = std::make_shared<PlayerState>(id, 210, 100, 32, 32);  
->>>>>>> origin/Server_2
         state.level.ducks[id] = players[id]->getState();
         state.level.num_ducks++;  
 
