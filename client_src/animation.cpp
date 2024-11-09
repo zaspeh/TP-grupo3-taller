@@ -1,12 +1,12 @@
 #include "animation.h"
 
 Animation::Animation(int qAnimationFrames, int spriteWidth, int spriteHeight, SDL_Renderer* renderer, DuckAnimationType type)
-: frame(0), // Inicialización del primer miembro
+: frame(0),
   qAnimationFrames(qAnimationFrames), 
   spriteWidth(spriteWidth), 
   spriteHeight(spriteHeight), 
-  type(type), // Ahora esta línea está en el orden correcto
-  gSpriteSheetTexture(renderer) { // Inicializa el texture al final
+  type(type),
+  gSpriteSheetTexture(renderer) {
 
     if (type == WALKING){
         for (int i = 0; i < qAnimationFrames; ++i){
@@ -35,11 +35,16 @@ Animation::Animation(int qAnimationFrames, int spriteWidth, int spriteHeight, SD
         }
     }
 
-    frame = 0;
-}
+    if (type == FLAPPING){
+        for (int i = 0; i < qAnimationFrames; ++i){
+            gSpriteClips[i].x = i * spriteWidth;
+            gSpriteClips[i].y = spriteHeight;
+            gSpriteClips[i].w = spriteWidth;
+            gSpriteClips[i].h = spriteHeight;
+        }
+    }
 
-void Animation::setAnimationColor(Uint8 red, Uint8 green, Uint8 blue){
-    gSpriteSheetTexture.setColor(red, green, blue);
+    frame = 0;
 }
 
 bool Animation::loadTexture(std::string path){
@@ -54,7 +59,7 @@ void Animation::renderAnimation(float x, float y, SDL_Rect &scaleRect, bool face
         frame = (frame + 1) % qAnimationFrames;
         lastFrameTime = currentTime;
     }
-
+    
     SDL_Rect* currentClip = &gSpriteClips[frame]; 
 
     SDL_RendererFlip flip = faceLeft ? SDL_FLIP_HORIZONTAL : SDL_FLIP_NONE;

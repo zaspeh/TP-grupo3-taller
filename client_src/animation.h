@@ -8,22 +8,21 @@
 
 #define MAX_ANIMATIONS 10
 
-enum DuckAnimationType { WALKING, JUMPING, DUCKING };
+enum DuckAnimationType { WALKING, JUMPING, DUCKING, FLAPPING };
 
 class Animation {
 public:
     Animation(int qAnimationFrames, int spriteWidth, int spriteHeight, SDL_Renderer* renderer, DuckAnimationType type);
     bool loadTexture(std::string path);
     void renderAnimation(float x, float y, SDL_Rect &scaleRect, bool faceLeft, bool motion);
-    void setAnimationColor(Uint8 red, Uint8 green, Uint8 blue);
 private:
     int frame;
     int qAnimationFrames;
     int spriteWidth;
     int spriteHeight;
-    DuckAnimationType type; // Cambiado de posición
+    DuckAnimationType type;
     SDL_Rect gSpriteClips[MAX_ANIMATIONS];
-    LTexture gSpriteSheetTexture; // Cambiado de posición
+    LTexture gSpriteSheetTexture;
 };
 
 #endif
