@@ -56,7 +56,7 @@ private:
         level.platforms[10].platform = {420, 200, 32, 32};  // Plataforma 8
         level.platforms[11].platform = {452, 200, 32, 32};  // Plataforma 8
         level.platforms[12].platform = {484, 200, 32, 32};  // Plataforma 8
-        level.platforms[13].platform = {1000, 200, 32, 32};  // Plataforma 8
+        level.platforms[13].platform = {420, 160, 32, 32};  // Plataforma 8
 
         // Configuración de lugares de aparición (spawn)
         level.num_spawn_places = 0;
