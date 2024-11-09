@@ -14,15 +14,17 @@ void Receiver::run() {
         try {
             std::vector<uint8_t> mensaje = protocol->recvCommand(wasClosed);
             if (wasClosed) {
+                std::cout << "Saliendo del receiver.\n";
                 break;
             }
             idPlayer = mensaje[0];
             
-            //std::cout << "Received command: " << std::to_string(mensaje[0]) << " " << std::to_string(mensaje[1]) << std::endl;
+            std::cout << "Received command: " << std::to_string(mensaje[0]) << " " << std::to_string(mensaje[1]) << std::endl;
             server.obtener_gameloop().agregar_comando([this, mensaje]() {
+                std::cout << "Agregando comandos\n";
                 gameLoop.doActionGameState(mensaje[0], mensaje[1]);
+                std::cout << "COmando agreagado\n";
             });
-
             
         } catch (const std::exception& e) {
             std::cerr << EXCEPTION << " receiver - " << e.what() << std::endl;
@@ -31,6 +33,7 @@ void Receiver::run() {
     }
 
     try {
+        std::cout << "Eliminando jugador " << idPlayer << std::endl;
         server.removeClient(protocol);
         gameLoop.removePlayer(idPlayer); 
     } catch (const std::exception& e) {

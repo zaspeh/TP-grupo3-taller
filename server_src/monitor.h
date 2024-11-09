@@ -13,7 +13,6 @@ private:
     Server& server;
     std::mutex mutex_clientes;
     std::mutex mutex_senders;
-    std::mutex mutex_cajas;
     std::vector<std::shared_ptr<ServerProtocol>> clientes;
 
 public:
@@ -34,6 +33,8 @@ public:
 
     // Elimina un cliente del monitor.
     void eliminar_cliente(std::shared_ptr<ServerProtocol> client);
+
+    //void removeSender(uint8_t idClient);
 
     // Devuelve una lista de todos los clientes actuales.
     std::vector<std::shared_ptr<ServerProtocol>> obtener_clientes();

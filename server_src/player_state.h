@@ -13,6 +13,7 @@ private:
     Armor armor;
     Helmet helmet;
 
+    bool isOnGround = false;
     float verticalVelocity;  // Velocidad vertical para el salto
     //const float gravity = -9.8;  // Valor de gravedad (ejemplo)
     //const float jumpStrength = 15.0;  // Fuerza del salto
@@ -22,7 +23,11 @@ private:
 
 public:
     // Constructor por defecto
+<<<<<<< HEAD
     PlayerState(uint8_t id, int x, int y, int w, int h) : 
+=======
+    PlayerState(uint8_t clientID, int x, int y, int w, int h) : 
+>>>>>>> origin/Server_2
         weapon(nullptr), 
         verticalVelocity(0.0)
     {
@@ -31,7 +36,11 @@ public:
         duck.health = 100;
         duck.isJumping = false;
         duck.isFalling = false;  // Aseguramos que inicie en false
+<<<<<<< HEAD
         duck.id = id;
+=======
+        duck.id = clientID;
+>>>>>>> origin/Server_2
     }
 
     duck_t getState() {
@@ -70,7 +79,11 @@ public:
 
     uint8_t getFacingDirection() const { return duck.faceLeft; }
     void setFacingDirection(uint8_t direction) { duck.faceLeft = direction; }; 
-    void move(int dx, int dy);
+    void move(int dx, int dy, platform_t* plat, uint8_t numPlats);
+
+    bool doNotCollideX(platform_t* plat, uint8_t numPlats, int new_x);
+
+    bool doNotCollideY(platform_t* plat, uint8_t numPlats, int new_y);
 
     /* int getScore() const;
     void setScore(int newScore);
@@ -89,62 +102,13 @@ public:
     void equipHelmet() { helmet.equip(); }
 
 
-    void forceGroundState() {
-        duck.pos.y = groundLevel;
-        verticalVelocity = 0.0f;
-        duck.isJumping = false;
-        duck.isFalling = false;
-    }
+    void updatePosition(float deltaTime, platform_t* platforms, uint8_t numPlatforms);
 
-    void updatePosition(float deltaTime) {
-        // Limitamos deltaTime para evitar saltos en la física
-        deltaTime = std::min(deltaTime, 0.016f);
-        
-        // Si estamos por debajo del suelo, corregimos inmediatamente
-        if (duck.pos.y > groundLevel) {
-            forceGroundState();
-            return;
-        }
+    bool checkPlatformBelow(platform_t* platforms, uint8_t numPlatforms, float newY);
 
-        // Aplicamos física solo si estamos saltando, cayendo o no estamos en el suelo
-        if (duck.isJumping || duck.isFalling || duck.pos.y < groundLevel) {
-            // Actualizamos la velocidad vertical
-            verticalVelocity += gravity * deltaTime;
-            
-            // Actualizamos la posición
-            float newY = duck.pos.y + (verticalVelocity * deltaTime);
-            
-            // Verificamos colisión con el suelo
-            if (newY >= groundLevel) {
-                forceGroundState();
-            } else {
-                duck.pos.y = newY;
-                
-                // Actualizamos estado de salto/caída
-                if (verticalVelocity > 0) {
-                    duck.isFalling = true;
-                    duck.isJumping = false;
-                }
-            }
-            
-            // Limitamos la velocidad máxima de caída
-            const float maxFallSpeed = 800.0f;
-            if (verticalVelocity > maxFallSpeed) {
-                verticalVelocity = maxFallSpeed;
+    void forcePlatformState();
 
-            }
-        }
-        
-    }
-
-    void jump() {
-        // Solo permitimos saltar si estamos en el suelo
-        if (duck.pos.y >= groundLevel && !duck.isJumping && !duck.isFalling) {
-            duck.isJumping = true;
-            duck.isFalling = false;
-            verticalVelocity = jumpStrength;
-        }
-    }
+    void jump();
 };
 
 #endif // PLAYERSTATE_H

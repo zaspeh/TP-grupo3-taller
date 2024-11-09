@@ -40,6 +40,7 @@ public:
     Queue(): max_size(UINT_MAX - 1), closed(false) {}
     explicit Queue(const unsigned int max_size): max_size(max_size), closed(false) {}
 
+    bool isClosed() { return closed; }
 
     bool try_push(T const& val) {
         std::unique_lock<std::mutex> lck(mtx);
@@ -238,6 +239,8 @@ public:
         is_not_empty.notify_all();
     }
 
+    bool isClosed() { return closed; }
+
 private:
     Queue(const Queue&) = delete;
     Queue& operator=(const Queue&) = delete;
@@ -248,7 +251,8 @@ template <typename T>
 class Queue<T*>: private Queue<void*> {
 public:
     explicit Queue(const unsigned int max_size): Queue<void*>(max_size) {}
-
+    
+    bool isClosed() { return closed; }
 
     bool try_push(T* const& val) { return Queue<void*>::try_push(val); }
 

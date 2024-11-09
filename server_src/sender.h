@@ -30,6 +30,8 @@ public:
     // Envía un mensaje con información a todos los clientes conectados.
     void broadcast_message_with_info(game_state_t gameState);
 
+    bool isQueueClosed() { return gameStateQueue->isClosed(); }
+    
     // Detiene el sender.
     void stop() override;
 
