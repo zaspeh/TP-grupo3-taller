@@ -9,29 +9,22 @@
 #include "../common_src/serverprotocol.h"
 #include "../common_src/queue.h"
 #include "../common_src/thread.h"
+#include "client.h"
 
 class Server;
-class Monitor;
+class Client;
 
 class Sender: public Thread {
 private:
     Server& server;
-    Monitor& monitor;
-    std::shared_ptr<ServerProtocol> protocol;
-    std::shared_ptr<Queue<game_state_t>> gameStateQueue;
+    std::shared_ptr<Client> client;
 
 public:
-    explicit Sender(Server& server, Monitor& monitor, std::shared_ptr<ServerProtocol> protocol,
-                    std::shared_ptr<Queue<game_state_t>> gameStateQueue);
+    explicit Sender(Server &server, std::shared_ptr<Client> client);
 
     // Ejecuta el hilo sender.
     void run() override;
 
-    // Envía un mensaje con información a todos los clientes conectados.
-    void broadcast_message_with_info(game_state_t gameState);
-
-    bool isQueueClosed() { return gameStateQueue->isClosed(); }
-    
     // Detiene el sender.
     void stop() override;
 

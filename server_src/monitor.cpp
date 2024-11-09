@@ -4,67 +4,49 @@
 
 #include "server.h"
 
-Monitor::Monitor(Server& server): server(server) {}
+Monitor::Monitor(Server& server): server(std::unique_ptr<Server>(&server)) {}
 
 void Monitor::procesar_mensaje(const game_state_t gameState) {
     std::cout << "Intentando tomar el lock en procesar_mensaje" << std::endl;
-    std::lock_guard<std::mutex> lock(mutex_senders);
+    std::lock_guard<std::mutex> lock(mutex_clientes);
     std::cout << "Lock tomado" << std::endl;
-    auto senders = server.obtener_emisores();
-    if (!senders.empty()) {
-        for (auto& sender : senders) {
-            std::cout << "Enviando mensaje" << std::endl;
-            if (sender && !sender->isQueueClosed()) {  // Verifica si la cola está abierta
+
+    auto clients = server->getClients();  // Obtiene el mapa de clientes del servidor.
+    if (!clients.empty()) {
+        for (auto& [idClient, client] : clients) {
+            if (client && client->isActive()) {  // Verifica si el cliente es válido y está activo.
+                std::cout << "Enviando mensaje al cliente con ID: " << static_cast<int>(idClient) << std::endl;
                 try {
-                    sender->broadcast_message_with_info(gameState);
-                    std::cout << "Mensaje enviado" << std::endl;
+                    client->broadcast_message_with_info(gameState);
+                    std::cout << "Mensaje enviado al cliente con ID: " << static_cast<int>(idClient) << std::endl;
                 } catch (const std::exception& e) {
-                    std::cerr << "Error: fallo al enviar mensaje - " << e.what() << std::endl;
+                    std::cerr << "Error: fallo al enviar mensaje al cliente con ID " 
+                              << static_cast<int>(idClient) << " - " << e.what() << std::endl;
                 }
+            } else {
+                std::cerr << "Cliente con ID " << static_cast<int>(idClient) 
+                          << " no está activo o es nulo." << std::endl;
             }
         }
+    } else {
+        std::cerr << "No hay clientes conectados." << std::endl;
     }
 }
 
-
-/* void Monitor::removeSender(uint8_t idClient) {
-    std::lock_guard<std::mutex> lock(mutex_senders);
-    auto& emisores = server.obtener_emisores();
-    
-    if (idClient < emisores.size() && emisores[idClient]) {  // Verifica que el índice es válido
-        emisores[idClient]->stop();  // Cierra la cola antes de eliminar
-        emisores.erase(emisores.begin() + idClient);  // Elimina el sender
-    }
-} */
-
-
-
-void Monitor::agregar_cliente(std::shared_ptr<ServerProtocol> client) {
+void Monitor::addToMap(std::map<uint8_t, std::shared_ptr<Client>>& clients, uint8_t idClient, std::shared_ptr<Client> client) {
     std::lock_guard<std::mutex> lock(mutex_clientes);
-    clientes.push_back(client);
+    clients[idClient] = client;
 }
 
-void Monitor::eliminar_cliente(std::shared_ptr<ServerProtocol> client) {
+void Monitor::removeFromMap(std::map<uint8_t, std::shared_ptr<Client>>& clientes, uint8_t idClient) {
     std::lock_guard<std::mutex> lock(mutex_clientes);
-
-    auto it = std::remove(clientes.begin(), clientes.end(), client);
-    if (it != clientes.end()) {
-        clientes.erase(it, clientes.end());  
-    }
-    client = nullptr;
+    clientes.erase(idClient);
 }
 
-
-
-std::vector<std::shared_ptr<ServerProtocol>> Monitor::obtener_clientes() {
+void Monitor::closeClients(std::map<uint8_t, std::shared_ptr<Client>>& clientes) {
     std::lock_guard<std::mutex> lock(mutex_clientes);
-    return clientes;
-}
-
-void Monitor::cerrar_clientes() {
-    std::lock_guard<std::mutex> lock(mutex_clientes);
-    for (auto& client: clientes) {
-        client->closeSocket();
+    for (auto& client : clientes) {
+        client.second->stop();
     }
     clientes.clear();
 }

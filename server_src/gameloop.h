@@ -10,7 +10,7 @@
 #include "game_state.h"
 #include "monitor.h"
 
-class Server;
+class Monitor;
 
 class GameLoop: public Thread {
 private:
@@ -18,7 +18,7 @@ private:
     Queue<std::function<void()>> cola_comandos;
     std::atomic<int> iteraciones;
     std::unique_ptr<GameState> gameState;
-    Monitor& monitor;
+    std::shared_ptr<Monitor> monitor;
 
     // Ejecuta los comandos pendientes en la cola de comandos.
     void ejecutar_comandos();
@@ -26,7 +26,7 @@ private:
 public:
     bool matchStarted = false;
     // Constructor que inicializa el bucle de juego con una referencia al servidor.
-    explicit GameLoop(Server& server, Monitor& monitor);
+    explicit GameLoop(Server& server, std::shared_ptr<Monitor> monitor);
     
     void initGame();
 

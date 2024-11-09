@@ -5,15 +5,18 @@
 #include <mutex>
 #include <vector>
 
-#include "sender.h"
+#include "client.h"
+#include "server.h"
 #include "../common_src/serverprotocol.h"
+
+class Client;
+class Server;
 
 class Monitor {
 private:
-    Server& server;
+    std::unique_ptr<Server> server;
     std::mutex mutex_clientes;
     std::mutex mutex_senders;
-    std::vector<std::shared_ptr<ServerProtocol>> clientes;
 
 public:
     explicit Monitor(Server& server);
@@ -29,18 +32,12 @@ public:
     // Métodos para manejar clientes
 
     // Agrega un nuevo cliente al monitor.
-    void agregar_cliente(std::shared_ptr<ServerProtocol> client);
+    void addToMap(std::map<uint8_t, std::shared_ptr<Client>>& map, uint8_t idClient, std::shared_ptr<Client> client);
 
-    // Elimina un cliente del monitor.
-    void eliminar_cliente(std::shared_ptr<ServerProtocol> client);
-
-    //void removeSender(uint8_t idClient);
-
-    // Devuelve una lista de todos los clientes actuales.
-    std::vector<std::shared_ptr<ServerProtocol>> obtener_clientes();
+    void removeFromMap(std::map<uint8_t, std::shared_ptr<Client>>& map, uint8_t idClient);
 
     // Cierra todas las conexiones de los clientes.
-    void cerrar_clientes();
+    void closeClients(std::map<uint8_t, std::shared_ptr<Client>>& clientes);
 };
 
 #endif  // MONITOR_H
