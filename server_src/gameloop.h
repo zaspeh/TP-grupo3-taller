@@ -32,8 +32,6 @@ public:
 
     void doActionGameState(uint8_t player, uint8_t action);
 
-    void firstTime(uint8_t player);
-    
     // Método que contiene la lógica del bucle de juego y se ejecuta en un hilo separado.
     void run() override;
 

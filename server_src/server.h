@@ -41,6 +41,8 @@ public:
     // Elimina un cliente del servidor.
     void removeClient(std::shared_ptr<ServerProtocol> client);
 
+    //void removeSender(uint8_t idPlayer);
+
     // Maneja la entrada del usuario desde la consola.
     void handleInput();
 
@@ -58,8 +60,6 @@ public:
 
     // Devuelve los Senders de los usuarios.
     std::vector<std::shared_ptr<Sender>>& obtener_emisores();
-
-    void doActionGameState(uint8_t id, uint8_t action);
 
     // Destruye el servidor, liberando todos los recursos reservados.
     ~Server();

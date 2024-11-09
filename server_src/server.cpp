@@ -48,11 +48,13 @@ void Server::removeClient(std::shared_ptr<ServerProtocol> client) {
     monitor.eliminar_cliente(client);
 }
 
+/* void Server::removeSender(uint8_t idClient) {
+    monitor.removeSender(idClient);
+} */
+
 std::vector<std::shared_ptr<ServerProtocol>> Server::getClients() {
     return monitor.obtener_clientes();
 } 
-
-
 
 void Server::stop() {
     Thread::stop();
