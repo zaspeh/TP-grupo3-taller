@@ -26,6 +26,7 @@ class Game : public Thread
         std::unique_ptr<SDL_Renderer, decltype(&SDL_DestroyRenderer)> gRenderer;
         std::vector<std::unique_ptr<Duck>> ducks;
         std::vector<std::unique_ptr<Platform>> platforms;
+        std::unique_ptr<LTexture> background;
         game_state_t gameState;
         void render();
         bool processEvents();

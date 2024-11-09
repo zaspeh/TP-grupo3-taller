@@ -39,6 +39,13 @@ bool Game::loadMedia()
             charged = false;
         }
     }
+
+    background = std::make_unique<LTexture>(gRenderer.get());
+
+    if(!background->loadFromFile("client_src/forest.png")){
+        charged = false;
+    }
+
     return charged;
 }
 
@@ -142,6 +149,10 @@ void Game::run()
  
 
 void Game::render() {  
+    SDL_Rect* scaleRect = new SDL_Rect{0, 0, 0, 0};
+    scaleRect->h = 480;
+    scaleRect->w = 640;
+    background->render(0,0,NULL, scaleRect, SDL_FLIP_NONE);
     for (size_t i = 0; i < platforms.size(); i++) {
         if (platforms[i]) {
             platforms[i]->render();
@@ -219,6 +230,9 @@ bool Game::init()
 
     ducks.resize(gameState.level.num_ducks);  // Inicializa el vector con el tamaño correcto
     printf("Initialized ducks vector with %d ducks.\n", gameState.level.num_ducks);
+
+    platforms.resize(gameState.level.num_platforms);  // Inicializa el vector con el tamaño correcto
+    printf("Initialized ducks vector with %d platforms.\n", gameState.level.num_platforms);
 
     return true;
 }
