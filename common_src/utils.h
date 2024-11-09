@@ -32,6 +32,13 @@
 #define FLOOR 0x07
 #define START_MATCH 0x99
 
-
 #define NEW_CLIENT 0x77
+
+#define GRASS_PLATFORM 0x01
+
+constexpr const uint8_t WIDTH_DUCK = 32;
+constexpr const uint8_t HIGH_DUCK = 32;
+constexpr const uint8_t WIDTH_PLATFORM = 32;
+constexpr const uint8_t HEIGHT_PLATFORM = 32;
+
 #endif

@@ -12,11 +12,11 @@
 
 bool PlayerState::doNotCollideX(platform_t* plat, uint8_t numPlats, int new_x) {
     for (int i = 0; i < numPlats; i++) {
-        if (duck.pos.y + 32 > plat[i].platform.y && 
-            duck.pos.y < plat[i].platform.y + 32) {
+        if (duck.pos.y + HEIGHT_PLATFORM > plat[i].pos.y && 
+            duck.pos.y < plat[i].pos.y + HEIGHT_PLATFORM) {
             
-            if (new_x < plat[i].platform.x + 32 &&
-                new_x + 32 > plat[i].platform.x) {
+            if (new_x < plat[i].pos.x + WIDTH_PLATFORM &&
+                new_x + WIDTH_PLATFORM > plat[i].pos.x) {
                 return false;
             }
         }
@@ -48,14 +48,14 @@ void PlayerState::updatePosition(float deltaTime, platform_t* platforms, uint8_t
     
     for (int i = 0; i < numPlatforms; i++) {
         // Verificar si estamos sobre la plataforma en X
-        if (duck.pos.x + 32 > platforms[i].platform.x && 
-            duck.pos.x < platforms[i].platform.x + 32) {
+        if (duck.pos.x + WIDTH_DUCK > platforms[i].pos.x && 
+            duck.pos.x < platforms[i].pos.x + WIDTH_PLATFORM) {
             
             // Colisión con plataforma
-            if (newY + 32 > platforms[i].platform.y) {
+            if (newY + HEIGHT_PLATFORM > platforms[i].pos.y) { 
                 // Si estamos cayendo
-                if (verticalVelocity > 0 && duck.pos.y + 32 <= platforms[i].platform.y) {
-                    duck.pos.y = platforms[i].platform.y - 32;
+                if (verticalVelocity > 0 && duck.pos.y + HIGH_DUCK <= platforms[i].pos.y) {
+                    duck.pos.y = platforms[i].pos.y - HEIGHT_PLATFORM;
                     verticalVelocity = 0;
                     isOnGround = true;
                     duck.isJumping = false;

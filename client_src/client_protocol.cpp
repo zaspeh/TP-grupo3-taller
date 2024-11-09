@@ -26,8 +26,6 @@ position_t ClientProtocol::readPosition(bool& wasClosed){
     position_t position;
     position.x = recvInt(wasClosed);
     position.y = recvInt(wasClosed);
-    position.w = recvInt(wasClosed);
-    position.h = recvUint32(wasClosed);
     return position;
 }
 
@@ -57,7 +55,8 @@ void ClientProtocol::readDucks(duck_t ducks[MAX_DUCKS], uint8_t numDucks, bool &
 
 void ClientProtocol::readPlatforms(platform_t platforms[MAX_PLATFORMS], uint8_t numPlatforms, bool &wasClosed) {
     for (uint8_t i = 0; i < numPlatforms; i++) {
-        platforms[i].platform = readPosition(wasClosed);
+        platforms[i].pos = readPosition(wasClosed);
+        platforms[i].type = recvUint8(wasClosed);
     }
 }
 
