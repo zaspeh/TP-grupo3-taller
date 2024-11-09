@@ -6,6 +6,7 @@
 #include <memory>
 #include <mutex>
 #include "player_state.h"
+#include "level.h"
 #include "../common_src/utils.h"
 
 class GameState {
@@ -21,7 +22,7 @@ public:
         players = std::map<uint8_t, std::shared_ptr<PlayerState>>();
         //levels = std::vector<std::shared_ptr<level_t>>(); // almacena todos los niveles del juego
 
-        level_t currentLevel = instanceLevel(); // posteriormente deberìa agarrar uno random de arriba.
+        level_t currentLevel = Level(0).getLevel(); 
         state = {
             currentLevel,
             0,
@@ -70,7 +71,7 @@ public:
 
     std::shared_ptr<PlayerState> connectPlayer(uint8_t id) {
         std::cout << "Nuevo jugador: " << static_cast<int>(id) << std::endl;
-        players[id] = std::make_shared<PlayerState>(id, 100, 100, 32, 32);  
+        players[id] = std::make_shared<PlayerState>(id, 210, 100, 32, 32);  
         state.level.ducks[id] = players[id]->getState();
         state.level.num_ducks++;  
 
@@ -92,12 +93,12 @@ public:
         Weapon* weapon = nullptr;
         switch(action) {
             case MOVE_LEFT:
-                player->move(-10, 0);
+                player->move(-10, 0, state.level.platforms, state.level.num_platforms);
                 player->setFacingDirection(1);
                 break;
             case MOVE_RIGHT:
                 std::cout << "Moving right" << std::endl;
-                player->move(10, 0);
+                player->move(10, 0, state.level.platforms, state.level.num_platforms);
                 player->setFacingDirection(0);
                 break;
             case JUMP:
@@ -139,30 +140,12 @@ public:
         
         // Actualizar cada jugador
         for (auto& [id, player] : players) {
-            player->updatePosition(deltaTime);
+            player->updatePosition(deltaTime, state.level.platforms, state.level.num_platforms);
             updateState(id, player); 
         }
         return state;
     }
     
-    level_t instanceLevel() {
-        std::lock_guard<std::mutex> lock(mtx);
-
-        level_t level = {
-            0,                          // num_ducks
-            {},                         // ducks array (inicialización vacía)
-            0,                          // num_platforms
-            {},                         // platforms array (inicialización vacía)
-            0,                          // num_spawn_places
-            {},                         // spawn_places array (inicialización vacía)
-            0,                          // num_boxes
-            {},                         // boxes array (inicialización vacía)
-            0,                          // num_projectiles
-            {}                          // projectiles array (inicialización vacía)
-        };
-
-        return level;
-    }
 
 };
 
