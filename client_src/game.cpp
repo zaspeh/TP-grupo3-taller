@@ -124,7 +124,7 @@ void Game::run()
         return;
     }
 
-    printf("Game initialized and media loaded successfully.\n");
+    //printf("Game initialized and media loaded successfully.\n");
 
     bool quit = false;
     auto next_frame = std::chrono::steady_clock::now();
@@ -140,8 +140,8 @@ void Game::run()
             continue;
         }
 
-        printf("Game state updated.\n");
-        std::cout << "Posicion del pato: " << static_cast<int>(gameState.level.ducks[0].pos.x) << " " << static_cast<int>(gameState.level.ducks[0].pos.y) << std::endl; 
+        //printf("Game state updated.\n");
+        //std::cout << "Posicion del pato: " << static_cast<int>(gameState.level.ducks[0].pos.x) << " " << static_cast<int>(gameState.level.ducks[0].pos.y) << std::endl; 
         update(gameState);
 
         render();

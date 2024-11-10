@@ -37,13 +37,11 @@ void GameState::updateState(uint8_t id, std::shared_ptr<PlayerState> player) {
 }
 
 std::shared_ptr<PlayerState> GameState::connectPlayer(uint8_t id) {
-    std::cout << "Nuevo jugador: " << static_cast<int>(id) << std::endl;
     position_t pos = level.getSpawnPosition();
     players[id] = std::make_shared<PlayerState>(id, pos.x, pos.y);  
     state.level.ducks[id] = players[id]->getState();
     state.level.num_ducks++;  
 
-    std::cout << "Cantidad de jugadores: "<< static_cast<int>(state.level.num_ducks) << std::endl;
     return players[id];
 }
 
@@ -53,9 +51,7 @@ std::map<uint8_t, std::shared_ptr<PlayerState>> GameState::getPlayers() {
 }
 
 game_state_t GameState::doAction(uint8_t id, uint8_t action) {
-    //std::cout << "A punto de realizar una acción\n";
     std::lock_guard<std::mutex> lock(mtx);
-    //std::cout << "Realizando acción\n";
     auto player = players[id];
     weapon_t weaponST;
     Weapon* weapon = nullptr;
@@ -73,7 +69,6 @@ game_state_t GameState::doAction(uint8_t id, uint8_t action) {
             player->jump();
             break;
         case TAKE_WEAPON:
-            std::cout << "Arma tomada\n";
             weaponST = getWeaponPosition(player->getPosition());
             if (weaponST.type == 0){ 
                 std::cout << "Dropping weapon\n";
@@ -135,14 +130,8 @@ weapon_t GameState::getWeaponPosition(position_t position) {
     return weapon;
 }
 
-/*
-#define GRENADE_WEAPON 0x1
-#define BANANA_WEAPON 0x2
-#define PEWPEWLASER_WEAPON 0x3
-#define LASERRIFLE_WEAPON 0x4
-*/
 Weapon* GameState::createWeapon(uint8_t weaponType) {
-    std::cout << static_cast<int> (weaponType) << std::endl;
+    std::cout << "Arma tomada\n";
     Weapon* newWeapon;
     switch (weaponType) {
         case GRENADE_WEAPON:
@@ -159,10 +148,10 @@ Weapon* GameState::createWeapon(uint8_t weaponType) {
             break;
         case DARTGUN_WEAPON:
             newWeapon = new Dartgun();
+            break;
         case AK_47_WEAPON:
             newWeapon = new AK47();
-        case NULL_WEAPON:
-            newWeapon = new Dartgun();
+            break;
         default:
             std::cerr << "Arma no creada\n";
             newWeapon = nullptr;

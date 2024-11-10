@@ -115,6 +115,7 @@ void PlayerState::pickWeapon(Weapon* newWeapon) {
     }
     weapon = newWeapon;
     duck.equipped_weapon.type = newWeapon->getId();
+    std::cout << "Tipo de arma: " << static_cast<int>(duck.equipped_weapon.type) << std::endl;
 }
 
 void PlayerState::dropWeapon() {

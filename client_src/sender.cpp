@@ -9,12 +9,12 @@ void Sender::run() {
     bool wasClosed = false;
     while (!wasClosed && _keep_running) {
         try {
-            std::cout << "Popeando el mensaje" << std::endl;
+            //std::cout << "Popeando el mensaje" << std::endl;
             uint8_t command = commandQueue->pop();
 
             if (wasClosed)
                 break;
-            std::cout << "Comando: " << static_cast<int>(command) << std::endl;
+            //std::cout << "Comando: " << static_cast<int>(command) << std::endl;
             if (commandIsValid(command))
                 protocol->sendCommand(command, wasClosed);
 

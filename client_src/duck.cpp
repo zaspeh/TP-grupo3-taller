@@ -86,10 +86,9 @@ void Duck::render() {
             posX = posX + 10;
         }
         wings->renderAnimation(posX, posY, scaleFlap, faceLeft, true);*/
-        std::cout << "Voy a dibujar el arma tomada" << std::endl;
-        if(weapon->getType() != NULL_WEAPON) // si tengo un arma... 
-        {
-            std::cout << "VALIDE EL TIPO DE ARMA" << std::endl;
+        //std::cout << "Voy a dibujar el arma tomada" << std::endl;
+        if(weapon->getType() != NULL_WEAPON) {
+            std::cout << "Tipo de arma: " << static_cast<int>(weapon->getType()) << std::endl;
             weapon->render(duckState.pos.x, duckState.pos.y, faceLeft);
         }
     } else {
