@@ -32,15 +32,15 @@ bool Duck::loadTexture() {
         break;
     case 1:
         pathDuck = "client_src/duckgray.png";
-        pathWings = "client_src/duckgrayflap.png";
+        pathWings = "client_src/duckyellowflap.png";
         break;
     case 2:
         pathDuck = "client_src/duckorange.png";
-        pathWings = "client_src/duckorangeflap.png";
+        pathWings = "client_src/duckyellowflap.png";
         break;
     default:
         pathDuck = "client_src/duckwhite.png";
-        pathWings = "client_src/duckwhiteflap.png";
+        pathWings = "client_src/duckyellowflap.png";
         break;
     }
 
