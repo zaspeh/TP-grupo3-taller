@@ -13,7 +13,6 @@ private:
 
     // Método que crea el nivel 0 con plataformas, cajas, etc.
     static level_t getLevel0();
-    static void FillRect(level_t &level, int xIni, int xFin, int height);
 
 protected:
     level_t level;

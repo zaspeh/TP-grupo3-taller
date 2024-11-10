@@ -92,10 +92,22 @@ level_t Level::getLevel0() {
     // Spawpoints para armas
     level.spawn_places[4].pos = {75, 340};
     level.spawn_places[4].is_active = true;
+    weapon_t weapon1 = {
+        {75, 340},
+        LASERRIFLE_WEAPON,
+        30,
+        false
+    };
 
         // Spawpoints para armas
     level.spawn_places[5].pos = {450, 440};
     level.spawn_places[5].is_active = true;
+    weapon_t weapon2 = {
+        {75, 340},
+        LASERRIFLE_WEAPON,
+        30,
+        false
+    };
 
         // Spawpoints para armas
     level.spawn_places[6].pos = {510, 440};
@@ -133,13 +145,6 @@ Level::Level(int id) : level(getLevelById(id)), chosenLevel(id) {}
 // Métodos para acceder a la información del nivel
 level_t Level::getLevel() {
     return level;
-}
-
-void Level::FillRect(level_t &level, int xIni, int xFin, int height) {
-    for (int i = xIni; i < xFin; ++i) {
-        level.platforms[level.num_platforms].pos = {i * WIDTH_PLATFORM, height};
-        level.platforms[level.num_platforms++].type = DIRT_PLATFORM;
-    }
 }
 
 position_t Level::getSpawnPosition() {
