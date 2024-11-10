@@ -32,7 +32,7 @@ bool Game::loadMedia()
     platforms.resize(gameState.level.num_platforms);  // Ajuste: asegurar el tamaño correcto del vector ducks
     for (int i = 0; i < gameState.level.num_platforms && charged; i++) {
         if (!platforms[i]) {
-            platforms[i] = std::make_unique<Platform>(gameState.level.platforms[i].platform, gRenderer.get());
+            platforms[i] = std::make_unique<Platform>(gameState.level.platforms[i].pos, gRenderer.get());
         }
         if (!platforms[i]->loadTexture()) {
             printf("Failed to load texture for duck %d.\n", i);
