@@ -23,11 +23,11 @@ private:
 
 public:
     // Constructor por defecto
-    PlayerState(uint8_t clientID, int x, int y, int w, int h) : 
+    PlayerState(uint8_t clientID, int x, int y) : 
         weapon(nullptr), 
         verticalVelocity(0.0)
     {
-        duck.pos = {x, y, w, h};
+        duck.pos = {x, y};
         duck.isAlive = true;
         duck.health = 100;
         duck.isJumping = false;

@@ -11,6 +11,7 @@
 #include "monitor.h"
 
 class Server;
+class GameState;
 
 class GameLoop: public Thread {
 private:

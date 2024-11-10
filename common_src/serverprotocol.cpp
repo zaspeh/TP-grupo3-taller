@@ -32,8 +32,6 @@ void ServerProtocol::sendWeapon(weapon_t weapon, bool &wasClosed) {
 void ServerProtocol::sendPosition(position_t position, bool &wasClosed) {
     sendInt(position.x, wasClosed);
     sendInt(position.y, wasClosed);
-    sendInt(position.w, wasClosed);
-    sendInt(position.h, wasClosed);
 }
 
 void ServerProtocol::sendDuck(duck_t duck, bool &wasClosed) {
@@ -60,7 +58,8 @@ void ServerProtocol::sendDucks(duck_t ducks[MAX_DUCKS], uint8_t num_ducks, bool 
 
 void ServerProtocol::sendPlatforms(platform_t platforms[MAX_PLATFORMS], uint8_t num_platforms, bool &wasClosed) {
     for (int i = 0; i < num_platforms; i++) {
-        sendPosition(platforms[i].platform, wasClosed);
+        sendPosition(platforms[i].pos, wasClosed);
+        sendUint8(platforms[i].type, wasClosed);
     }
 }
 

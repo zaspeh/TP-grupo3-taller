@@ -6,32 +6,32 @@
 
 class Level {
 private:
+    // Definición de la estructura level_t
+    /*
+    typedef struct {
+        uint8_t num_ducks;
+        duck_t ducks[MAX_DUCKS];
+        uint8_t num_platforms;
+        platform_t platforms[MAX_PLATFORMS];
+        uint8_t num_spawn_places;
+        spawn_place_t spawn_places[MAX_SPAWN_PLACES];
+        uint8_t num_boxes;
+        box_t boxes[MAX_BOXES];
+        uint8_t num_projectiles;
+        projectile_t projectiles[MAX_PROJECTILES];
+    } level_t;
+    */
+
     // Método estático que inicializa el nivel según su ID
-    static level_t instanceLevel(int id) {
+    static level_t getLevelById(int id) {
         switch (id) {
             case 0:
                 return getLevel0();
-            // Podrías agregar más casos aquí para otros niveles
+            // Agregar más casos aquí para otros niveles si es necesario
             default:
                 return getLevel0();  // Nivel predeterminado si el ID no coincide
         }
     }
-
-    // Definición de la estructura level_t
-    /*
-    typedef struct {
-    uint8_t num_ducks;
-    duck_t ducks[MAX_DUCKS];
-    uint8_t num_platforms;
-    platform_t platforms[MAX_PLATFORMS];
-    uint8_t num_spawn_places;
-    spawn_place_t spawn_places[MAX_SPAWN_PLACES];
-    uint8_t num_boxes;
-    box_t boxes[MAX_BOXES];
-    uint8_t num_projectiles;
-    projectile_t projectiles[MAX_PROJECTILES];
-    } level_t;
-    */
 
     // Método que crea el nivel 0 con plataformas, cajas, etc.
     static level_t getLevel0() {
@@ -43,53 +43,79 @@ private:
 
         // Configuración de plataformas (ejemplo)
         level.num_platforms = 14;
-        level.platforms[0].platform = {100, 200, 32, 32};  // Plataforma 1
-        level.platforms[1].platform = {132, 200, 32, 32};  // Plataforma 2
-        level.platforms[2].platform = {164, 200, 32, 32};  // Plataforma 3
-        level.platforms[3].platform = {196, 200, 32, 32};  // Plataforma 4
-        level.platforms[4].platform = {228, 200, 32, 32};  // Plataforma 5
-        level.platforms[5].platform = {260, 200, 32, 32};  // Plataforma 6
-        level.platforms[6].platform = {292, 200, 32, 32};  // Plataforma 7
-        level.platforms[7].platform = {324, 200, 32, 32};  // Plataforma 8
-        level.platforms[8].platform = {356, 200, 32, 32};  // Plataforma 8
-        level.platforms[9].platform = {388, 200, 32, 32};  // Plataforma 8
-        level.platforms[10].platform = {420, 200, 32, 32};  // Plataforma 8
-        level.platforms[11].platform = {452, 200, 32, 32};  // Plataforma 8
-        level.platforms[12].platform = {484, 200, 32, 32};  // Plataforma 8
-        level.platforms[13].platform = {420, 160, 32, 32};  // Plataforma 8
+        level.platforms[0].pos = {100, 200};  // Plataforma 1
+        level.platforms[1].pos = {132, 200};  // Plataforma 2
+        level.platforms[2].pos = {164, 200};  // Plataforma 3
+        level.platforms[3].pos = {196, 200};  // Plataforma 4
+        level.platforms[4].pos = {228, 200};  // Plataforma 5
+        level.platforms[5].pos = {260, 200};  // Plataforma 6
+        level.platforms[6].pos = {292, 200};  // Plataforma 7
+        level.platforms[7].pos = {324, 200};  // Plataforma 8
+        level.platforms[8].pos = {356, 200};  // Plataforma 9
+        level.platforms[9].pos = {388, 200};  // Plataforma 10
+        level.platforms[10].pos = {420, 200}; // Plataforma 11
+        level.platforms[11].pos = {452, 200}; // Plataforma 12
+        level.platforms[12].pos = {484, 200}; // Plataforma 13
+        level.platforms[13].pos = {420, 160}; // Plataforma 14
+
+        for (int i = 0; i < level.num_platforms; ++i)
+            level.platforms[i].type = GRASS_PLATFORM;
+
 
         // Configuración de lugares de aparición (spawn)
-        level.num_spawn_places = 0;
-        for (int i = 0; i < level.num_spawn_places; ++i)
-            level.spawn_places[i] = {}; 
+        level.num_spawn_places = 2;
+        level.spawn_places[0].pos = {150, 140};
+        level.spawn_places[0].is_active = true;
 
-        level.num_boxes = 0;                          
-        for (int i = 0; i < level.num_boxes; ++i)
-            level.boxes[i] = {};
-                                // boxes array (inicialización vacía)
-        level.num_projectiles = 0;                          // num_projectiles
+        level.spawn_places[1].pos = {300, 140};
+        level.spawn_places[1].is_active = true;
+
+        // Inicialización de cajas y proyectiles
+        level.num_boxes = 1;
+        weapon_t weapon = {
+            {0,0},
+            0,
+            0,
+            false
+        };
+        armor_t armor = {
+            {0,0},
+            0,
+            false
+        };
+        level.boxes[0] = {420, 170, false, false, weapon, armor};
+        
+
+        level.num_projectiles = 0;
         for (int i = 0; i < level.num_projectiles; ++i)
             level.projectiles[i] = {};
-                                // projectiles array (inicialización vacía)
+
         return level;
     }
 
 protected:
     level_t level;
+    int chosenLevel;
 
 public:
     // Constructor
-    explicit Level(int id) {
-        level = instanceLevel(id);
-    }
-
-    level_t getLevel() const { return level; }
-    
-    // Destructor
-    ~Level() = default;
+    explicit Level(int id) : level(getLevelById(id)), chosenLevel(id) {}
 
     // Métodos para acceder a la información del nivel
-    const level_t& getLevelData() const { return level; }
+    level_t getLevel() { return level; }
+
+    position_t getSpawnPosition() {
+        for (int i = 0; i < level.num_spawn_places; ++i) {
+            if (level.spawn_places[i].is_active) {
+                level.spawn_places[i].is_active = false;
+                return level.spawn_places[i].pos;
+            }
+        }
+        return {0, 0};  // Retorna posición nula si no hay spawn activo
+    }
+
+    // Destructor
+    ~Level() = default;
 };
 
 #endif // LEVEL_H

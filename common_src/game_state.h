@@ -15,13 +15,12 @@
 typedef struct {
     int x;
     int y;
-    int w;
-    int h;
 } position_t;
 
 // Representa plataformas en el escenario
 typedef struct {
-    position_t platform; // Posición de la plataforma
+    position_t pos; // Posición de la plataforma
+    uint8_t type;   // Tipo de plataforma (ej.: suelo, muro, etc.)
 } platform_t;
 
 // Representa un arma en el juego
