@@ -14,11 +14,12 @@ Platform::Platform(platform_t platform, SDL_Renderer* renderer)
 
 bool Platform::loadTexture(){
     bool loaded = false;
-    if(platform.type == GRASS_PLATFORM){
+    /*if(platform.type == GRASS_PLATFORM){
         loaded = platformTexture->loadFromFile("client_src/platform.png");
     }else{
         loaded = platformTexture->loadFromFile("client_src/platformdirt.png");
-    }
+    }*/
+    loaded = platformTexture->loadFromFile("client_src/platformdirt.png");
     return loaded;
 }
 
