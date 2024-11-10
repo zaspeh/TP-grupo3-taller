@@ -8,7 +8,7 @@
 #define MAX_PROJECTILES 100
 #define MAX_ITEMS 50
 #define MAX_LEVELS 5
-#define MAX_PLATFORMS 50
+#define MAX_PLATFORMS 1000
 #define MAX_SPAWN_PLACES 20
 #define MAX_BOXES 20
 

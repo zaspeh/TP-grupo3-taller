@@ -34,10 +34,11 @@
 
 #define NEW_CLIENT 0x77
 
-#define GRASS_PLATFORM 0x01
+constexpr const uint8_t GRASS_PLATFORM = 1;
+constexpr const uint8_t DIRT_PLATFORM = 2;
 
 constexpr const uint8_t WIDTH_DUCK = 32;
-constexpr const uint8_t HIGH_DUCK = 32;
+constexpr const uint8_t HEIGHT_DUCK = 32;
 constexpr const uint8_t WIDTH_PLATFORM = 32;
 constexpr const uint8_t HEIGHT_PLATFORM = 32;
 
