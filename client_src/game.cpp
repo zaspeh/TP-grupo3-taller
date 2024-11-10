@@ -150,8 +150,8 @@ void Game::run()
 
 void Game::render() {  
     SDL_Rect* scaleRect = new SDL_Rect{0, 0, 0, 0};
-    scaleRect->h = 480;
-    scaleRect->w = 640;
+    scaleRect->h = SCREEN_HEIGHT;
+    scaleRect->w = SCREEN_WIDTH;
     background->render(0,0,NULL, scaleRect, SDL_FLIP_NONE);
     for (size_t i = 0; i < platforms.size(); i++) {
         if (platforms[i]) {
