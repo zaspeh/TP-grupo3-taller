@@ -39,6 +39,19 @@ bool Game::loadMedia()
             charged = false;
         }
     }
+    spawns.resize(gameState.level.num_spawn_places);
+    for (int i = 0; i < gameState.level.num_spawn_places && charged; i++) {
+        if (gameState.level.spawn_places[i].weapon.type == NULL_WEAPON) {
+            continue;
+        }
+        if (!spawns[i]) {
+            spawns[i] = std::make_unique<SpawnPlace>(gameState.level.spawn_places[i], gRenderer.get());
+        }
+        if (!spawns[i]->loadTexture()) {
+            printf("Failed to load texture for spawn %d.\n", i);
+            charged = false;
+        }
+    }
 
     background = std::make_unique<LTexture>(gRenderer.get());
 
@@ -72,6 +85,8 @@ bool Game::processEvents() {
                 case SDLK_DOWN: sendCommand(FLOOR); break;
                 case SDLK_LEFT: leftPressed = true; break;
                 case SDLK_RIGHT: rightPressed = true; break;
+                case SDLK_RSHIFT: sendCommand(TAKE_WEAPON); break;
+                case SDLK_RCTRL: sendCommand(SHOOT); break;
                 default: break;
             }
         } else if (e.type == SDL_KEYUP) {
@@ -161,6 +176,12 @@ void Game::render() {
     for (size_t i = 0; i < ducks.size(); i++) {
         if (ducks[i]) {
             ducks[i]->render();
+        }
+    }
+
+    for (size_t i = 0; i < spawns.size(); i++) {
+        if (spawns[i]) {
+            spawns[i]->render();
         }
     }
 }

@@ -75,7 +75,7 @@ level_t Level::getLevel0() {
     //              ---------------                
     //  -----------------------------------------
     // Configuración de lugares de aparición (spawn)
-    level.num_spawn_places = 4;
+    level.num_spawn_places = 8;
     
     level.spawn_places[0].pos = {50, 500};
     level.spawn_places[0].is_active = true;
@@ -86,51 +86,65 @@ level_t Level::getLevel0() {
     level.spawn_places[2].pos = {874, 500};
     level.spawn_places[2].is_active = true;
 
-    level.spawn_places[3].pos = {924, 500};
+    level.spawn_places[3].pos = {924, 500}; // no mas de cuatro jugadores.
     level.spawn_places[3].is_active = true;
 
+
+
+    weapon_t null_weapon = {
+        {0, 0},
+        NULL_WEAPON
+    };
+    armor_t null_armor = {
+        {0, 0},
+        NULL_ARMOR
+    };
+
     // Spawpoints para armas
-    level.spawn_places[4].pos = {75, 340};
-    level.spawn_places[4].is_active = true;
+    level.spawn_places[4].pos = {75, 418};
+    level.spawn_places[4].is_active = false;
     weapon_t weapon1 = {
         {75, 340},
-        LASERRIFLE_WEAPON,
-        30,
-        false
+        AK_47_WEAPON
     };
+    level.spawn_places[4].weapon = weapon1;
+    level.spawn_places[4].armor = null_armor;
 
         // Spawpoints para armas
-    level.spawn_places[5].pos = {450, 440};
-    level.spawn_places[5].is_active = true;
+    level.spawn_places[5].pos = {450, 518};
+    level.spawn_places[5].is_active = false;
     weapon_t weapon2 = {
-        {75, 340},
-        LASERRIFLE_WEAPON,
-        30,
-        false
+        {450, 440},
+        DARTGUN_WEAPON
     };
+    level.spawn_places[5].weapon = weapon2;
+    level.spawn_places[5].armor = null_armor;
 
         // Spawpoints para armas
-    level.spawn_places[6].pos = {510, 440};
-    level.spawn_places[6].is_active = true;
-
+    level.spawn_places[6].pos = {510, 518};
+    level.spawn_places[6].is_active = false;
+    level.spawn_places[6].weapon = null_weapon;
+    armor_t armor1 = {
+        {510, 440},
+        HELMET_ARMOR,
+    };
+    level.spawn_places[6].armor = armor1;
+    
         // Spawpoints para armas
-    level.spawn_places[7].pos = {850, 340};
-    level.spawn_places[7].is_active = true;
+    level.spawn_places[7].pos = {850, 418};
+    level.spawn_places[7].is_active = false;
+    level.spawn_places[7].weapon = null_weapon;
+    armor_t armor2 = {
+        {850, 340},
+        CHESTPLATE_ARMOR,
+    };
+    level.spawn_places[7].armor = armor2;
+    
 
     // Inicialización de cajas y proyectiles
     level.num_boxes = 1;
-    weapon_t weapon = {
-        {0, 0},
-        0,
-        0,
-        false
-    };
-    armor_t armor = {
-        {0, 0},
-        0,
-        false
-    };
-    level.boxes[0] = {420, 170, false, false, weapon, armor};
+
+    level.boxes[0] = {420, 170, false, false, null_weapon, null_armor};
 
     level.num_projectiles = 0;
     for (int i = 0; i < level.num_projectiles; ++i)

@@ -7,19 +7,19 @@
 Monitor::Monitor(Server& server): server(server) {}
 
 void Monitor::procesar_mensaje(const game_state_t gameState) {
-    std::cout << "Intentando tomar el lock en procesar_mensaje" << std::endl;
+    //std::cout << "Intentando tomar el lock en procesar_mensaje" << std::endl;
     std::lock_guard<std::mutex> lock(mutex_senders);
-    std::cout << "Lock tomado" << std::endl;
+    //std::cout << "Lock tomado" << std::endl;
     auto senders = server.obtener_emisores();
     if (!senders.empty()) {
         for (auto& sender : senders) {
-            std::cout << "Enviando mensaje" << std::endl;
+            //std::cout << "Enviando mensaje" << std::endl;
             if (sender && !sender->isQueueClosed()) {  // Verifica si la cola está abierta
                 try {
                     sender->broadcast_message_with_info(gameState);
-                    std::cout << "Mensaje enviado" << std::endl;
+                    //std::cout << "Mensaje enviado" << std::endl;
                 } catch (const std::exception& e) {
-                    std::cerr << "Error: fallo al enviar mensaje - " << e.what() << std::endl;
+                    //std::cerr << "Error: fallo al enviar mensaje - " << e.what() << std::endl;
                 }
             }
         }

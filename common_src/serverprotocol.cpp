@@ -19,14 +19,11 @@ void ServerProtocol::sendGameState(game_state_t& game, bool &wasClosed) {
 void ServerProtocol::sendArmor(armor_t armor, bool &wasClosed) {
     sendPosition(armor.pos, wasClosed);
     sendUint8(armor.type, wasClosed);
-    sendUint8(armor.is_equipped, wasClosed);
 }
 
 void ServerProtocol::sendWeapon(weapon_t weapon, bool &wasClosed) {
     sendPosition(weapon.pos, wasClosed);
     sendUint8(weapon.type, wasClosed);
-    sendUint8(weapon.ammo, wasClosed);
-    sendUint8(weapon.is_equipped, wasClosed);
 }
 
 void ServerProtocol::sendPosition(position_t position, bool &wasClosed) {
@@ -47,7 +44,8 @@ void ServerProtocol::sendDuck(duck_t duck, bool &wasClosed) {
     sendUint8(duck.score, wasClosed);
     sendUint8(duck.color, wasClosed);
     sendWeapon(duck.equipped_weapon, wasClosed);
-    sendArmor(duck.equipped_armor, wasClosed);
+    sendArmor(duck.helmet, wasClosed);
+    sendArmor(duck.chestplate, wasClosed);
 }
 
 void ServerProtocol::sendDucks(duck_t ducks[MAX_DUCKS], uint8_t num_ducks, bool &wasClosed) {

@@ -24,7 +24,7 @@ void Sender::run() {
                 break;
             }
 
-            std::cout << "Cantidad de jugadores: " << static_cast<int>(mensaje.level.num_ducks) << std::endl;
+            //std::cout << "Cantidad de jugadores: " << static_cast<int>(mensaje.level.num_ducks) << std::endl;
 
             if (protocol == nullptr || !server.esta_corriendo()) {
                 break;
@@ -46,12 +46,12 @@ void Sender::run() {
 }
 
 void Sender::broadcast_message_with_info(game_state_t gameState) {
-    std::cout << "Broadcasting message with info" << std::endl;
+    //std::cout << "Broadcasting message with info" << std::endl;
     if (gameStateQueue->isClosed()) {
         return;  
     }
     gameStateQueue->push(gameState);
-    std::cout << "Message broadcasted with info" << std::endl;
+    //std::cout << "Message broadcasted with info" << std::endl;
 }
 
 void Sender::stop() {

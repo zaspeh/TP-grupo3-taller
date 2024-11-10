@@ -86,7 +86,12 @@ void Duck::render() {
             posX = posX + 10;
         }
         wings->renderAnimation(posX, posY, scaleFlap, faceLeft, true);*/
-        weapon->render(duckState.pos.x, duckState.pos.y, faceLeft);
+        std::cout << "Voy a dibujar el arma tomada" << std::endl;
+        if(weapon->getType() != NULL_WEAPON) // si tengo un arma... 
+        {
+            std::cout << "VALIDE EL TIPO DE ARMA" << std::endl;
+            weapon->render(duckState.pos.x, duckState.pos.y, faceLeft);
+        }
     } else {
         std::cerr << "Attempted to render an uninitialized animation." << std::endl;
     }
@@ -107,8 +112,12 @@ void Duck::updateState(const duck_t& newDuckState) {
     } else if (duckState.isDucking) {
         currentAnimation = DUCKING;
     } else if (duckState.isFlaping) {
-        currentAnimation = JUMPING;
+        currentAnimation = FLAPPING;
     } else {
         currentAnimation = WALKING;
+    }
+
+    if (duckState.equipped_weapon.type != weapon->getType()) { // actualizo el arma
+        weapon->setWeapon(duckState.equipped_weapon);
     }
 }

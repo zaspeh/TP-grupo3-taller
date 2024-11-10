@@ -21,9 +21,9 @@ void Receiver::run() {
             
             std::cout << "Received command: " << std::to_string(mensaje[0]) << " " << std::to_string(mensaje[1]) << std::endl;
             server.obtener_gameloop().agregar_comando([this, mensaje]() {
-                std::cout << "Agregando comandos\n";
+                //std::cout << "Agregando comandos\n";
                 gameLoop.doActionGameState(mensaje[0], mensaje[1]);
-                std::cout << "COmando agreagado\n";
+                //std::cout << "COmando agreagado\n";
             });
             
         } catch (const std::exception& e) {

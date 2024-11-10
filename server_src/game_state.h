@@ -28,6 +28,8 @@ public:
     std::map<uint8_t, std::shared_ptr<PlayerState>> getPlayers();
     game_state_t doAction(uint8_t id, uint8_t action);
     game_state_t updatePlayers(float deltaTime);
+    weapon_t getWeaponPosition(position_t position);
+    Weapon* createWeapon(uint8_t weaponType);
 };
 
 #endif // GAME_STATE_H

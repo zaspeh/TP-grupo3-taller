@@ -8,6 +8,7 @@
 #include "ltexture.h"
 #include "../common_src/game_state.h"
 #include "animation.h"
+#include "../common_src/utils.h"
 #include "weapon.h"
 #include <memory>
 

@@ -27,21 +27,18 @@ typedef struct {
 typedef struct {
     position_t pos;
     uint8_t type;    // Tipo de arma (ej.: pistola, escopeta, etc.)
-    int ammo;        // Munición restante del arma
-    bool is_equipped; // Indica si el arma está equipada por un jugador
 } weapon_t;
 
 // Representa una armadura o casco en el juego
 typedef struct {
     position_t pos;
     uint8_t type;     // Tipo de armadura/casco
-    bool is_equipped; // Indica si está equipada por un jugador
 } armor_t;
 
 // Representa puntos de aparición donde aparecen armas y armaduras
 typedef struct {
     position_t pos;    // Posición del spawn place en el nivel
-    bool is_active;    // Si actualmente hay un item disponible en el spawn place
+    bool is_active;    // Si se puede spawnear
     weapon_t weapon;   // Arma que puede aparecer en este spawn place
     armor_t armor;     // Armadura o casco que puede aparecer en este spawn place
 } spawn_place_t;
@@ -76,7 +73,8 @@ typedef struct {
     uint8_t score;              // Puntaje acumulado del pato
     uint8_t color;              // Color asignado al pato   
     weapon_t equipped_weapon; // Arma equipada por el pato
-    armor_t equipped_armor;   // Armadura o casco equipado por el pato
+    armor_t helmet;   // Armadura o casco equipado por el pato
+    armor_t chestplate;
 } duck_t;
 
 // Representa un nivel completo con todos sus elementos

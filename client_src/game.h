@@ -10,6 +10,7 @@
 #include "ltexture.h"
 #include "duck.h"
 #include "platform.h"
+#include "spawn_place.h"
 #include "../common_src/thread.h"
 #include "../common_src/game_state.h"
 #include "../common_src/queue.h"
@@ -26,6 +27,7 @@ class Game : public Thread
         std::unique_ptr<SDL_Renderer, decltype(&SDL_DestroyRenderer)> gRenderer;
         std::vector<std::unique_ptr<Duck>> ducks;
         std::vector<std::unique_ptr<Platform>> platforms;
+        std::vector<std::unique_ptr<SpawnPlace>> spawns;
         std::unique_ptr<LTexture> background;
         game_state_t gameState;
         void render();

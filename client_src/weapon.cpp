@@ -15,7 +15,18 @@ Weapon::Weapon(weapon_t weaponState, SDL_Renderer* renderer)
 }
 
 bool Weapon::loadTexture(){
-    return (guns[0]->loadFromFile("client_src/guns/dartgun.png"));
+    switch (weaponState.type) {
+        case AK_47_WEAPON:
+            return (guns[0]->loadFromFile("client_src/guns/ak47.png"));
+        case DARTGUN_WEAPON:
+            return (guns[0]->loadFromFile("client_src/guns/dartgun.png"));
+        case CHAINSAW_WEAPON:
+            return (guns[0]->loadFromFile("client_src/guns/chainsaw.png"));
+        default:
+            std::cerr << "Error: Invalid weapon type " << static_cast<int>(weaponState.type) << std::endl;
+            return false;
+    }
+
 }
 
 void Weapon::updateState(const weapon_t& newWeaponState){

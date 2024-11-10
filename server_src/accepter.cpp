@@ -14,9 +14,9 @@ void Accepter::run() {
     gameLoop.initGame();
     while (_keep_running) {
         try {
-            std::cout << "Esperando conexiones" << std::endl;
+            //std::cout << "Esperando conexiones" << std::endl;
             Socket socket_cliente = socket_servidor.accept();
-            std::cout << "Cliente conectado\n";
+            //std::cout << "Cliente conectado\n";
             if (!_keep_running)
                 break;
             auto protocol = std::make_shared<ServerProtocol>(std::move(socket_cliente));

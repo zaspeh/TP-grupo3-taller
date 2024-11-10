@@ -10,11 +10,18 @@
 #define SLEEP_DURATION_MS = 0.03333
 #define MAX_CLIENTS_PER_QUEUE 100
 
+#define NULL_WEAPON 0x0
 #define GRENADE_WEAPON 0x1
 #define BANANA_WEAPON 0x2
 #define PEWPEWLASER_WEAPON 0x3
 #define LASERRIFLE_WEAPON 0x4
+#define AK_47_WEAPON 0x5
+#define DARTGUN_WEAPON 0x6
+#define CHAINSAW_WEAPON 0x7
 
+#define NULL_ARMOR 0x0
+#define HELMET_ARMOR 0x1
+#define CHESTPLATE_ARMOR 0x2
 
 // Protocol side
 #define ERROR_READING_STRING "Error reading string from protocol"
@@ -33,6 +40,9 @@
 #define START_MATCH 0x99
 
 #define NEW_CLIENT 0x77
+
+
+
 
 constexpr const uint8_t GRASS_PLATFORM = 1;
 constexpr const uint8_t DIRT_PLATFORM = 2;

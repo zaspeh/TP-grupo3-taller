@@ -9,7 +9,6 @@ armor_t ClientProtocol::readArmor(bool& wasClosed){
     armor_t armor;
     armor.pos = readPosition(wasClosed);
     armor.type = recvUint8(wasClosed);
-    armor.is_equipped = recvUint8(wasClosed) ? true : false;
     return armor;
 }
 
@@ -17,8 +16,6 @@ weapon_t ClientProtocol::readWeapon(bool& wasClosed){
     weapon_t weapon;
     weapon.pos = readPosition(wasClosed);
     weapon.type = recvUint8(wasClosed);
-    weapon.ammo = recvUint8(wasClosed);
-    weapon.is_equipped = recvUint8(wasClosed) ? true : false;
     return weapon;
 }
 
@@ -43,7 +40,8 @@ duck_t ClientProtocol::readDuck(bool& wasClosed){
     duck.score = recvUint8(wasClosed);
     duck.color = recvUint8(wasClosed);
     duck.equipped_weapon = readWeapon(wasClosed);
-    duck.equipped_armor = readArmor(wasClosed);
+    duck.helmet = readArmor(wasClosed);
+    duck.chestplate = readArmor(wasClosed);
     return duck;
 }
 
