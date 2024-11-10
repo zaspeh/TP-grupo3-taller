@@ -29,7 +29,7 @@ level_t Level::getLevel0() {
     level.num_platforms += 14;
     for (int i = 30; i < 44; ++i) {
         level.platforms[i].pos = {i * WIDTH_PLATFORM - 22*WIDTH_PLATFORM, 550};
-        level.platforms[i].type = GRASS_PLATFORM;
+        level.platforms[i].type = GRASS_PLATFORM;   
     }
 
     level.num_platforms += 14;
