@@ -11,8 +11,8 @@
 #include "weapon.h"
 #include <memory>
 
-const int SCREEN_WIDTH = 640;
-const int SCREEN_HEIGHT = 480;
+const int SCREEN_WIDTH = 1024;
+const int SCREEN_HEIGHT = 720;
 const int SPRITE_FLAP_WIDTH = 16;
 const int SPRITE_FLAP_HEIGHT = 16;
 const int SPRITE_WIDTH = 32;
