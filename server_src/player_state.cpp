@@ -30,7 +30,6 @@ bool PlayerState::doNotCollideX(platform_t* plat, uint8_t numPlats, int new_x) {
 }
 
 
-
 void PlayerState::move(int dx, int dy, platform_t* plat, uint8_t numPlats) {
     // Movimiento horizontal
     if (dx != 0) {
