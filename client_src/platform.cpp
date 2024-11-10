@@ -1,8 +1,9 @@
 #include "platform.h"
+#include "../common_src/utils.h"
 #include <iostream>
 
-Platform::Platform(position_t pos, SDL_Renderer* renderer)
-: pos(pos)
+Platform::Platform(platform_t platform, SDL_Renderer* renderer)
+: platform(platform)
 {
     try {
         platformTexture = std::make_unique<LTexture>(renderer);
@@ -12,11 +13,17 @@ Platform::Platform(position_t pos, SDL_Renderer* renderer)
 }
 
 bool Platform::loadTexture(){
-    return platformTexture->loadFromFile("client_src/platform.png");
+    bool loaded = false;
+    if(platform.type == GRASS_PLATFORM){
+        loaded = platformTexture->loadFromFile("client_src/platform.png");
+    }else{
+        loaded = platformTexture->loadFromFile("client_src/platformdirt.png");
+    }
+    return loaded;
 }
 
-void Platform::updateState(const position_t& newPosState){
-    pos = newPosState;
+void Platform::updateState(const platform_t& newPlatformState){
+    platform = newPlatformState;
 }
 
 void Platform::render(){
@@ -25,5 +32,5 @@ void Platform::render(){
     scaleRect->w = platformTexture->getWidth(); 
     scaleRect->x = platformTexture->getHeight();
     scaleRect->y = platformTexture->getWidth(); 
-    platformTexture->render(pos.x+32, pos.y+32, NULL, scaleRect, SDL_FLIP_NONE);
+    platformTexture->render(platform.pos.x+32, platform.pos.y+32, NULL, scaleRect, SDL_FLIP_NONE);
 }
