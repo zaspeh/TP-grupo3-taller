@@ -10,12 +10,12 @@
 class Platform{
 private:
     std::unique_ptr<LTexture> platformTexture;
-    position_t pos;
+    platform_t platform;
 public:
-    Platform(position_t pos, SDL_Renderer* renderer);
+    Platform(platform_t platform_t, SDL_Renderer* renderer);
     void render();
     bool loadTexture();
-    void updateState(const position_t& newposState);
+    void updateState(const platform_t& newPlatformState);
 };
 
 #endif
