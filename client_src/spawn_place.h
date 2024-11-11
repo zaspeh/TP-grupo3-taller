@@ -7,6 +7,8 @@
 #include <memory>
 #include "ltexture.h"
 #include <SDL2/SDL_image.h>
+#include <vector>
+#include "weapon.h"
 
 class SpawnPlace {
 public:
@@ -22,6 +24,8 @@ public:
     // Renderizar el SpawnPlace en el nivel
     void render();
 
+    void updateState(const spawn_place_t& newState);
+
     // Obtener la posición del spawn
     position_t getPosition() const;
 
@@ -32,6 +36,8 @@ private:
     spawn_place_t spawnData;  // Datos de la estructura de spawn
     std::unique_ptr<LTexture> spawnTexture;  // Textura del spawn
     SDL_Renderer* renderer;  // Renderizador de SDL
+    std::unique_ptr<Weapon> weapon;
+    
 };
 
 #endif // SPAWNPLACE_H

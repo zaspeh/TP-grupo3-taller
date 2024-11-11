@@ -88,6 +88,12 @@ void ServerProtocol::sendProjectiles(projectile_t projectiles[MAX_PROJECTILES], 
     }
 }
 
+void ServerProtocol::sendDroppedWeapons(weapon_t droppedWeapons[MAX_ITEMS], uint8_t numDroppedWeapons, bool wasClosed) {
+    for (uint8_t i = 0; i < numDroppedWeapons; i++) {
+        sendWeapon(droppedWeapons[i], wasClosed);
+    }
+}
+
 void ServerProtocol::sendLevel(level_t& level, bool &wasClosed) {
     sendUint8(level.num_ducks, wasClosed);
     sendDucks(level.ducks, level.num_ducks, wasClosed);
@@ -99,4 +105,6 @@ void ServerProtocol::sendLevel(level_t& level, bool &wasClosed) {
     sendBoxes(level.boxes, level.num_boxes, wasClosed);
     sendUint8(level.num_projectiles, wasClosed);
     sendProjectiles(level.projectiles, level.num_projectiles, wasClosed);
+    sendUint8(level.num_dropped_weapons, wasClosed);
+    sendDroppedWeapons(level.dropped_weapons, level.num_dropped_weapons, wasClosed);
 }

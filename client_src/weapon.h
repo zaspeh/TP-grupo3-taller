@@ -20,7 +20,7 @@ public:
     bool loadTexture();
     void updateState(const weapon_t& newWeaponState);
     int getType() const { return weaponState.type; }
-    void setWeapon(weapon_t wpn) { weaponState = wpn; }
+    weapon_t getState() const { return weaponState; }
 };
 
 

@@ -1,5 +1,5 @@
 #include "game_state.h"
-
+#include <cmath>
 // Constructor
 GameState::GameState() : level(0) {
     currentLevel = level.getLevel();
@@ -70,13 +70,13 @@ game_state_t GameState::doAction(uint8_t id, uint8_t action) {
             break;
         case TAKE_WEAPON:
             weaponST = getWeaponPosition(player->getPosition());
-            if (weaponST.type == 0){ 
+            if (weaponST.type == NULL_WEAPON){ 
                 std::cout << "Dropping weapon\n";
-                player->dropWeapon();
+                checkIfDropWeapon(player->dropWeapon());
             } else {
                 std::cout << "Eligiendo arma: " << static_cast<int>(weaponST.type) << std::endl;
                 weapon = createWeapon(weaponST.type);
-                player->pickWeapon(weapon);
+                checkIfDropWeapon(player->pickWeapon(weapon));
             }
             break;
         case SHOOT:
@@ -114,15 +114,37 @@ game_state_t GameState::updatePlayers(float deltaTime) {
 
 
 
-weapon_t GameState::getWeaponPosition(position_t position) {
+weapon_t GameState::getWeaponPosition(position_t position) { // SE PUEDE MODULARIZAR
     weapon_t weapon = {
         {0, 0},
         NULL_WEAPON,
     };
+    
+    const int pickupRadius = 20; // Radio de recogida del arma
+    
     for (int i = 4; i < state.level.num_spawn_places; i++) {
-        if (state.level.spawn_places[i].pos.x == position.x && state.level.spawn_places[i].pos.y == position.y) {
-            weapon = state.level.spawn_places[i].weapon;
-            state.level.spawn_places[i].weapon.type = NULL_WEAPON;
+        float dx = state.level.spawn_places[i].pos.x - position.x;
+        float dy = state.level.spawn_places[i].pos.y - position.y;
+        float distance = std::sqrt(std::pow(dx, 2) + std::pow(dy, 2));
+        
+        if (distance <= pickupRadius && state.level.spawn_places[i].weapon.type != NULL_WEAPON) {
+            weapon_t pickedWeapon = state.level.spawn_places[i].weapon;
+            weapon = pickedWeapon;
+            state.level.spawn_places[i].weapon.type = NULL_WEAPON; // Arma recogida, remover del spawn
+            break;
+        }
+    }
+
+    for (int i = 0; i < state.level.num_dropped_weapons; i++) {
+        float dx = state.level.dropped_weapons[i].pos.x - position.x;
+        float dy = state.level.dropped_weapons[i].pos.y - position.y;
+        float distance = std::sqrt(std::pow(dx, 2) + std::pow(dy, 2));
+        
+        if (distance <= pickupRadius && state.level.dropped_weapons[i].type != NULL_WEAPON) {
+            std::cout << "Arma recogida ESTABA DROPEADA\n";
+            weapon_t pickedWeapon = state.level.dropped_weapons[i];
+            weapon = pickedWeapon;
+            state.level.dropped_weapons[i].type = NULL_WEAPON; // Arma recogida, remover del lugar
             break;
         }
     }
@@ -158,4 +180,13 @@ Weapon* GameState::createWeapon(uint8_t weaponType) {
             break;
     }
     return newWeapon;
+}
+
+
+void GameState::checkIfDropWeapon(weapon_t droppedWeapon) {
+    weapon_t pickedWeapon = droppedWeapon;    
+    if (pickedWeapon.type != NULL_WEAPON) {
+        state.level.dropped_weapons[state.level.num_dropped_weapons] = droppedWeapon;
+        state.level.num_dropped_weapons++;
+    }
 }

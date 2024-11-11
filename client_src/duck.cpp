@@ -58,7 +58,7 @@ bool Duck::loadTexture() {
         std::cerr << "Failed to load DUCKING texture." << std::endl;
         allLoaded = false;
     }
-
+    
     if(!wings->loadTexture(pathWings)){
         std::cerr << "Failed to load DUCKING texture." << std::endl;
         allLoaded = false;
@@ -77,19 +77,25 @@ void Duck::render() {
 
     if (animations[currentAnimation]) {
         animations[currentAnimation]->renderAnimation(duckState.pos.x, duckState.pos.y, scaleRect, faceLeft, isMoving);
-        /*SDL_Rect scaleFlap;
-        scaleFlap.h = SPRITE_FLAP_HEIGHT*2;
-        scaleFlap.w = SPRITE_FLAP_WIDTH*2;
-        float posY = duckState.pos.y + 25;
-        float posX = duckState.pos.x + 10;
-        if (faceLeft){
-            posX = posX + 10;
+        
+        if(duckState.isFlaping){ // deberia funcionar
+            SDL_Rect scaleFlap;
+            scaleFlap.h = SPRITE_FLAP_HEIGHT*2;
+            scaleFlap.w = SPRITE_FLAP_WIDTH*2;
+            float posY = duckState.pos.y + 25;
+            float posX = duckState.pos.x + 10;
+            if (faceLeft){
+                posX = posX + 10;
+            }
+            wings->renderAnimation(posX, posY, scaleFlap, faceLeft, true);
         }
-        wings->renderAnimation(posX, posY, scaleFlap, faceLeft, true);*/
         //std::cout << "Voy a dibujar el arma tomada" << std::endl;
         if(weapon->getType() != NULL_WEAPON) {
             std::cout << "Tipo de arma: " << static_cast<int>(weapon->getType()) << std::endl;
+            if (!weapon->loadTexture())
+                std::cout << "Failed to load texture weapon\n"; 
             weapon->render(duckState.pos.x, duckState.pos.y, faceLeft);
+            std::cout << "Arma renderizada\n";
         }
     } else {
         std::cerr << "Attempted to render an uninitialized animation." << std::endl;
@@ -110,13 +116,11 @@ void Duck::updateState(const duck_t& newDuckState) {
         currentAnimation = JUMPING;
     } else if (duckState.isDucking) {
         currentAnimation = DUCKING;
-    } else if (duckState.isFlaping) {
-        currentAnimation = FLAPPING;
-    } else {
+    }  else {
         currentAnimation = WALKING;
     }
 
     if (duckState.equipped_weapon.type != weapon->getType()) { // actualizo el arma
-        weapon->setWeapon(duckState.equipped_weapon);
-    }
+        weapon->updateState(duckState.equipped_weapon);
+    }   
 }

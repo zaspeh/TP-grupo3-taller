@@ -104,7 +104,7 @@ level_t Level::getLevel0() {
     level.spawn_places[4].pos = {75, 418};
     level.spawn_places[4].is_active = false;
     weapon_t weapon1 = {
-        {75, 340},
+        {75, 418},
         AK_47_WEAPON
     };
     level.spawn_places[4].weapon = weapon1;
@@ -114,7 +114,7 @@ level_t Level::getLevel0() {
     level.spawn_places[5].pos = {450, 518};
     level.spawn_places[5].is_active = false;
     weapon_t weapon2 = {
-        {450, 440},
+        {450, 518},
         DARTGUN_WEAPON
     };
     level.spawn_places[5].weapon = weapon2;
@@ -125,7 +125,7 @@ level_t Level::getLevel0() {
     level.spawn_places[6].is_active = false;
     level.spawn_places[6].weapon = null_weapon;
     armor_t armor1 = {
-        {510, 440},
+        {510, 518},
         HELMET_ARMOR,
     };
     level.spawn_places[6].armor = armor1;
@@ -144,11 +144,15 @@ level_t Level::getLevel0() {
     // Inicialización de cajas y proyectiles
     level.num_boxes = 1;
 
-    level.boxes[0] = {420, 170, false, false, null_weapon, null_armor};
+    level.boxes[0] = {420, 100, false, false, null_weapon, null_armor};
 
     level.num_projectiles = 0;
     for (int i = 0; i < level.num_projectiles; ++i)
         level.projectiles[i] = {};
+
+    level.num_dropped_weapons = 0;
+    for (int i = 0; i < level.num_projectiles; ++i)
+        level.dropped_weapons[i] = {};
 
     return level;
 }

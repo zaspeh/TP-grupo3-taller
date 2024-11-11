@@ -89,6 +89,8 @@ typedef struct {
     box_t boxes[MAX_BOXES];
     uint8_t num_projectiles;
     projectile_t projectiles[MAX_PROJECTILES];
+    uint8_t num_dropped_weapons;
+    weapon_t dropped_weapons[MAX_ITEMS];
 } level_t;
 
 // Estado global del juego

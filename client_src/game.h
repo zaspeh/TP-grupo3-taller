@@ -28,6 +28,7 @@ class Game : public Thread
         std::vector<std::unique_ptr<Duck>> ducks;
         std::vector<std::unique_ptr<Platform>> platforms;
         std::vector<std::unique_ptr<SpawnPlace>> spawns;
+        std::vector<std::unique_ptr<Weapon>> droppedWeapons;
         std::unique_ptr<LTexture> background;
         game_state_t gameState;
         void render();

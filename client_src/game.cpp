@@ -53,6 +53,18 @@ bool Game::loadMedia()
         }
     }
 
+    droppedWeapons.resize(gameState.level.num_dropped_weapons);
+    for (int i = 0; i < gameState.level.num_dropped_weapons && charged; i++) {
+        if (gameState.level.dropped_weapons[i].type == NULL_WEAPON) continue;
+        if (!droppedWeapons[i]) {
+            droppedWeapons[i] = std::make_unique<Weapon>(gameState.level.dropped_weapons[i], gRenderer.get());
+        }
+        if (!droppedWeapons[i]->loadTexture()) {
+            printf("Failed to load texture for spawn %d.\n", i);
+            charged = false;
+        }
+    }
+
     background = std::make_unique<LTexture>(gRenderer.get());
 
     if(!background->loadFromFile("client_src/forest.png")){
@@ -161,9 +173,7 @@ void Game::run()
     printf("Game loop ended.\n");
 }
 
- 
-
-void Game::render() {  
+/* void Game::render() {  
     SDL_Rect* scaleRect = new SDL_Rect{0, 0, 0, 0};
     scaleRect->h = SCREEN_HEIGHT;
     scaleRect->w = SCREEN_WIDTH;
@@ -179,12 +189,38 @@ void Game::render() {
         }
     }
 
-    for (size_t i = 0; i < spawns.size(); i++) {
-        if (spawns[i]) {
-            spawns[i]->render();
-        }
+    for (const auto& spawn : spawns) {
+        if (spawn) spawn->render();
     }
+
+    for (const auto& weapon : droppedWeapons) {
+        if (weapon) weapon->render(weapon->getState().pos.x, weapon->getState().pos.y, false);
+    }
+} */
+
+void Game::render() {
+    SDL_Rect scaleRect = {0, 0, SCREEN_WIDTH, SCREEN_HEIGHT};
+    background->render(0, 0, nullptr, &scaleRect, SDL_FLIP_NONE);
+
+    for (const auto& platform : platforms) {
+        if (platform) platform->render();
+    }
+
+    for (const auto& duck : ducks) {
+        if (duck) duck->render();
+    }
+
+    for (const auto& spawn : spawns) {
+        if (spawn) spawn->render();
+    }
+
+    for (const auto& weapon : droppedWeapons) {
+        if (weapon) weapon->render(weapon->getState().pos.x, weapon->getState().pos.y, false);
+    }
+
+    SDL_RenderPresent(gRenderer.get());
 }
+
 
 void Game::update(game_state_t gameState) {
     // Vector temporal para los nuevos patos
@@ -220,6 +256,22 @@ void Game::update(game_state_t gameState) {
 
     // Reemplazar el vector antiguo con el nuevo
     ducks = std::move(newDucks);
+
+    for (int i = 0; i < gameState.level.num_spawn_places; ++i) {
+        if (!spawns[i]) {
+            spawns[i] = std::make_unique<SpawnPlace>(gameState.level.spawn_places[i], gRenderer.get());
+            spawns[i]->loadTexture();
+        }
+        spawns[i]->updateState(gameState.level.spawn_places[i]);
+    }
+
+    for (int i = 0; i < gameState.level.num_dropped_weapons; ++i) {
+        if (!droppedWeapons[i]) {
+            droppedWeapons[i] = std::make_unique<Weapon>(gameState.level.dropped_weapons[i], gRenderer.get());
+            droppedWeapons[i]->loadTexture();
+        }
+        droppedWeapons[i]->updateState(gameState.level.dropped_weapons[i]);
+    }
 }
 
 bool Game::init()

@@ -85,6 +85,12 @@ void ClientProtocol::readProjectiles(projectile_t projectiles[MAX_PROJECTILES], 
     }
 }
 
+void ClientProtocol::readDroppedWeapons(weapon_t droppedWeapons[MAX_ITEMS], uint8_t numDroppedWeapons, bool& wasClosed) {
+    for (uint_fast8_t i = 0; i < numDroppedWeapons; i++) {
+        droppedWeapons[i] = readWeapon(wasClosed);
+    }
+}
+
 void ClientProtocol::readLevel(level_t& level, bool &wasClosed) {
     level.num_ducks = recvUint8(wasClosed);
     readDucks(level.ducks, level.num_ducks, wasClosed);
@@ -96,6 +102,8 @@ void ClientProtocol::readLevel(level_t& level, bool &wasClosed) {
     readBoxes(level.boxes, level.num_boxes, wasClosed);
     level.num_projectiles = recvUint8(wasClosed);
     readProjectiles(level.projectiles, level.num_projectiles, wasClosed);
+    level.num_dropped_weapons = recvUint8(wasClosed);
+    readDroppedWeapons(level.dropped_weapons, level.num_dropped_weapons, wasClosed);
 }
 
 game_state_t ClientProtocol::readFromServer(bool &wasClosed) {
@@ -104,7 +112,6 @@ game_state_t ClientProtocol::readFromServer(bool &wasClosed) {
     game_state.current_level = recvUint8(wasClosed);    
     game_state.round = recvUint8(wasClosed);    
     game_state.winning_score = recvUint8(wasClosed);    
-    std::cout << "winning score: " << static_cast<int>(game_state.winning_score) << std::endl; // verifico si se envia bien, deberìa ser 10
     return game_state;
 }
 

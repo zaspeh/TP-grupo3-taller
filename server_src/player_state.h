@@ -45,7 +45,7 @@ public:
     void setPosition(const position_t& newPosition)  { duck.pos = newPosition; }
 
     uint8_t getWeapon() const { return weapon->getId(); } // ahora en weapon
-    void pickWeapon(Weapon* newWeapon);
+    weapon_t pickWeapon(Weapon* newWeapon);
 
     uint8_t getAmmo() const { return weapon->getAmmo(); } // ahora en weapon
     void setAmmo(uint8_t newAmmo) { weapon->setAmmo(newAmmo); }
@@ -89,7 +89,7 @@ public:
 
     //void crouch() { duck.isCrouched = true; }
 
-    void dropWeapon();
+    weapon_t dropWeapon();
     void equipArmor() { armor.equip(); }
     void equipHelmet() { helmet.equip(); }
 
