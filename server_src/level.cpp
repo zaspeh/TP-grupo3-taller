@@ -76,21 +76,6 @@ level_t Level::getLevel0() {
     //  -----------------------------------------
     // Configuración de lugares de aparición (spawn)
     level.num_spawn_places = 8;
-    
-    level.spawn_places[0].pos = {50, 500};
-    level.spawn_places[0].is_active = true;
-
-    level.spawn_places[1].pos = {100, 500};
-    level.spawn_places[1].is_active = true;
-
-    level.spawn_places[2].pos = {874, 500};
-    level.spawn_places[2].is_active = true;
-
-    level.spawn_places[3].pos = {924, 500}; // no mas de cuatro jugadores.
-    level.spawn_places[3].is_active = true;
-
-
-
     weapon_t null_weapon = {
         {0, 0},
         NULL_WEAPON
@@ -99,6 +84,27 @@ level_t Level::getLevel0() {
         {0, 0},
         NULL_ARMOR
     };
+
+    
+    level.spawn_places[0].pos = {50, 500};
+    level.spawn_places[0].is_active = true;
+    level.spawn_places[0].weapon = null_weapon;
+    level.spawn_places[0].armor = null_armor;
+    
+    level.spawn_places[1].pos = {100, 500};
+    level.spawn_places[1].is_active = true;
+    level.spawn_places[1].weapon = null_weapon;
+    level.spawn_places[1].armor = null_armor;
+
+    level.spawn_places[2].pos = {874, 500};
+    level.spawn_places[2].is_active = true;
+    level.spawn_places[2].weapon = null_weapon;
+    level.spawn_places[2].armor = null_armor;
+
+    level.spawn_places[3].pos = {924, 500}; // no mas de cuatro jugadores.
+    level.spawn_places[3].is_active = true;
+    level.spawn_places[3].weapon = null_weapon;
+    level.spawn_places[3].armor = null_armor;
 
     // Spawpoints para armas
     level.spawn_places[4].pos = {75, 418};
@@ -111,10 +117,10 @@ level_t Level::getLevel0() {
     level.spawn_places[4].armor = null_armor;
 
         // Spawpoints para armas
-    level.spawn_places[5].pos = {450, 518};
+    level.spawn_places[5].pos = {425, 518};
     level.spawn_places[5].is_active = false;
     weapon_t weapon2 = {
-        {450, 518},
+        {425, 518},
         DARTGUN_WEAPON
     };
     level.spawn_places[5].weapon = weapon2;
@@ -131,11 +137,11 @@ level_t Level::getLevel0() {
     level.spawn_places[6].armor = armor1;
     
         // Spawpoints para armas
-    level.spawn_places[7].pos = {850, 418};
+    level.spawn_places[7].pos = {875, 418};
     level.spawn_places[7].is_active = false;
     level.spawn_places[7].weapon = null_weapon;
     armor_t armor2 = {
-        {850, 340},
+        {875, 418},
         CHESTPLATE_ARMOR,
     };
     level.spawn_places[7].armor = armor2;

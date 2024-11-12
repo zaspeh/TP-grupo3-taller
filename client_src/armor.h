@@ -20,12 +20,10 @@ protected:
 
 public:
     Armor(armor_t armorState, SDL_Renderer* renderer);  // Constructor
-    void render(float x, float y, bool faceLeft);  // Renderiza todas las piezas de armadura
+    void render(float x, float y, bool faceLeft, uint8_t type);  // Renderiza todas las piezas de armadura
     bool loadTexture();  // Carga las texturas necesarias
     void setArmor(armor_t arm);  // Asigna el tipo de armadura
-    int getType(int type) const {  // Devuelve el tipo de armadura para casco o coraza
-        return type ? chestplateState.type : helmetState.type;
-    }
+    int getType();
 };
 
 #endif

@@ -55,7 +55,6 @@ void Weapon::updateState(const weapon_t& newWeaponState){
 
 void Weapon::render(float x, float y, bool faceLeft) {
     SDL_Rect scaleRect = {0, 0, 0, 0}; // Declaración directa
-    
     auto it = guns.find(weaponState.type);
     if (it != guns.end()) {
         LTexture* texture = it->second.get();  // Acceso seguro

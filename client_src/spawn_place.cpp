@@ -9,12 +9,10 @@ SpawnPlace::SpawnPlace(const spawn_place_t& spawnData, SDL_Renderer* renderer)
 
     if (spawnData.weapon.type != NULL_WEAPON) {
         weapon = std::make_unique<Weapon>(spawnData.weapon, renderer);
+    } else if (spawnData.armor.type != NULL_ARMOR){
+        armor = std::make_unique<Armor>(spawnData.armor, renderer);
     }
-    
-    //if(spawnData.armor.type != NULL_ARMOR){
-    //    armor = std::make_unique<Armor>(spawnData.armor, renderer);
-    ///}
-    //std::cout << "SpawnPlace created.\n";
+    std::cout << "SpawnPlace created.\n";
 }
 
 SpawnPlace::~SpawnPlace() {
@@ -30,10 +28,16 @@ bool SpawnPlace::loadTexture() {
         success = false;
     }
 
-    if (!weapon->loadTexture()) {
+    if (weapon && !weapon->loadTexture()) {
         std::cerr << "Failed to load weapon texture.\n";
         success = false;
     }
+
+    if (armor && !armor->loadTexture()) {
+        std::cerr << "Failed to load armor texture.\n";
+        success = false;
+    }
+
     return success;
 }
 
@@ -52,13 +56,11 @@ void SpawnPlace::render() {
     }
 
     // El arma se mantiene en su posición original
-    if (spawnData.weapon.type != NULL_WEAPON) {
+    if (spawnData.weapon.type != NULL_WEAPON) 
         weapon->render(spawnData.weapon.pos.x, spawnData.weapon.pos.y, false);
-    }
-
-    if (spawnData.armor.type != NULL_ARMOR) {
-        //helmetTexture->render(spawnData.weapon.pos.x, spawnData.weapon.pos.y, false);
-    }
+    
+    if (spawnData.armor.type != NULL_ARMOR)
+        armor->render(spawnData.armor.pos.x, spawnData.armor.pos.y, false, spawnData.armor.type);
 }
 
 void SpawnPlace::updateState(const spawn_place_t& newState) {

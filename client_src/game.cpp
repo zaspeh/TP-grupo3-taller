@@ -41,10 +41,10 @@ bool Game::loadMedia()
     spawns.resize(MAX_SPAWN_PLACES);
     std::cout << "Tamaño de spawns: " << static_cast<int>(gameState.level.num_spawn_places) << std::endl; 
     for (int i = 0; i < gameState.level.num_spawn_places && charged; i++) {
-        if (gameState.level.spawn_places[i].weapon.type == NULL_WEAPON) {
-            continue;
-        }
+        if (gameState.level.spawn_places[i].weapon.type == NULL_WEAPON && gameState.level.spawn_places[i].armor.type == NULL_ARMOR) continue;
         if (!spawns[i]) {
+            std::cout << "Creando nuevo spawn: " << static_cast<int>(gameState.level.spawn_places[i].weapon.type)  << std::endl;
+            std::cout << "Creando nuevo spawn: " << static_cast<int>(gameState.level.spawn_places[i].armor.type)  << std::endl;
             spawns[i] = std::make_unique<SpawnPlace>(gameState.level.spawn_places[i], gRenderer.get());
         }
         if (!spawns[i]->loadTexture()) {

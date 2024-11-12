@@ -61,10 +61,16 @@ public:
     void setCrouched(bool isCrouched) { duck.isDucking = isCrouched; }
 
     bool hasArmorEquipped() const { return armor.isEquipped(); }
-    void setArmorEquipped() { armor.equip(); }    
+    void setArmorEquipped(armor_t armr) { 
+        duck.chestplate = armr;
+        armor.equip(); 
+        }    
 
     bool hasHelmetEquipped() const { return helmet.isEquipped(); }
-    void setHelmetEquipped() { helmet.equip(); }
+    void setHelmetEquipped(armor_t hmt) { 
+        duck.helmet = hmt;
+        helmet.equip(); 
+        }
 
     uint8_t getHealth() const { return duck.health; }  
     void setHealth(uint8_t newHealth) { duck.health = newHealth; }

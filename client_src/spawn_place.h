@@ -9,6 +9,7 @@
 #include <SDL2/SDL_image.h>
 #include <vector>
 #include "weapon.h"
+#include "armor.h"
 
 class SpawnPlace {
 public:
@@ -37,7 +38,9 @@ private:
     std::unique_ptr<LTexture> spawnTexture;  // Textura del spawn
     SDL_Renderer* renderer;  // Renderizador de SDL
     std::unique_ptr<Weapon> weapon;
-    
+    std::unique_ptr<Armor> armor;
+    std::unique_ptr<LTexture> chestplateTexture;
+    std::unique_ptr<LTexture> helmetTexture;
 };
 
 #endif // SPAWNPLACE_H

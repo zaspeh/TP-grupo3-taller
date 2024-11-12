@@ -10,6 +10,7 @@
 #include "animation.h"
 #include "../common_src/utils.h"
 #include "weapon.h"
+#include "armor.h"
 #include <memory>
 
 const int SCREEN_WIDTH = 1024;
@@ -45,6 +46,7 @@ private:
     DuckAnimationType currentAnimation;
     std::unique_ptr<Animation> wings;
     std::unique_ptr<Weapon> weapon;
+    std::unique_ptr<Armor> armor;
 };
 
 #endif

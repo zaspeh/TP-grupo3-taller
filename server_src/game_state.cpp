@@ -54,7 +54,9 @@ game_state_t GameState::doAction(uint8_t id, uint8_t action) {
     std::lock_guard<std::mutex> lock(mtx);
     auto player = players[id];
     weapon_t weaponST;
+    armor_t armorST;
     Weapon* weapon = nullptr;
+
     switch(action) {
         case MOVE_LEFT:
             player->move(-10, 0, state.level.platforms, state.level.num_platforms);
@@ -70,15 +72,27 @@ game_state_t GameState::doAction(uint8_t id, uint8_t action) {
             break;
         case TAKE_WEAPON:
             weaponST = getWeaponPosition(player->getPosition());
-            if (weaponST.type == NULL_WEAPON){ 
-                std::cout << "Dropping weapon\n";
-                checkIfDropWeapon(player->dropWeapon());
-            } else {
+            armorST = getArmorPosition(player->getPosition());
+
+            if (armorST.type != NULL_ARMOR) { // si encontre una armadura
+                if (armorST.type == HELMET_ARMOR)
+                    player->setHelmetEquipped(armorST);
+                if (armorST.type == CHESTPLATE_ARMOR)
+                    player->setArmorEquipped(armorST);
+
+                break;
+            }
+
+            if (weaponST.type != NULL_WEAPON){  // si encontre un arma
                 std::cout << "Eligiendo arma: " << static_cast<int>(weaponST.type) << std::endl;
                 weapon = createWeapon(weaponST.type);
                 checkIfDropWeapon(player->pickWeapon(weapon));
+            } else { // si quiero tirar lo que tengo en la mano
+                std::cout << "Dropping weapon\n";
+                checkIfDropWeapon(player->dropWeapon());
             }
             break;
+
         case SHOOT:
             player->shoot();
             break;
@@ -185,6 +199,30 @@ weapon_t GameState::getWeaponPosition(position_t position) { // SE PUEDE MODULAR
     }
 
     return weapon;
+}
+
+armor_t GameState::getArmorPosition(position_t position) { // SE PUEDE MODULARIZAR
+    armor_t armor = {
+        {0, 0},
+        NULL_ARMOR,
+    };
+    
+    const int pickupRadius = 20; // Radio de recogida del arma
+    
+    for (int i = 4; i < state.level.num_spawn_places; i++) {
+        float dx = state.level.spawn_places[i].pos.x - position.x;
+        float dy = state.level.spawn_places[i].pos.y - position.y;
+        float distance = std::sqrt(std::pow(dx, 2) + std::pow(dy, 2));
+        
+        if (distance <= pickupRadius && state.level.spawn_places[i].armor.type != NULL_ARMOR) {
+            armor_t pickedarmor = state.level.spawn_places[i].armor;
+            armor = pickedarmor;
+            state.level.spawn_places[i].armor.type = NULL_ARMOR; // Arma recogida, remover del spawn
+            break;
+        }
+    }
+
+    return armor;
 }
 
 Weapon* GameState::createWeapon(uint8_t weaponType) {

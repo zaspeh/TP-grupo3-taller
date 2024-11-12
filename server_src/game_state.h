@@ -31,6 +31,7 @@ public:
     std::map<uint8_t, std::shared_ptr<PlayerState>> getPlayers();
     game_state_t doAction(uint8_t id, uint8_t action);
     game_state_t updatePlayers(float deltaTime);
+    armor_t getArmorPosition(position_t position);
     weapon_t getWeaponPosition(position_t position);
     Weapon* createWeapon(uint8_t weaponType);
     void checkIfDropWeapon(weapon_t droppedWeapon);
