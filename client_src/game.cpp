@@ -7,7 +7,6 @@ Game::Game(std::shared_ptr<Queue<game_state_t>> gameStateQueue, std::shared_ptr<
       gRenderer(nullptr, SDL_DestroyRenderer)
 {
     gameState = gameStateQueue->pop();
-    printf("Game initialized with game state.\n");
 }
 
 Game::~Game()
@@ -39,7 +38,8 @@ bool Game::loadMedia()
             charged = false;
         }
     }
-    spawns.resize(gameState.level.num_spawn_places);
+    spawns.resize(MAX_SPAWN_PLACES);
+    std::cout << "Tamaño de spawns: " << static_cast<int>(gameState.level.num_spawn_places) << std::endl; 
     for (int i = 0; i < gameState.level.num_spawn_places && charged; i++) {
         if (gameState.level.spawn_places[i].weapon.type == NULL_WEAPON) {
             continue;
@@ -53,7 +53,7 @@ bool Game::loadMedia()
         }
     }
 
-    droppedWeapons.resize(gameState.level.num_dropped_weapons);
+    droppedWeapons.resize(MAX_ITEMS);
     for (int i = 0; i < gameState.level.num_dropped_weapons && charged; i++) {
         if (gameState.level.dropped_weapons[i].type == NULL_WEAPON) continue;
         if (!droppedWeapons[i]) {
@@ -215,7 +215,7 @@ void Game::render() {
     }
 
     for (const auto& weapon : droppedWeapons) {
-        if (weapon) weapon->render(weapon->getState().pos.x, weapon->getState().pos.y, false);
+        if (weapon && weapon->getState().type != NULL_WEAPON) weapon->render(weapon->getState().pos.x, weapon->getState().pos.y, false);
     }
 
     SDL_RenderPresent(gRenderer.get());
@@ -258,19 +258,18 @@ void Game::update(game_state_t gameState) {
     ducks = std::move(newDucks);
 
     for (int i = 0; i < gameState.level.num_spawn_places; ++i) {
-        if (!spawns[i]) {
-            spawns[i] = std::make_unique<SpawnPlace>(gameState.level.spawn_places[i], gRenderer.get());
-            spawns[i]->loadTexture();
-        }
-        spawns[i]->updateState(gameState.level.spawn_places[i]);
+        if (spawns[i])
+            spawns[i]->updateState(gameState.level.spawn_places[i]);
     }
 
     for (int i = 0; i < gameState.level.num_dropped_weapons; ++i) {
         if (!droppedWeapons[i]) {
             droppedWeapons[i] = std::make_unique<Weapon>(gameState.level.dropped_weapons[i], gRenderer.get());
             droppedWeapons[i]->loadTexture();
+        } 
+        if (droppedWeapons[i]) {
+            droppedWeapons[i]->updateState(gameState.level.dropped_weapons[i]);
         }
-        droppedWeapons[i]->updateState(gameState.level.dropped_weapons[i]);
     }
 }
 

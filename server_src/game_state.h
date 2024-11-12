@@ -31,6 +31,7 @@ public:
     weapon_t getWeaponPosition(position_t position);
     Weapon* createWeapon(uint8_t weaponType);
     void checkIfDropWeapon(weapon_t droppedWeapon);
+    
 };
 
 #endif // GAME_STATE_H

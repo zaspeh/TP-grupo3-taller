@@ -52,7 +52,7 @@ void SpawnPlace::render() {
         spawnTexture->render(x, y, nullptr, &destRect);
     }
 
-    if (spawnData.weapon.type != NULL_WEAPON){
+    if (spawnData.weapon.type != NULL_WEAPON) {
         weapon->render(spawnData.weapon.pos.x, spawnData.weapon.pos.y, false);
     }
     
@@ -62,19 +62,20 @@ void SpawnPlace::render() {
 }
 
 void SpawnPlace::updateState(const spawn_place_t& newState) {
-    spawnData.pos = newState.pos;
-
-    spawnData.is_active = newState.is_active;
+    spawnData = newState;
 
     // Manejar cambios en el arma
     if (newState.weapon.type != NULL_WEAPON) {
+        std::cout << "Actualizando el arma\n";
         if (weapon == nullptr || weapon->getType() != newState.weapon.type) {
+            std::cout << "Creando una nueva arma\n";
             // Si el arma no existe o es diferente, creamos una nueva
             weapon = std::make_unique<Weapon>(newState.weapon, renderer);
             if (!weapon->loadTexture()) {
                 std::cerr << "Failed to load new weapon texture.\n";
             }
         } else {
+            std::cout << "El arma ya existe\n";
             // Si es la misma arma, solo actualizamos su estado
             weapon->updateState(newState.weapon);
         }
