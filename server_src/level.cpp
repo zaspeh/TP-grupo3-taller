@@ -150,7 +150,7 @@ level_t Level::getLevel0() {
     // Inicialización de cajas y proyectiles
     level.num_boxes = 1;
 
-    level.boxes[0] = {420, 100, false, false, null_weapon, null_armor};
+    level.boxes[0] = {480, 518, false, false, null_weapon, null_armor};
 
     level.num_projectiles = 0;
     for (int i = 0; i < level.num_projectiles; ++i)
