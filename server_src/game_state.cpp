@@ -102,6 +102,39 @@ game_state_t GameState::doAction(uint8_t id, uint8_t action) {
     return state;
 }
 
+void GameState::updateWeaponsPhysics(float deltaTime) {
+    for (size_t i = 0; i < weaponsInAir.size(); /* no increment here */) {
+        // Encontrar el índice correspondiente en dropped_weapons
+        int droppedIndex = -1;
+        for (int j = 0; j < state.level.num_dropped_weapons; j++) {
+            if (state.level.dropped_weapons[j].type == weaponsInAir[i].type &&
+                state.level.dropped_weapons[j].pos.x == weaponsInAir[i].pos.x &&
+                state.level.dropped_weapons[j].pos.y == weaponsInAir[i].pos.y) {
+                droppedIndex = j;
+                break;
+            }
+        }
+        
+        if (fallingWeapons[i].updatePosition(weaponsInAir[i], deltaTime, state.level.platforms, state.level.num_platforms)) {
+            // El arma ha llegado a una plataforma
+            if (droppedIndex != -1) {
+                // Actualizar la posición final en dropped_weapons
+                state.level.dropped_weapons[droppedIndex].pos = weaponsInAir[i].pos;
+            }
+            
+            // Eliminar el arma de las que están cayendo
+            weaponsInAir.erase(weaponsInAir.begin() + i);
+            fallingWeapons.erase(fallingWeapons.begin() + i);
+        } else {
+            // Actualizar la posición en dropped_weapons mientras cae
+            if (droppedIndex != -1) {
+                state.level.dropped_weapons[droppedIndex].pos = weaponsInAir[i].pos;
+            }
+            i++; // Solo incrementamos si no eliminamos el elemento
+        }
+    }
+}
+
 game_state_t GameState::updatePlayers(float deltaTime) {
     deltaTime = std::min(deltaTime, 0.033f); // Máximo ~30 FPS
     
@@ -109,6 +142,8 @@ game_state_t GameState::updatePlayers(float deltaTime) {
         player->updatePosition(deltaTime, state.level.platforms, state.level.num_platforms);
         updateState(id, player); 
     }
+    updateWeaponsPhysics(deltaTime);
+
     return state;
 }
 
@@ -183,10 +218,24 @@ Weapon* GameState::createWeapon(uint8_t weaponType) {
 }
 
 
-void GameState::checkIfDropWeapon(weapon_t droppedWeapon) {
+/* void GameState::checkIfDropWeapon(weapon_t droppedWeapon) {
     weapon_t pickedWeapon = droppedWeapon;    
     if (pickedWeapon.type != NULL_WEAPON) {
         state.level.dropped_weapons[state.level.num_dropped_weapons] = droppedWeapon;
         state.level.num_dropped_weapons++;
+        weaponsInAir.push_back(droppedWeapon);
+        fallingWeapons.emplace_back();
+    }
+} */
+
+void GameState::checkIfDropWeapon(weapon_t droppedWeapon) {
+    if (droppedWeapon.type != NULL_WEAPON) {
+        // Añadir el arma inmediatamente a dropped_weapons
+        state.level.dropped_weapons[state.level.num_dropped_weapons] = droppedWeapon;
+        state.level.num_dropped_weapons++;
+        
+        // También mantener el tracking para la física
+        weaponsInAir.push_back(droppedWeapon);
+        fallingWeapons.emplace_back();
     }
 }

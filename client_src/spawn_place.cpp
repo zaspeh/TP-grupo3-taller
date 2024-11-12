@@ -41,22 +41,22 @@ void SpawnPlace::render() {
     if (spawnTexture) {
         int originalWidth = spawnTexture->getWidth();
         int originalHeight = spawnTexture->getHeight();
-        
-        int x = spawnData.pos.x;
-        int y = spawnData.pos.y;
-        
-        int scaledWidth = static_cast<int>(originalWidth * 2);
-        int scaledHeight = static_cast<int>(originalHeight * 2);
-        
+        int x = spawnData.pos.x + 20;
+        // Ajustamos la posición Y de la plataforma 20 píxeles más abajo
+        int platformOffset = 50;
+        int y = spawnData.pos.y + platformOffset;
+        int scaledWidth = static_cast<int>(originalWidth * 2.5);
+        int scaledHeight = static_cast<int>(originalHeight * 2.5);
         SDL_Rect destRect = {x, y, scaledWidth, scaledHeight};
         spawnTexture->render(x, y, nullptr, &destRect);
     }
 
+    // El arma se mantiene en su posición original
     if (spawnData.weapon.type != NULL_WEAPON) {
         weapon->render(spawnData.weapon.pos.x, spawnData.weapon.pos.y, false);
     }
-    
-    if (spawnData.armor.type != NULL_ARMOR){
+
+    if (spawnData.armor.type != NULL_ARMOR) {
         //helmetTexture->render(spawnData.weapon.pos.x, spawnData.weapon.pos.y, false);
     }
 }

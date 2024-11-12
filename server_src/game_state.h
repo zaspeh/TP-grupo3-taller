@@ -7,6 +7,7 @@
 #include <mutex>
 #include "player_state.h"
 #include "level.h"
+#include "weapon_physics.h"
 #include "../common_src/utils.h"
 
 class GameState {
@@ -16,6 +17,8 @@ private:
     Level level;
     level_t currentLevel;
     mutable std::mutex mtx;
+    std::vector<WeaponPhysics> fallingWeapons;
+    std::vector<weapon_t> weaponsInAir;
 
 public:
     // Constructor
@@ -31,7 +34,7 @@ public:
     weapon_t getWeaponPosition(position_t position);
     Weapon* createWeapon(uint8_t weaponType);
     void checkIfDropWeapon(weapon_t droppedWeapon);
-    
+    void updateWeaponsPhysics(float deltaTime);
 };
 
 #endif // GAME_STATE_H
