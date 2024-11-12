@@ -269,7 +269,6 @@ void Game::update(game_state_t gameState) {
             }
         }
             
-
         if (projectiles[i])
             projectiles[i]->updateState(gameState.level.projectiles[i]);
         if (!gameState.level.projectiles[i].is_active)

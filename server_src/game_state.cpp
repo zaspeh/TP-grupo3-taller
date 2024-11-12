@@ -83,11 +83,11 @@ game_state_t GameState::doAction(uint8_t id, uint8_t action) {
                 break;
             }
 
-            if (weaponST.type != NULL_WEAPON){  // si encontre un arma
+            if (weaponST.type != NULL_WEAPON){ 
                 std::cout << "Eligiendo arma: " << static_cast<int>(weaponST.type) << std::endl;
                 weapon = createWeapon(weaponST.type);
                 checkIfDropWeapon(player->pickWeapon(weapon));
-            } else { // si quiero tirar lo que tengo en la mano
+            } else { 
                 std::cout << "Dropping weapon\n";
                 checkIfDropWeapon(player->dropWeapon());
             }
@@ -101,7 +101,6 @@ game_state_t GameState::doAction(uint8_t id, uint8_t action) {
             createProjectile(player->getWeaponType(), player->getPosition(), player->getFacingDirection());
             break;
         case LOOK_UP:
-            // Implementar lógica para mirar hacia arriba
             break;
         case FLOOR:
             player->setCrouched(!player->isCrouched());
@@ -116,28 +115,11 @@ game_state_t GameState::doAction(uint8_t id, uint8_t action) {
     }
 
     updateState(id, player);
-    //std::cout << "Accion realizada\n";
     return state;
 }
 
-/* void GameState::checkProjectils(std::shared_ptr<PlayerState> player) {
-    for (int i = 0; i < state.level.num_projectiles; i++) { // reutilizo espacio en el vector
-        if (!state.level.projectiles[i].is_active) {
-            state.level.projectiles[i].type = player->getWeapon();
-            state.level.projectiles[i].pos = player->getPosition();
-            state.level.projectiles[i].is_active = true;
-            return;
-        }
-    }
-    state.level.projectiles[state.level.num_projectiles].type = player->getWeapon();
-    state.level.projectiles[state.level.num_projectiles].pos = player->getPosition();
-    state.level.projectiles[state.level.num_projectiles].is_active = true;
-    state.level.num_projectiles++;
-} */
-
 void GameState::updateWeaponsPhysics(float deltaTime) {
-    for (size_t i = 0; i < weaponsInAir.size(); /* no increment here */) {
-        // Encontrar el índice correspondiente en dropped_weapons
+    for (size_t i = 0; i < weaponsInAir.size(); ) {
         int droppedIndex = -1;
         for (int j = 0; j < state.level.num_dropped_weapons; j++) {
             if (state.level.dropped_weapons[j].type == weaponsInAir[i].type &&
@@ -149,21 +131,17 @@ void GameState::updateWeaponsPhysics(float deltaTime) {
         }
         
         if (fallingWeapons[i].updatePosition(weaponsInAir[i], deltaTime, state.level.platforms, state.level.num_platforms)) {
-            // El arma ha llegado a una plataforma
             if (droppedIndex != -1) {
-                // Actualizar la posición final en dropped_weapons
                 state.level.dropped_weapons[droppedIndex].pos = weaponsInAir[i].pos;
             }
             
-            // Eliminar el arma de las que están cayendo
             weaponsInAir.erase(weaponsInAir.begin() + i);
             fallingWeapons.erase(fallingWeapons.begin() + i);
         } else {
-            // Actualizar la posición en dropped_weapons mientras cae
             if (droppedIndex != -1) {
                 state.level.dropped_weapons[droppedIndex].pos = weaponsInAir[i].pos;
             }
-            i++; // Solo incrementamos si no eliminamos el elemento
+            i++; 
         }
     }
 }
@@ -172,7 +150,7 @@ void GameState::createProjectile(uint8_t weaponType, position_t origin, bool fac
 
     bool projectileLoaded = false;
     int index = 0;
-    for (int i = 0; i < state.level.num_projectiles && i < MAX_PROJECTILES; i++) { // reutilizo espacio en el vector
+    for (int i = 0; i < state.level.num_projectiles && i < MAX_PROJECTILES; i++) {
         if (!state.level.projectiles[i].is_active) {
             state.level.projectiles[i].type = weaponType;
             state.level.projectiles[i].pos = origin;
@@ -191,11 +169,9 @@ void GameState::createProjectile(uint8_t weaponType, position_t origin, bool fac
         index = state.level.num_projectiles;
     }
     
-    // Calcular la velocidad inicial y ángulo del proyectil
-    float initialVelocity = 1000.0f; // Velocidad inicial del proyectil
-    float initialAngle = facingLeft ? M_PI : 0.0f; // Ángulo inicial del proyectil
+    float initialVelocity = 1000.0f;
+    float initialAngle = facingLeft ? M_PI : 0.0f; // por si tiene que tener caìda
 
-    // Crear y configurar el objeto ProjectilePhysics
     projectilePhysics[index].initProjectile(initialVelocity, initialAngle, origin.x);
     
     if(index == state.level.num_projectiles)
@@ -203,15 +179,14 @@ void GameState::createProjectile(uint8_t weaponType, position_t origin, bool fac
 }
 
 void GameState::updateProjectilsPhysics(float deltaTime) {
-    for (size_t i = 0; i < state.level.num_projectiles; /* no increment here */) {
+    for (size_t i = 0; i < state.level.num_projectiles; i++) {
         uint8_t maxDistance = checkWeaponDistance(state.level.projectiles[i].type);
         state.level.projectiles[i].is_active = projectilePhysics[i].updatePosition(state.level.projectiles[i], deltaTime, state.level.platforms, state.level.num_platforms, maxDistance);
-        i++; // Solo incrementamos si no eliminamos el elemento
     }
 }
 
 game_state_t GameState::updatePlayers(float deltaTime) {
-    deltaTime = std::min(deltaTime, 0.033f); // Máximo ~30 FPS
+    deltaTime = std::min(deltaTime, 0.033f); 
     
     for (auto& [id, player] : players) {
         player->updatePosition(deltaTime, state.level.platforms, state.level.num_platforms);
@@ -280,7 +255,7 @@ weapon_t GameState::getWeaponPosition(position_t position) { // SE PUEDE MODULAR
             std::cout << "Arma recogida ESTABA DROPEADA\n";
             weapon_t pickedWeapon = state.level.dropped_weapons[i];
             weapon = pickedWeapon;
-            state.level.dropped_weapons[i].type = NULL_WEAPON; // Arma recogida, remover del lugar
+            state.level.dropped_weapons[i].type = NULL_WEAPON; 
             break;
         }
     }
@@ -288,13 +263,13 @@ weapon_t GameState::getWeaponPosition(position_t position) { // SE PUEDE MODULAR
     return weapon;
 }
 
-armor_t GameState::getArmorPosition(position_t position) { // SE PUEDE MODULARIZAR
+armor_t GameState::getArmorPosition(position_t position) { 
     armor_t armor = {
         {0, 0},
         NULL_ARMOR,
     };
     
-    const int pickupRadius = 20; // Radio de recogida del arma
+    const int pickupRadius = 20; 
     
     for (int i = 4; i < state.level.num_spawn_places; i++) {
         float dx = state.level.spawn_places[i].pos.x - position.x;
@@ -304,7 +279,7 @@ armor_t GameState::getArmorPosition(position_t position) { // SE PUEDE MODULARIZ
         if (distance <= pickupRadius && state.level.spawn_places[i].armor.type != NULL_ARMOR) {
             armor_t pickedarmor = state.level.spawn_places[i].armor;
             armor = pickedarmor;
-            state.level.spawn_places[i].armor.type = NULL_ARMOR; // Arma recogida, remover del spawn
+            state.level.spawn_places[i].armor.type = NULL_ARMOR; 
             break;
         }
     }
@@ -344,11 +319,9 @@ Weapon* GameState::createWeapon(uint8_t weaponType) {
 
 void GameState::checkIfDropWeapon(weapon_t droppedWeapon) {
     if (droppedWeapon.type != NULL_WEAPON) {
-        // Añadir el arma inmediatamente a dropped_weapons
         state.level.dropped_weapons[state.level.num_dropped_weapons] = droppedWeapon;
         state.level.num_dropped_weapons++;
         
-        // También mantener el tracking para la física
         weaponsInAir.push_back(droppedWeapon);
         fallingWeapons.emplace_back();
     }
