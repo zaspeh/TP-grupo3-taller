@@ -1,7 +1,6 @@
 #include "spawn_place.h"
 #include <iostream>
 
-
 SpawnPlace::SpawnPlace(const spawn_place_t& spawnData, SDL_Renderer* renderer)
     : spawnData(spawnData), renderer(renderer) {
     // Inicializamos la textura a nullptr
@@ -12,7 +11,6 @@ SpawnPlace::SpawnPlace(const spawn_place_t& spawnData, SDL_Renderer* renderer)
     } else if (spawnData.armor.type != NULL_ARMOR){
         armor = std::make_unique<Armor>(spawnData.armor, renderer);
     }
-    std::cout << "SpawnPlace created.\n";
 }
 
 SpawnPlace::~SpawnPlace() {
@@ -68,22 +66,17 @@ void SpawnPlace::updateState(const spawn_place_t& newState) {
 
     // Manejar cambios en el arma
     if (newState.weapon.type != NULL_WEAPON) {
-        std::cout << "Actualizando el arma\n";
         if (weapon == nullptr || weapon->getType() != newState.weapon.type) {
-            std::cout << "Creando una nueva arma\n";
             // Si el arma no existe o es diferente, creamos una nueva
             weapon = std::make_unique<Weapon>(newState.weapon, renderer);
             if (!weapon->loadTexture()) {
                 std::cerr << "Failed to load new weapon texture.\n";
             }
         } else {
-            std::cout << "El arma ya existe\n";
             // Si es la misma arma, solo actualizamos su estado
             weapon->updateState(newState.weapon);
         }
     } else {
-        // Si el nuevo estado no tiene arma, eliminamos cualquier arma existente
-        std::cout << "Eliminando arma del spawn\n";
         weapon = nullptr;
     }
 

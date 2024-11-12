@@ -5,7 +5,7 @@
 #include <stdint.h>
 
 #define MAX_DUCKS 10
-#define MAX_PROJECTILES 100
+#define MAX_PROJECTILES 300
 #define MAX_ITEMS 50
 #define MAX_LEVELS 5
 #define MAX_PLATFORMS 1000

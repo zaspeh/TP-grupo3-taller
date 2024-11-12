@@ -3,6 +3,10 @@
 
 // Client side
 #define CLIENT_USAGE_COMMAND_ERROR "Error of usage: ./client <ip> <port>"
+#define LEVEL_WIDTH 1024
+#define LEVEL_HEIGHT 720
+#define SPRITE_PROJECTILE_WIDTH 16
+#define SPRITE_PROJECTILE_HEIGHT 16
 
 // Server side
 //#define MOVEMENT 0x15
@@ -21,6 +25,17 @@
 #define MAGNUM_WEAPON 0x8
 #define SHOTGUN_WEAPON 0x9
 #define SNIPER_WEAPON 0xa
+
+#define GRENADE_DISTANCE 25
+#define BANANA_DISTANCE 25
+#define PEWPEWLASER_DISTANCE 38
+#define LASERRIFLE_DISTANCE 30
+#define AK_47_DISTANCE 13
+#define DARTGUN_DISTANCE 5
+#define COWBOY_DISTANCE 20
+#define MAGNUM_DISTANCE 20
+#define SHOTGUN_DISTANCE 9
+#define SNIPER_DISTANCE 64
 
 #define NULL_ARMOR 0x0
 #define HELMET_ARMOR 0x1

@@ -74,7 +74,7 @@ public:
 
 class Dartgun : public Weapon {
 public:
-    Dartgun() : Weapon(20, 15, DARTGUN_WEAPON) {}
+    Dartgun() : Weapon(10, 15, DARTGUN_WEAPON) {}
     
     bool shoot() override {
         if (!canShoot()) return false;

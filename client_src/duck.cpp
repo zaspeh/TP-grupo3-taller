@@ -22,7 +22,6 @@ Duck::Duck(duck_t duckState, int screenWidth, int screenHeight, SDL_Renderer* re
     }
 }
 
-
 bool Duck::loadTexture() {
     bool allLoaded = true;
     std::string pathDuck = "client_src/duckyellow.png";
@@ -80,36 +79,6 @@ bool Duck::loadTexture() {
     return allLoaded;
 }
 
-/* void Duck::render() {
-    bool faceLeft = (duckState.faceLeft == 1);
-
-    if (animations[currentAnimation]) {
-        animations[currentAnimation]->renderAnimation(duckState.pos.x, duckState.pos.y, scaleRect, faceLeft, isMoving);
-        
-        if(duckState.isFlaping){ // deberia funcionar
-            SDL_Rect scaleFlap;
-            scaleFlap.h = SPRITE_FLAP_HEIGHT*2;
-            scaleFlap.w = SPRITE_FLAP_WIDTH*2;
-            float posY = duckState.pos.y + 25;
-            float posX = duckState.pos.x + 10;
-            if (faceLeft){
-                posX = posX + 10;
-            }
-            wings->renderAnimation(posX, posY, scaleFlap, faceLeft, true);
-        }
-        //std::cout << "Voy a dibujar el arma tomada" << std::endl;
-        if(weapon->getType() != NULL_WEAPON) {
-            std::cout << "Tipo de arma: " << static_cast<int>(weapon->getType()) << std::endl;
-            if (!weapon->loadTexture())
-                std::cout << "Failed to load texture weapon\n"; 
-            weapon->render(duckState.pos.x, duckState.pos.y, faceLeft);
-            std::cout << "Arma renderizada\n";
-        }
-    } else {
-        std::cerr << "Attempted to render an uninitialized animation." << std::endl;
-    }
-} */
-
 void Duck::render() {
     bool faceLeft = (duckState.faceLeft == 1);
 
@@ -132,7 +101,6 @@ void Duck::render() {
         if (duckState.helmet.type == HELMET_ARMOR) {
             if (!armor->loadTexture())
                 std::cout << "Failed to load texture weapon\n"; 
-            std::cout << "Posición de la armadura: " << duckState.pos.x << ", " << duckState.pos.y << std::endl;
             if (faceLeft)
                 armor->render(duckState.pos.x + 5, duckState.pos.y - 15, faceLeft, HELMET_ARMOR);
             else
@@ -157,29 +125,6 @@ void Duck::render() {
         std::cerr << "Attempted to render an uninitialized animation." << std::endl;
     }
 }
-
-/* void Duck::updateState(const duck_t& newDuckState) {
-    if (duckState.pos.x != newDuckState.pos.x || 
-    duckState.pos.y != newDuckState.pos.y ) {
-        isMoving = true;
-    } else {
-        isMoving = false;
-    }
-
-    duckState = newDuckState;
-
-    if (duckState.isJumping) {
-        currentAnimation = JUMPING;
-    } else if (duckState.isDucking) {
-        currentAnimation = DUCKING;
-    }  else {
-        currentAnimation = WALKING;
-    }
-
-    if (duckState.equipped_weapon.type != weapon->getType()) { // actualizo el arma
-        weapon->updateState(duckState.equipped_weapon);
-    }   
-} */
 
 void Duck::updateState(const duck_t& newDuckState) {
     isMoving = (duckState.pos.x != newDuckState.pos.x || duckState.pos.y != newDuckState.pos.y);

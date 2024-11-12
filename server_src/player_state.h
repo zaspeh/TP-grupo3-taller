@@ -44,7 +44,8 @@ public:
     position_t getPosition() const { return duck.pos; }
     void setPosition(const position_t& newPosition)  { duck.pos = newPosition; }
 
-    uint8_t getWeapon() const { return weapon->getId(); } // ahora en weapon
+    Weapon* getWeapon() const { return weapon; }
+    uint8_t getWeaponType() const { return weapon->getId(); } // ahora en weapon
     weapon_t pickWeapon(Weapon* newWeapon);
 
     uint8_t getAmmo() const { return weapon->getAmmo(); } // ahora en weapon

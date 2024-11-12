@@ -155,6 +155,7 @@ level_t Level::getLevel0() {
     level.num_projectiles = 0;
     for (int i = 0; i < level.num_projectiles; ++i)
         level.projectiles[i] = {};
+    
 
     level.num_dropped_weapons = 0;
     for (int i = 0; i < level.num_projectiles; ++i)

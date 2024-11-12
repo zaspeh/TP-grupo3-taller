@@ -8,6 +8,7 @@
 #include "player_state.h"
 #include "level.h"
 #include "weapon_physics.h"
+#include "projectile_physics.h"
 #include "../common_src/utils.h"
 
 class GameState {
@@ -19,6 +20,7 @@ private:
     mutable std::mutex mtx;
     std::vector<WeaponPhysics> fallingWeapons;
     std::vector<weapon_t> weaponsInAir;
+    std::vector<ProjectilePhysics> projectilePhysics;
 
 public:
     // Constructor
@@ -36,6 +38,10 @@ public:
     Weapon* createWeapon(uint8_t weaponType);
     void checkIfDropWeapon(weapon_t droppedWeapon);
     void updateWeaponsPhysics(float deltaTime);
+    void checkProjectils(std::shared_ptr<PlayerState> player);
+    void updateProjectilsPhysics(float deltaTime);
+    void createProjectile(uint8_t weaponType, position_t origin, bool facingLeft);
+    uint8_t checkWeaponDistance(uint8_t weaponType);
 };
 
 #endif // GAME_STATE_H

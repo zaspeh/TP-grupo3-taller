@@ -4,7 +4,7 @@
 GameState::GameState() : level(0) {
     currentLevel = level.getLevel();
     players = std::map<uint8_t, std::shared_ptr<PlayerState>>();
-    
+    projectilePhysics.resize(MAX_PROJECTILES);
     state = {
         currentLevel,
         0,
@@ -94,7 +94,11 @@ game_state_t GameState::doAction(uint8_t id, uint8_t action) {
             break;
 
         case SHOOT:
+            if(player->getWeapon() == nullptr || player->getWeaponType() == NULL_WEAPON) 
+                break;
             player->shoot();
+            std::cout << "Creando un nuevo proyectil: " << static_cast<int>(player->getWeaponType()) << std::endl;
+            createProjectile(player->getWeaponType(), player->getPosition(), player->getFacingDirection());
             break;
         case LOOK_UP:
             // Implementar lógica para mirar hacia arriba
@@ -115,6 +119,21 @@ game_state_t GameState::doAction(uint8_t id, uint8_t action) {
     //std::cout << "Accion realizada\n";
     return state;
 }
+
+/* void GameState::checkProjectils(std::shared_ptr<PlayerState> player) {
+    for (int i = 0; i < state.level.num_projectiles; i++) { // reutilizo espacio en el vector
+        if (!state.level.projectiles[i].is_active) {
+            state.level.projectiles[i].type = player->getWeapon();
+            state.level.projectiles[i].pos = player->getPosition();
+            state.level.projectiles[i].is_active = true;
+            return;
+        }
+    }
+    state.level.projectiles[state.level.num_projectiles].type = player->getWeapon();
+    state.level.projectiles[state.level.num_projectiles].pos = player->getPosition();
+    state.level.projectiles[state.level.num_projectiles].is_active = true;
+    state.level.num_projectiles++;
+} */
 
 void GameState::updateWeaponsPhysics(float deltaTime) {
     for (size_t i = 0; i < weaponsInAir.size(); /* no increment here */) {
@@ -149,6 +168,48 @@ void GameState::updateWeaponsPhysics(float deltaTime) {
     }
 }
 
+void GameState::createProjectile(uint8_t weaponType, position_t origin, bool facingLeft) {
+
+    bool projectileLoaded = false;
+    int index = 0;
+    for (int i = 0; i < state.level.num_projectiles && i < MAX_PROJECTILES; i++) { // reutilizo espacio en el vector
+        if (!state.level.projectiles[i].is_active) {
+            state.level.projectiles[i].type = weaponType;
+            state.level.projectiles[i].pos = origin;
+            state.level.projectiles[i].is_active = true;
+            projectileLoaded = true;
+            index = i;
+            break;
+        }
+    }
+    if(!projectileLoaded){
+        projectile_t newProjectile;
+        newProjectile.pos = origin;
+        newProjectile.type = weaponType;
+        newProjectile.is_active = true;
+        state.level.projectiles[state.level.num_projectiles] = newProjectile;
+        index = state.level.num_projectiles;
+    }
+    
+    // Calcular la velocidad inicial y ángulo del proyectil
+    float initialVelocity = 1000.0f; // Velocidad inicial del proyectil
+    float initialAngle = facingLeft ? M_PI : 0.0f; // Ángulo inicial del proyectil
+
+    // Crear y configurar el objeto ProjectilePhysics
+    projectilePhysics[index].initProjectile(initialVelocity, initialAngle, origin.x);
+    
+    if(index == state.level.num_projectiles)
+        state.level.num_projectiles++;
+}
+
+void GameState::updateProjectilsPhysics(float deltaTime) {
+    for (size_t i = 0; i < state.level.num_projectiles; /* no increment here */) {
+        uint8_t maxDistance = checkWeaponDistance(state.level.projectiles[i].type);
+        state.level.projectiles[i].is_active = projectilePhysics[i].updatePosition(state.level.projectiles[i], deltaTime, state.level.platforms, state.level.num_platforms, maxDistance);
+        i++; // Solo incrementamos si no eliminamos el elemento
+    }
+}
+
 game_state_t GameState::updatePlayers(float deltaTime) {
     deltaTime = std::min(deltaTime, 0.033f); // Máximo ~30 FPS
     
@@ -157,11 +218,37 @@ game_state_t GameState::updatePlayers(float deltaTime) {
         updateState(id, player); 
     }
     updateWeaponsPhysics(deltaTime);
+    updateProjectilsPhysics(deltaTime);
 
     return state;
 }
 
-
+uint8_t GameState::checkWeaponDistance(uint8_t weaponType) {
+    switch (weaponType) {
+        case GRENADE_WEAPON:
+            return GRENADE_DISTANCE;
+        case BANANA_WEAPON:
+            return BANANA_DISTANCE;
+        case PEWPEWLASER_WEAPON:
+            return PEWPEWLASER_DISTANCE;
+        case LASERRIFLE_WEAPON:
+            return LASERRIFLE_DISTANCE;
+        case DARTGUN_WEAPON:
+            return DARTGUN_DISTANCE;
+        case AK_47_WEAPON:
+            return AK_47_DISTANCE;
+        case COWBOY_WEAPON:
+            return COWBOY_DISTANCE;
+        case MAGNUM_WEAPON:
+            return MAGNUM_DISTANCE;
+        case SHOTGUN_WEAPON:
+            return SHOTGUN_DISTANCE;
+        case SNIPER_WEAPON:
+            return SNIPER_DISTANCE;
+        default:
+            return 0;
+    }   
+}
 
 weapon_t GameState::getWeaponPosition(position_t position) { // SE PUEDE MODULARIZAR
     weapon_t weapon = {
@@ -254,17 +341,6 @@ Weapon* GameState::createWeapon(uint8_t weaponType) {
     }
     return newWeapon;
 }
-
-
-/* void GameState::checkIfDropWeapon(weapon_t droppedWeapon) {
-    weapon_t pickedWeapon = droppedWeapon;    
-    if (pickedWeapon.type != NULL_WEAPON) {
-        state.level.dropped_weapons[state.level.num_dropped_weapons] = droppedWeapon;
-        state.level.num_dropped_weapons++;
-        weaponsInAir.push_back(droppedWeapon);
-        fallingWeapons.emplace_back();
-    }
-} */
 
 void GameState::checkIfDropWeapon(weapon_t droppedWeapon) {
     if (droppedWeapon.type != NULL_WEAPON) {
