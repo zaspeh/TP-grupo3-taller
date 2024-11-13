@@ -71,7 +71,6 @@ game_state_t GameState::doAction(uint8_t id, uint8_t action) {
             player->jump();
             break;
         case TAKE_WEAPON:
-            weaponST = getWeaponPosition(player->getPosition());
             armorST = getArmorPosition(player->getPosition());
 
             if (armorST.type != NULL_ARMOR) { // si encontre una armadura
@@ -83,6 +82,7 @@ game_state_t GameState::doAction(uint8_t id, uint8_t action) {
                 break;
             }
 
+            weaponST = getWeaponPosition(player->getPosition());
             if (weaponST.type != NULL_WEAPON){ 
                 std::cout << "Eligiendo arma: " << static_cast<int>(weaponST.type) << std::endl;
                 weapon = createWeapon(weaponST.type);
