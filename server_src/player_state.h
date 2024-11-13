@@ -50,7 +50,6 @@ public:
 
     uint8_t getAmmo() const { return weapon->getAmmo(); } // ahora en weapon
     void setAmmo(uint8_t newAmmo) { weapon->setAmmo(newAmmo); }
-    void reload(uint8_t newAmmo);
 
     bool isAlive() const { return duck.isAlive; }
     void setAlive() { duck.isAlive = !duck.isAlive; }

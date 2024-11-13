@@ -6,7 +6,9 @@ Game::Game(std::shared_ptr<Queue<game_state_t>> gameStateQueue, std::shared_ptr<
       gWindow(nullptr, SDL_DestroyWindow),
       gRenderer(nullptr, SDL_DestroyRenderer)
 {
+    std::cout << "Popeando gamState\n";
     gameState = gameStateQueue->pop();
+    std::cout << "gamestate popeado\n";
 }
 
 Game::~Game()
@@ -54,11 +56,15 @@ bool Game::loadMedia()
     }
 
     droppedWeapons.resize(MAX_ITEMS);
+    std::cout << "Cambiando el tamaño de las cajas\n";
+    droppedArmors.resize(MAX_ITEMS);
+    std::cout << "Cajas reziseadas.\n";
     projectiles.resize(MAX_PROJECTILES);
 
     boxes.resize(MAX_BOXES);
     for (int i = 0; i < gameState.level.num_boxes && charged; i++) {
         if (!boxes[i]) {
+            std::cout << "Cargando boxes\n";
             boxes[i] = std::make_unique<Box>(gameState.level.boxes[i], gRenderer.get());
         }
         if (!boxes[i]->loadTexture()) {
@@ -114,7 +120,7 @@ bool Game::processEvents() {
         }
     }
 
-    // Deberìa ser màs pausada la cantidad de veces que se envia el disparar
+    // Deberìa ser màs pausada la cantidad de veces que se envia el dispa
 
     // Control de la frecuencia de envío de comandos
     auto currentTime = std::chrono::steady_clock::now();
@@ -189,7 +195,7 @@ void Game::render() {
     }
 
     for (const auto& box : boxes) {
-        if (box) box->render();
+        if (box && box->getState().health > 0) box->render();
     }
 
     for (const auto& duck : ducks) {
@@ -202,6 +208,10 @@ void Game::render() {
 
     for (const auto& weapon : droppedWeapons) {
         if (weapon && weapon->getState().type != NULL_WEAPON) weapon->render(weapon->getState().pos.x, weapon->getState().pos.y, false);
+    }
+
+    for (const auto& armor : droppedArmors) {
+        if (armor && armor->getState().type != NULL_ARMOR) armor->render(armor->getState().pos.x, armor->getState().pos.y, false, armor->getState().type);
     }
 
     for (const auto& projectile : projectiles) {
@@ -261,6 +271,16 @@ void Game::update(game_state_t gameState) {
         }
     }
 
+    for (int i = 0; i < gameState.level.num_dropped_armors; ++i) {
+        if (!droppedArmors[i]) {
+            droppedArmors[i] = std::make_unique<Armor>(gameState.level.dropped_armors[i], gRenderer.get());
+            droppedArmors[i]->loadTexture();
+        } 
+        if (droppedArmors[i]) {
+            droppedArmors[i]->updateState(gameState.level.dropped_armors[i]);
+        }
+    }
+
     for (int i = 0; i < gameState.level.num_projectiles; ++i) {
         if (!projectiles[i] && gameState.level.projectiles[i].is_active) {
             projectiles[i] = std::make_unique<Projectile>(gameState.level.projectiles[i], gRenderer.get());
@@ -269,14 +289,21 @@ void Game::update(game_state_t gameState) {
             }
         }
             
+
+        if (!gameState.level.projectiles[i].is_active) {
+            projectiles[i] = nullptr;
+            continue;
+        }
         if (projectiles[i])
             projectiles[i]->updateState(gameState.level.projectiles[i]);
-        if (!gameState.level.projectiles[i].is_active)
-            projectiles[i] = nullptr;
     }   
 
-    for (int i = 0; i < gameState.level.num_boxes; ++i) {
-        if (boxes[i])
+    for (int i = 0; i < gameState.level.num_boxes; ++i) {            
+        if (boxes[i] && gameState.level.boxes[i].health <= 0) {
+            boxes[i] = nullptr;
+            continue;
+        }
+        if (boxes[i] && gameState.level.boxes[i].health > 0) 
             boxes[i]->updateState(gameState.level.boxes[i]);
     }
 

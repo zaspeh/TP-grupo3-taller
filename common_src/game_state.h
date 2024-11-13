@@ -46,8 +46,9 @@ typedef struct {
 // Representa cajas en el escenario que pueden contener items o ser explosivas
 typedef struct {
     position_t pos;      // Posición de la caja en el nivel
+    uint8_t health;       // Salud de la caja
     bool is_explosive;   // Si la caja es explosiva
-    bool is_destroyed;   // Estado de destrucción de la caja
+    // bool is_broken;
     weapon_t weapon;     // Arma en la caja (si aplica)
     armor_t armor;       // Armadura o casco en la caja (si aplica)
 } box_t;
@@ -91,6 +92,8 @@ typedef struct {
     projectile_t projectiles[MAX_PROJECTILES];
     uint8_t num_dropped_weapons;
     weapon_t dropped_weapons[MAX_ITEMS];
+    uint8_t num_dropped_armors;
+    armor_t dropped_armors[MAX_ITEMS];
 } level_t;
 
 // Estado global del juego

@@ -42,6 +42,7 @@ public:
     void updateProjectilsPhysics(float deltaTime);
     void createProjectile(uint8_t weaponType, position_t origin, bool facingLeft);
     uint8_t checkWeaponDistance(uint8_t weaponType);
+    void updateBoxes();
 };
 
 #endif // GAME_STATE_H

@@ -28,7 +28,10 @@ public:
         isActive = true;
     }
 
-    bool updatePosition(projectile_t& projectile, float deltaTime, platform_t* platforms, uint8_t numPlatforms, float distance) {
+    bool updatePosition(projectile_t &projectile, level_t &level, float deltaTime, float distance) {
+        if (projectile.is_active == false) {
+            return false;
+        }
         deltaTime = std::min(deltaTime, 0.016f);
 
         // Actualizar posición del proyectil
@@ -36,15 +39,29 @@ public:
         projectile.pos.y += velocity * std::sin(angle) * deltaTime + 0.5f * acceleration * deltaTime * deltaTime;
 
         // Verificar colisiones con plataformas
-        for (int i = 0; i < numPlatforms; i++) { // falta calcular offset de las plataformas 32*32 cada una
-            bool horizontalOverlap = (projectile.pos.x >= platforms[i].pos.x) && 
-                                   (projectile.pos.x <= platforms[i].pos.x + WIDTH_PLATFORM);
-            bool verticalOverlap = (projectile.pos.y >= platforms[i].pos.y) && 
-                                  (projectile.pos.y <= platforms[i].pos.y + HEIGHT_PLATFORM);
+        for (int i = 0; i < level.num_platforms; i++) { // falta calcular offset de las plataformas 32*32 cada una
+            bool horizontalOverlap = (projectile.pos.x >= level.platforms[i].pos.x) && 
+                                   (projectile.pos.x <= level.platforms[i].pos.x + WIDTH_PLATFORM);
+            bool verticalOverlap = (projectile.pos.y >= level.platforms[i].pos.y) && 
+                                  (projectile.pos.y <= level.platforms[i].pos.y + HEIGHT_PLATFORM);
 
             if (horizontalOverlap && verticalOverlap) {
                 // Colisión con una plataforma, detener el proyectil
                 std::cout << "Colision con plataforma" << std::endl;
+                return false;
+            }
+        }
+
+        for (int i = 0; i < level.num_boxes; i++) {
+            if(level.boxes[i].health <= 0) continue;
+            bool horizontalOverlap = (projectile.pos.x >= level.boxes[i].pos.x) && 
+                                   (projectile.pos.x <= level.boxes[i].pos.x + WIDTH_BOX);
+            bool verticalOverlap = (projectile.pos.y >= level.boxes[i].pos.y) && 
+                                  (projectile.pos.y <= level.boxes[i].pos.y + HEIGHT_BOX);
+
+            if (horizontalOverlap && verticalOverlap) {
+                level.boxes[i].health--;
+                std::cout << "Colision con caja" << std::endl;
                 return false;
             }
         }

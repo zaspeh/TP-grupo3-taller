@@ -24,7 +24,7 @@
 #define COWBOY_WEAPON 0x7
 #define MAGNUM_WEAPON 0x8
 #define SHOTGUN_WEAPON 0x9
-#define SNIPER_WEAPON 0xa
+#define SNIPER_WEAPON 0x10
 
 #define GRENADE_DISTANCE 25
 #define BANANA_DISTANCE 25
@@ -36,10 +36,16 @@
 #define MAGNUM_DISTANCE 20
 #define SHOTGUN_DISTANCE 9
 #define SNIPER_DISTANCE 64
+#define WEAPON_COUNT 10
 
 #define NULL_ARMOR 0x0
 #define HELMET_ARMOR 0x1
 #define CHESTPLATE_ARMOR 0x2
+#define ARMOR_COUNT 2
+
+#define BOX_HEALTH 4    
+#define WIDTH_BOX 32
+#define HEIGHT_BOX 32
 
 // Protocol side
 #define ERROR_READING_STRING "Error reading string from protocol"

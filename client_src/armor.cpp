@@ -2,7 +2,7 @@
 #include <iostream>
 
 Armor::Armor(armor_t armorState, SDL_Renderer* renderer) {
-    setArmor(armorState);
+    updateState(armorState);
     try {
         armors.emplace(CHESTPLATE_ARMOR, std::make_unique<LTexture>(renderer));
         armors.emplace(HELMET_ARMOR, std::make_unique<LTexture>(renderer));
@@ -65,7 +65,6 @@ void Armor::renderArmorPiece(uint8_t armorType, armor_t& armorState, float x, fl
     }
 }
 
-
 int Armor::getType() {
     if (chestplateState.type == CHESTPLATE_ARMOR) {
         return CHESTPLATE_ARMOR;
@@ -75,10 +74,17 @@ int Armor::getType() {
     return NULL_ARMOR;
 }
 
-void Armor::setArmor(armor_t arm) {
+void Armor::updateState(armor_t arm) {
     if (arm.type == CHESTPLATE_ARMOR) {
         chestplateState = arm;
     } else if (arm.type == HELMET_ARMOR) {
         helmetState = arm;
     }
+}
+
+armor_t Armor::getState() {
+    if (chestplateState.type == CHESTPLATE_ARMOR)
+        return chestplateState;
+    else 
+        return helmetState;
 }

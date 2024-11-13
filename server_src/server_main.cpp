@@ -1,4 +1,6 @@
 #include "server.h"
+#include <cstdlib>
+#include <ctime>
 
 const int CANTIDAD_ARGS = 2;
 const int PRIMER_ARGUMENTO = 0;

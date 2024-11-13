@@ -13,23 +13,20 @@ protected:
     int id;
     int range;
     int ammo;
-    bool isReloading;
 
 public:
     Weapon(int initialAmmo, int weaponRange, int id) :
         id(id),
-        range(weaponRange), 
-        isReloading(false) {
+        range(weaponRange) {
             ammo = initialAmmo;
         }
     
     virtual ~Weapon() = default;
     
     virtual bool shoot() = 0;
-    virtual bool canShoot() const { return ammo > 0 && !isReloading; }
+    virtual bool canShoot() const { return ammo > 0; }
     
     int getAmmo() const { return ammo; }
-    void reload(uint8_t newAmmo) { ammo += newAmmo; }
     void setAmmo(uint8_t newAmmo) { ammo = newAmmo; }
     int getId() const { return id; }
     int getRange() const { return range; }

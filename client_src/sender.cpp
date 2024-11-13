@@ -14,7 +14,7 @@ void Sender::run() {
 
             if (wasClosed)
                 break;
-            //std::cout << "Comando: " << static_cast<int>(command) << std::endl;
+            std::cout << "Comando: " << static_cast<int>(command) << std::endl;
             if (commandIsValid(command))
                 protocol->sendCommand(command, wasClosed);
 

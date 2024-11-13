@@ -70,8 +70,8 @@ void ClientProtocol::readSpawnPlaces(spawn_place_t spawn_places[MAX_SPAWN_PLACES
 void ClientProtocol::readBoxes(box_t boxes[MAX_BOXES], uint8_t numBoxes, bool &wasClosed) {
     for (uint8_t i = 0; i < numBoxes; i++) {
         boxes[i].pos = readPosition(wasClosed);
+        boxes[i].health = recvUint8(wasClosed);
         boxes[i].is_explosive = recvUint8(wasClosed);
-        boxes[i].is_destroyed = recvUint8(wasClosed);
         boxes[i].weapon = readWeapon(wasClosed);
         boxes[i].armor = readArmor(wasClosed);
     }
@@ -86,8 +86,14 @@ void ClientProtocol::readProjectiles(projectile_t projectiles[MAX_PROJECTILES], 
 }
 
 void ClientProtocol::readDroppedWeapons(weapon_t droppedWeapons[MAX_ITEMS], uint8_t numDroppedWeapons, bool& wasClosed) {
-    for (uint_fast8_t i = 0; i < numDroppedWeapons; i++) {
+    for (int i = 0; i < numDroppedWeapons; i++) {
         droppedWeapons[i] = readWeapon(wasClosed);
+    }
+}
+
+void ClientProtocol::readDroppedArmors(armor_t droppedArmors[MAX_ITEMS], uint8_t numDroppedArmors, bool& wasClosed) {
+    for (int i = 0; i < numDroppedArmors; i++) {
+        droppedArmors[i] = readArmor(wasClosed);
     }
 }
 
@@ -104,6 +110,8 @@ void ClientProtocol::readLevel(level_t& level, bool &wasClosed) {
     readProjectiles(level.projectiles, level.num_projectiles, wasClosed);
     level.num_dropped_weapons = recvUint8(wasClosed);
     readDroppedWeapons(level.dropped_weapons, level.num_dropped_weapons, wasClosed);
+    level.num_dropped_armors = recvUint8(wasClosed);
+    readDroppedArmors(level.dropped_armors, level.num_dropped_armors, wasClosed);
 }
 
 game_state_t ClientProtocol::readFromServer(bool &wasClosed) {

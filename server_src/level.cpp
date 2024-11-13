@@ -1,5 +1,18 @@
 #include "level.h"
 
+weapon_t null_weapon = {
+    {0, 0},
+    NULL_WEAPON
+};
+armor_t null_armor = {
+    {0, 0},
+    NULL_ARMOR
+};
+
+Level::Level(int id) : level(getLevelById(id)), chosenLevel(id) {
+    srand(static_cast<unsigned>(time(NULL)));
+}
+
 // Implementación de getLevelById
 level_t Level::getLevelById(int id) {
     switch (id) {
@@ -19,7 +32,7 @@ level_t Level::getLevel0() {
     for (int i = 0; i < level.num_ducks; ++i)
         level.ducks[i] = {};
 
-    // Configuración de plataformas (ejemplo)
+    // Configuración de plataformas 
     level.num_platforms = 30;
     for (int i = 0; i < 30; ++i) {
         level.platforms[i].pos = {i * WIDTH_PLATFORM, 650};
@@ -76,15 +89,6 @@ level_t Level::getLevel0() {
     //  -----------------------------------------
     // Configuración de lugares de aparición (spawn)
     level.num_spawn_places = 8;
-    weapon_t null_weapon = {
-        {0, 0},
-        NULL_WEAPON
-    };
-    armor_t null_armor = {
-        {0, 0},
-        NULL_ARMOR
-    };
-
     
     level.spawn_places[0].pos = {50, 500};
     level.spawn_places[0].is_active = true;
@@ -106,71 +110,37 @@ level_t Level::getLevel0() {
     level.spawn_places[3].weapon = null_weapon;
     level.spawn_places[3].armor = null_armor;
 
-    // Spawpoints para armas
-    level.spawn_places[4].pos = {75, 418};
-    level.spawn_places[4].is_active = false;
-    weapon_t weapon1 = {
-        {75, 418},
-        AK_47_WEAPON
-    };
-    level.spawn_places[4].weapon = weapon1;
-    level.spawn_places[4].armor = null_armor;
-
-        // Spawpoints para armas
-    level.spawn_places[5].pos = {425, 518};
-    level.spawn_places[5].is_active = false;
-    weapon_t weapon2 = {
-        {425, 518},
-        DARTGUN_WEAPON
-    };
-    level.spawn_places[5].weapon = weapon2;
-    level.spawn_places[5].armor = null_armor;
-
-        // Spawpoints para armas
-    level.spawn_places[6].pos = {510, 518};
-    level.spawn_places[6].is_active = false;
-    level.spawn_places[6].weapon = null_weapon;
-    armor_t armor1 = {
-        {510, 518},
-        HELMET_ARMOR,
-    };
-    level.spawn_places[6].armor = armor1;
-    
-        // Spawpoints para armas
-    level.spawn_places[7].pos = {875, 418};
-    level.spawn_places[7].is_active = false;
-    level.spawn_places[7].weapon = null_weapon;
-    armor_t armor2 = {
-        {875, 418},
-        CHESTPLATE_ARMOR,
-    };
-    level.spawn_places[7].armor = armor2;
-    
+    std::cout << level.spawn_places[0].pos.x << " " << level.spawn_places[0].pos.y << std::endl;
+    level.spawn_places[4] = getRandomSpawnPlace(75, 418);
+    level.spawn_places[5] = getRandomSpawnPlace(425, 518);
+    level.spawn_places[6] = getRandomSpawnPlace(510, 518);
+    level.spawn_places[7] = getRandomSpawnPlace(875, 418);
 
     // Inicialización de cajas y proyectiles
     level.num_boxes = 5;
+    std::cout << level.spawn_places[0].pos.x << " " << level.spawn_places[0].pos.y << std::endl;
+    level.boxes[0] = getRandomBox(490, 152);
+    level.boxes[1] = getRandomBox(335, 642);
+    level.boxes[2] = getRandomBox(435, 642);
+    level.boxes[3] = getRandomBox(535, 642);
+    level.boxes[4] = getRandomBox(635, 642);
 
-    level.boxes[0] = {490, 152, 4, false, false, null_weapon, null_armor};
-
-    level.boxes[1] = {335, 642, 4, false, false, null_weapon, null_armor};
-    level.boxes[2] = {435, 642, 4, false, false, null_weapon, null_armor};
-    level.boxes[3] = {535, 642, 4, false, false, null_weapon, null_armor};
-    level.boxes[4] = {635, 642, 4, false, false, null_weapon, null_armor};
 
     level.num_projectiles = 0;
     for (int i = 0; i < level.num_projectiles; ++i)
         level.projectiles[i] = {};
     
-
     level.num_dropped_weapons = 0;
-    for (int i = 0; i < level.num_projectiles; ++i)
+    for (int i = 0; i < level.num_dropped_weapons; ++i)
         level.dropped_weapons[i] = {};
+
+    level.num_dropped_armors = 0;
+    for (int i = 0; i < level.num_dropped_armors; ++i)
+        level.dropped_armors[i] = {};
+
 
     return level;
 }
-
-// Constructor
-Level::Level(int id) : level(getLevelById(id)), chosenLevel(id) {}
 
 // Métodos para acceder a la información del nivel
 level_t Level::getLevel() {
@@ -185,4 +155,67 @@ position_t Level::getSpawnPosition() {
         }
     }
     return {0, 0};  // Retorna posición nula si no hay spawn activo
+}
+
+box_t Level::getRandomBox(int x, int y) {
+    int randomIndex = (rand() % level.num_boxes)+1;
+    std::cout << "random box" << std::endl;
+    
+    box_t box = {
+        {x, y},
+        BOX_HEALTH,
+        false,
+        null_weapon,
+        null_armor
+    };
+
+    if (randomIndex < level.num_boxes / 3) {
+        box.is_explosive = true;
+    } else if (randomIndex < 2 * level.num_boxes / 3) {
+        box.weapon.pos = {x, y};
+        box.weapon.type = getRandomWeapon();
+    } else {
+        box.armor.pos = {x, y};
+        box.armor.type = getRandomArmor();
+    }
+
+    return box;
+}
+
+uint8_t Level::getRandomWeapon() {
+    std::cout << "random weapon" << std::endl;
+    int randomIndex = (rand() % WEAPON_COUNT) + 1;
+    std::cout << "random weapon" << std::endl;
+    return randomIndex;
+}
+
+uint8_t Level::getRandomArmor() {
+    std::cout << "random armor" << std::endl;
+    int randomIndex = (rand() % ARMOR_COUNT)+1;
+    std::cout << "random armor" << std::endl;
+    return randomIndex;
+}
+
+spawn_place_t Level::getRandomSpawnPlace(int x, int y) {
+    std::cout << "Random spawn" << std::endl;
+    int randomIndex = (rand() % level.num_spawn_places)+1;
+    std::cout << "Random spawn" << std::endl;
+
+    spawn_place_t spawn = {
+        {x, y},
+        false,
+        null_weapon,
+        null_armor
+    };
+
+    if (randomIndex < level.num_spawn_places / 2) {
+        spawn.weapon.pos = {x, y};
+        spawn.weapon.type = getRandomWeapon();
+        std::cout << "random weapon" << std::endl;
+    } else {
+        spawn.armor.pos = {x, y};
+        spawn.armor.type = getRandomArmor();
+    }
+    std::cout << "Random spawn" << std::endl;
+    return spawn;
 }

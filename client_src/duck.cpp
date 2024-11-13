@@ -143,8 +143,8 @@ void Duck::updateState(const duck_t& newDuckState) {
     }
 
     if (duckState.chestplate.type != armor->getType()) 
-        armor->setArmor(duckState.chestplate);
+        armor->updateState(duckState.chestplate);
     
     if (duckState.helmet.type != armor->getType()) 
-        armor->setArmor(duckState.helmet);
+        armor->updateState(duckState.helmet);
 }

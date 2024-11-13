@@ -73,8 +73,8 @@ void ServerProtocol::sendSpawnPlaces(spawn_place_t spawn_places[MAX_SPAWN_PLACES
 void ServerProtocol::sendBoxes(box_t boxes[MAX_BOXES], uint8_t num_boxes, bool &wasClosed) {
     for (int i = 0; i < num_boxes; i++) {
         sendPosition(boxes[i].pos, wasClosed);
+        sendUint8(boxes[i].health, wasClosed);
         sendUint8(boxes[i].is_explosive, wasClosed);
-        sendUint8(boxes[i].is_destroyed, wasClosed);
         sendWeapon(boxes[i].weapon, wasClosed);
         sendArmor(boxes[i].armor, wasClosed);
     }
@@ -94,6 +94,12 @@ void ServerProtocol::sendDroppedWeapons(weapon_t droppedWeapons[MAX_ITEMS], uint
     }
 }
 
+void ServerProtocol::sendDroppedArmors(armor_t droppedArmors[MAX_ITEMS], uint8_t numDroppedArmors, bool wasClosed) {
+    for (int i = 0; i < numDroppedArmors; i++) {
+        sendArmor(droppedArmors[i], wasClosed);
+    }
+}
+
 void ServerProtocol::sendLevel(level_t& level, bool &wasClosed) {
     sendUint8(level.num_ducks, wasClosed);
     sendDucks(level.ducks, level.num_ducks, wasClosed);
@@ -107,4 +113,6 @@ void ServerProtocol::sendLevel(level_t& level, bool &wasClosed) {
     sendProjectiles(level.projectiles, level.num_projectiles, wasClosed);
     sendUint8(level.num_dropped_weapons, wasClosed);
     sendDroppedWeapons(level.dropped_weapons, level.num_dropped_weapons, wasClosed);
+    sendUint8(level.num_dropped_armors, wasClosed);
+    sendDroppedArmors(level.dropped_armors, level.num_dropped_armors, wasClosed);
 }

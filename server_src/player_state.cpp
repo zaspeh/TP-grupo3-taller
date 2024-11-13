@@ -102,10 +102,6 @@ void PlayerState::jump() {
 
 }
 
-void PlayerState::reload(uint8_t newAmmo) { 
-    weapon->reload(newAmmo);
-}
-
 void PlayerState::takeDamage(uint8_t damage) {
     if (armor.isEquipped()) {
         armor.absorb_hit();

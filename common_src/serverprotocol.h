@@ -19,6 +19,7 @@ class ServerProtocol: public Protocol {
         void sendBoxes(box_t boxes[MAX_BOXES], uint8_t num_boxes, bool &wasClosed);
         void sendProjectiles(projectile_t projectiles[MAX_PROJECTILES], uint8_t num_projectiles, bool &wasClosed);
         void sendDroppedWeapons(weapon_t droppedWeapons[MAX_ITEMS], uint8_t numDroppedWeapons, bool wasClosed);
+        void sendDroppedArmors(armor_t droppedArmors[MAX_ITEMS], uint8_t numDroppedArmors, bool wasClosed);
         void sendLevel(level_t& level, bool &wasClosed);
 
     public:

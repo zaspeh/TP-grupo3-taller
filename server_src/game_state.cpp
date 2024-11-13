@@ -3,6 +3,7 @@
 // Constructor
 GameState::GameState() : level(0) {
     currentLevel = level.getLevel();
+    std::cout << "Instancio el nivel" << std::endl;
     players = std::map<uint8_t, std::shared_ptr<PlayerState>>();
     projectilePhysics.resize(MAX_PROJECTILES);
     state = {
@@ -181,7 +182,8 @@ void GameState::createProjectile(uint8_t weaponType, position_t origin, bool fac
 void GameState::updateProjectilsPhysics(float deltaTime) {
     for (size_t i = 0; i < state.level.num_projectiles; i++) {
         uint8_t maxDistance = checkWeaponDistance(state.level.projectiles[i].type);
-        state.level.projectiles[i].is_active = projectilePhysics[i].updatePosition(state.level.projectiles[i], deltaTime, state.level.platforms, state.level.num_platforms, maxDistance);
+        state.level.projectiles[i].is_active = projectilePhysics[i].updatePosition(state.level.projectiles[i] ,state.level, deltaTime, maxDistance);
+        // if false -> lo elimino asì no aparece otra vez.
     }
 }
 
@@ -192,12 +194,33 @@ game_state_t GameState::updatePlayers(float deltaTime) {
         player->updatePosition(deltaTime, state.level.platforms, state.level.num_platforms);
         updateState(id, player); 
     }
+
+    updateBoxes();
+    std::cout << "num boxes " << state.level.num_boxes << std::endl;
     updateWeaponsPhysics(deltaTime);
+    std::cout << "num weapons in air " << weaponsInAir.size() << std::endl;
     updateProjectilsPhysics(deltaTime);
+    std::cout << "num projectiles " << state.level.num_projectiles << std::endl;
 
     return state;
 }
 
+
+void GameState::updateBoxes() {
+    for (size_t i = 0; i < state.level.num_boxes; i++) {
+        if(state.level.boxes[i].health == 0){ // && !is_broken
+            if (state.level.boxes[i].weapon.type != NULL_WEAPON) {
+                state.level.dropped_weapons[state.level.num_dropped_weapons] = state.level.boxes[i].weapon;
+                state.level.num_dropped_weapons++;
+            } else if (state.level.boxes[i].armor.type != NULL_ARMOR) {
+                state.level.dropped_armors[state.level.num_dropped_armors] = state.level.boxes[i].armor;
+                state.level.num_dropped_armors++;
+            } //else { // la caja es explosiva  (?)
+
+        }
+
+    }
+}
 uint8_t GameState::checkWeaponDistance(uint8_t weaponType) {
     switch (weaponType) {
         case GRENADE_WEAPON:
@@ -290,29 +313,33 @@ armor_t GameState::getArmorPosition(position_t position) {
 Weapon* GameState::createWeapon(uint8_t weaponType) {
     std::cout << "Arma tomada\n";
     Weapon* newWeapon;
-    switch (weaponType) {
-        case GRENADE_WEAPON:
-            newWeapon = new Grenade();
-            break;
-        case BANANA_WEAPON:
-            newWeapon = new Banana();
-            break;
-        case PEWPEWLASER_WEAPON:
-            newWeapon = new PewPewLaser();
-            break;
-        case LASERRIFLE_WEAPON:
-            newWeapon = new LaserRifle();
-            break;
-        case DARTGUN_WEAPON:
-            newWeapon = new Dartgun();
-            break;
-        case AK_47_WEAPON:
-            newWeapon = new AK47();
-            break;
-        default:
-            std::cerr << "Arma no creada\n";
-            newWeapon = nullptr;
-            break;
+    try { 
+        switch (weaponType) {
+            case GRENADE_WEAPON:
+                newWeapon = new Grenade();
+                break;
+            case BANANA_WEAPON:
+                newWeapon = new Banana();
+                break;
+            case PEWPEWLASER_WEAPON:
+                newWeapon = new PewPewLaser();
+                break;
+            case LASERRIFLE_WEAPON:
+                newWeapon = new LaserRifle();
+                break;
+            case DARTGUN_WEAPON:
+                newWeapon = new Dartgun();
+                break;
+            case AK_47_WEAPON:
+                newWeapon = new AK47();
+                break;
+            default:
+                std::cerr << "Arma no creada\n";
+                newWeapon = nullptr;
+                break;
+        }
+    } catch (const std::exception& e) {
+        std::cerr << "Error: " << e.what() << std::endl;
     }
     return newWeapon;
 }

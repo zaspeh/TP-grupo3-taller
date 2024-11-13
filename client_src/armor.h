@@ -22,8 +22,9 @@ public:
     Armor(armor_t armorState, SDL_Renderer* renderer);  // Constructor
     void render(float x, float y, bool faceLeft, uint8_t type);  // Renderiza todas las piezas de armadura
     bool loadTexture();  // Carga las texturas necesarias
-    void setArmor(armor_t arm);  // Asigna el tipo de armadura
+    void updateState(armor_t arm);  // Asigna el tipo de armadura
     int getType();
+    armor_t getState();
 };
 
 #endif

@@ -31,6 +31,7 @@ class Game : public Thread
         std::vector<std::unique_ptr<Platform>> platforms;
         std::vector<std::unique_ptr<SpawnPlace>> spawns;
         std::vector<std::unique_ptr<Weapon>> droppedWeapons;
+        std::vector<std::unique_ptr<Armor>> droppedArmors;
         std::vector<std::unique_ptr<Projectile>> projectiles;
         std::vector<std::unique_ptr<Box>> boxes;
         std::unique_ptr<LTexture> background;
