@@ -242,9 +242,9 @@ game_state_t GameState::updatePlayers(float deltaTime) {
         }
 
         
+        updateBoxes();
         updateWeaponsPhysics(deltaTime);
         updateProjectilsPhysics(deltaTime);
-        updateBoxes();
     } catch (const std::exception& e) {
         std::cerr << "Error updating players: " << e.what() << std::endl;
     }

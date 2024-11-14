@@ -104,6 +104,21 @@ void SpawnPlace::updateState(const spawn_place_t& newState) {
         weapon = nullptr;
     }
 
+    if (newState.armor.type != NULL_ARMOR) {
+        if (armor == nullptr || armor->getType() != newState.armor.type) {
+            // Si el arma no existe o es diferente, creamos una nueva
+            armor = std::make_unique<Armor>(newState.armor, renderer);
+            if (!armor->loadTexture()) {
+                std::cerr << "Failed to load new armor texture.\n";
+            }
+        } else {
+            // Si es la misma arma, solo actualizamos su estado
+            armor->updateState(newState.armor);
+        }
+    } else {
+        armor = nullptr;
+    }
+
     //std::cout << "SpawnPlace state updated.\n";
 }
 
