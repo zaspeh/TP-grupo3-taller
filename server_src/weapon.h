@@ -117,5 +117,48 @@ public:
     }
 }; 
 
+class CowBoyPistol : public Weapon {
+public:
+    CowBoyPistol() : Weapon(10, 30, COWBOY_WEAPON) {}
+
+    bool shoot() override {
+        if (!canShoot()) return false;
+        setAmmo(getAmmo() - 1);
+        return true;
+    }
+};
+
+class Magnum : public Weapon {
+public:
+    Magnum() : Weapon(10, 30, MAGNUM_WEAPON) {}
+
+    bool shoot() override {
+        if (!canShoot()) return false;
+        setAmmo(getAmmo() - 1);
+        return true;
+    }
+};
+
+class Shotgun : public Weapon {
+public:
+    Shotgun() : Weapon(10, 30, SHOTGUN_WEAPON) {}
+
+    bool shoot() override {
+        if (!canShoot()) return false;
+        setAmmo(getAmmo() - 1);
+        return true;
+    }
+};
+
+class Sniper : public Weapon {
+public:
+    Sniper() : Weapon(10, 30, SNIPER_WEAPON) {}
+
+    bool shoot() override {
+        if (!canShoot()) return false;
+        setAmmo(getAmmo() - 1);
+        return true;
+    }
+};
 
 #endif // WEAPON_H

@@ -14,7 +14,7 @@ void ProjectilePhysics::initProjectile(float initialVelocity, float initialAngle
     isActive = true;
 }
 
-bool ProjectilePhysics::updatePosition(projectile_t &projectile, Level& level, 
+bool ProjectilePhysics::updatePosition(projectile_t &projectile, Level* level, 
                                      float deltaTime, float distance, GameState* gameState) {
     if (projectile.is_active == false) {
         return false;
@@ -27,7 +27,7 @@ bool ProjectilePhysics::updatePosition(projectile_t &projectile, Level& level,
                        0.5f * acceleration * deltaTime * deltaTime;
 
     // Verificar colisiones con plataformas
-    level_t levelState = level.getLevel();
+    level_t& levelState = level->getLevel();
     for (int i = 0; i < levelState.num_platforms; i++) {
         bool horizontalOverlap = (projectile.pos.x >= levelState.platforms[i].pos.x) && 
                                (projectile.pos.x <= levelState.platforms[i].pos.x + WIDTH_PLATFORM);
@@ -61,14 +61,27 @@ bool ProjectilePhysics::updatePosition(projectile_t &projectile, Level& level,
         if (horizontalOverlap && verticalOverlap) {
             std::cout << "Colisión detectada con caja " << i << std::endl;
             levelState.boxes[i].health--;
+            auto boxes = level->getBoxes();
+            if (boxes[i])
+                boxes[i]->setBoxState(levelState.boxes[i]);
+            // Si la caja se rompió, verificar si tiene un arma para soltar
+            if (levelState.boxes[i].health == 0) {
+                std::cout << "Caja rota, verificando contenido\n";
+                if (i < int(boxes.size())) {
+                    weapon_t weaponState = boxes[i]->getWeaponState();
+                    boxes[i]->setBoxState(levelState.boxes[i]);
+                    if (weaponState.type != NULL_WEAPON) {
+                        std::cout << "Droppeando arma\n";
+                        gameState->checkIfDropWeapon(weaponState);
+                    }
+                }
+            }
+            
+            // Actualizar el estado del nivel después de modificar la caja
+            level->updateState(levelState);
             return false;
         }
-
-        if (levelState.boxes[i].health == 0) {
-            gameState->checkIfDropWeapon(level.getBoxes()[i]->getWeaponState());
-        }
     }
-    level.updateState(levelState);
 
     // Verificar si el proyectil se ha salido de los límites del nivel
     if (projectile.pos.x < 0 || projectile.pos.x > LEVEL_WIDTH || 

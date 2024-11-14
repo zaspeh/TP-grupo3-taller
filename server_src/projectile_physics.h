@@ -5,6 +5,7 @@
 #include <algorithm>
 #include "../common_src/utils.h"
 #include "level.h"
+#include "box.h"
 
 // Forward declarations
 class GameState;
@@ -22,7 +23,7 @@ public:
     
     void initProjectile(float initialVelocity, float initialAngle, float initialX);
     
-    bool updatePosition(projectile_t &projectile, Level& level, float deltaTime, 
+    bool updatePosition(projectile_t &projectile, Level* level, float deltaTime, 
                        float distance, GameState* gameState);
 
     bool isProjectileActive() const;

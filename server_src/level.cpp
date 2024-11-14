@@ -142,7 +142,7 @@ void Level::initLevel0() {
 }
 
 // Métodos para acceder a la información del nivel
-level_t Level::getLevel() {
+level_t& Level::getLevel() {
     return levelState;
 }
 
@@ -211,4 +211,8 @@ spawn_place_t Level::getRandomSpawnPlace(int x, int y) {
     }
     std::cout << "Random spawn" << std::endl;
     return spawn;
+}
+
+void Level::updateState(level_t& state) {
+    levelState = state;
 }

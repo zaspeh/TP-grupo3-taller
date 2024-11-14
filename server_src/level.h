@@ -27,14 +27,14 @@ public:
     explicit Level(int id);
 
     // Métodos para acceder a la información del nivel
-    level_t getLevel();
+    level_t& getLevel();
     position_t getSpawnPosition();
     uint8_t getRandomWeapon();
     uint8_t getRandomArmor();
     std::vector<std::shared_ptr<Box>> getBoxes() { return boxes; }
     std::unique_ptr<Box> getRandomBox(int x, int y);
     spawn_place_t getRandomSpawnPlace(int x, int y);
-    void updateState(level_t state) { levelState = state; };
+    void updateState(level_t& state);
 
     // Destructor
     ~Level() = default;

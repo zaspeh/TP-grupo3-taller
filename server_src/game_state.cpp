@@ -64,7 +64,6 @@ game_state_t GameState::doAction(uint8_t id, uint8_t action) {
             player->setFacingDirection(1);
             break;
         case MOVE_RIGHT:
-            std::cout << "Moving right" << std::endl;
             player->move(10, 0, state.level.platforms, state.level.num_platforms);
             player->setFacingDirection(0);
             break;
@@ -181,7 +180,7 @@ void GameState::createProjectile(uint8_t weaponType, position_t origin, bool fac
 void GameState::updateProjectilsPhysics(float deltaTime) {
     for (size_t i = 0; i < state.level.num_projectiles; i++) {
         uint8_t maxDistance = checkWeaponDistance(state.level.projectiles[i].type);
-        state.level.projectiles[i].is_active = projectilePhysics[i].updatePosition(state.level.projectiles[i] ,level, deltaTime, maxDistance, this);
+        state.level.projectiles[i].is_active = projectilePhysics[i].updatePosition(state.level.projectiles[i] , &level, deltaTime, maxDistance, this);
         // if false -> lo elimino asì no aparece otra vez.
     }
 }
@@ -206,14 +205,16 @@ game_state_t GameState::updatePlayers(float deltaTime) {
 void GameState::updateBoxes() {
 
     int i = 0;
-    std::cout << "Cantidad de cajas: " << level.getBoxes().size() << std::endl;
+    //std::cout << "Cantidad de cajas: " << level.getBoxes().size() << std::endl;
     for (auto box : level.getBoxes()) {
+        std::cout << "Salud de la caja " << i << ": "  << static_cast<int>(state.level.boxes[i].health) << std::endl;
         box->setBoxState(state.level.boxes[i]);
         box_t boxState = box->getBoxState();
         armor_t armorState = box->getArmorState();
         weapon_t weaponState = box->getWeaponState();
-        std::cout << "TIPO DE ARMA : " << static_cast<int>(weaponState.type) << std::endl;
+        //std::cout << "TIPO DE ARMA : " << static_cast<int>(weaponState.type) << std::endl;
         if(boxState.health == 0 && !box->isBroken()){ 
+            std::cout << "Caja rota : " << static_cast<int>(weaponState.type) << std::endl;
             if (weaponState.type != NULL_WEAPON) {
                 state.level.dropped_weapons[state.level.num_dropped_weapons] = weaponState;
                 state.level.dropped_weapons[state.level.num_dropped_weapons].pos = {boxState.pos.x-10, boxState.pos.y-20};
@@ -228,6 +229,7 @@ void GameState::updateBoxes() {
         i++;
     }
 }
+
 uint8_t GameState::checkWeaponDistance(uint8_t weaponType) {
     switch (weaponType) {
         case GRENADE_WEAPON:
@@ -369,6 +371,18 @@ Weapon* GameState::createWeapon(uint8_t weaponType) {
                 break;
             case AK_47_WEAPON:
                 newWeapon = new AK47();
+                break;
+            case COWBOY_WEAPON:
+                newWeapon = new CowBoyPistol();
+                break;
+            case MAGNUM_WEAPON:
+                newWeapon = new Magnum();
+                break;
+            case SHOTGUN_WEAPON:
+                newWeapon = new Shotgun();
+                break;
+            case SNIPER_WEAPON:
+                newWeapon = new Sniper();
                 break;
             default:
                 std::cerr << "Arma no creada\n";

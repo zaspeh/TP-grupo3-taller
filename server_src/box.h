@@ -1,4 +1,5 @@
-#
+#ifndef BOX_H
+#define BOX_H
 #include "../common_src/game_state.h"
 #include "../common_src/utils.h"
 
@@ -21,3 +22,5 @@ public:
     bool isBroken() const { return is_broken; }
     void breakBox() { is_broken = true; }
 };
+
+#endif // BOX_H
