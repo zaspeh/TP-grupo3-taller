@@ -1,6 +1,8 @@
 #ifndef UTILS_H
 #define UTILS_H
 
+#include <cstdint>
+
 // Client side
 #define CLIENT_USAGE_COMMAND_ERROR "Error of usage: ./client <ip> <port>"
 #define LEVEL_WIDTH 1024
@@ -24,7 +26,7 @@
 #define COWBOY_WEAPON 0x7
 #define MAGNUM_WEAPON 0x8
 #define SHOTGUN_WEAPON 0x9
-#define SNIPER_WEAPON 0x10
+#define SNIPER_WEAPON 0xa
 
 #define GRENADE_DISTANCE 25
 #define BANANA_DISTANCE 25

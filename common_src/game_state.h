@@ -49,8 +49,6 @@ typedef struct {
     uint8_t health;       // Salud de la caja
     bool is_explosive;   // Si la caja es explosiva
     // bool is_broken;
-    weapon_t weapon;     // Arma en la caja (si aplica)
-    armor_t armor;       // Armadura o casco en la caja (si aplica)
 } box_t;
 
 // Representa proyectiles lanzados por armas en el juego

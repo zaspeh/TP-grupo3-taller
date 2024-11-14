@@ -6,9 +6,7 @@ Game::Game(std::shared_ptr<Queue<game_state_t>> gameStateQueue, std::shared_ptr<
       gWindow(nullptr, SDL_DestroyWindow),
       gRenderer(nullptr, SDL_DestroyRenderer)
 {
-    std::cout << "Popeando gamState\n";
     gameState = gameStateQueue->pop();
-    std::cout << "gamestate popeado\n";
 }
 
 Game::~Game()
@@ -85,8 +83,10 @@ bool Game::loadMedia()
 #include <chrono>
 
 // Variables para limitar la frecuencia de envío de comandos
-const std::chrono::milliseconds COMMAND_INTERVAL(50); // Intervalo mínimo de 50 ms
+const std::chrono::milliseconds COMMAND_INTERVAL(50); // Para movimiento
+const std::chrono::milliseconds SHOOT_INTERVAL(200); // Para disparos, 200ms entre cada disparo
 std::chrono::steady_clock::time_point lastCommandTime = std::chrono::steady_clock::now();
+std::chrono::steady_clock::time_point lastShootTime = std::chrono::steady_clock::now();
 
 bool leftPressed = false;
 bool rightPressed = false;
@@ -127,8 +127,12 @@ bool Game::processEvents() {
     if (currentTime - lastCommandTime >= COMMAND_INTERVAL) {
         if (leftPressed) sendCommand(MOVE_LEFT);
         if (rightPressed) sendCommand(MOVE_RIGHT);
-        if (shootPressed) sendCommand(SHOOT);
-        lastCommandTime = currentTime; // Actualizar el último envío
+        lastCommandTime = currentTime;
+    }
+
+    if (shootPressed && currentTime - lastShootTime >= SHOOT_INTERVAL) {
+        sendCommand(SHOOT);
+        lastShootTime = currentTime;
     }
 
     if (!eventDetected) {

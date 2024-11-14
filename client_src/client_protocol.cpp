@@ -72,8 +72,6 @@ void ClientProtocol::readBoxes(box_t boxes[MAX_BOXES], uint8_t numBoxes, bool &w
         boxes[i].pos = readPosition(wasClosed);
         boxes[i].health = recvUint8(wasClosed);
         boxes[i].is_explosive = recvUint8(wasClosed);
-        boxes[i].weapon = readWeapon(wasClosed);
-        boxes[i].armor = readArmor(wasClosed);
     }
 }
 
