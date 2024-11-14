@@ -13,6 +13,30 @@ SpawnPlace::SpawnPlace(const spawn_place_t& spawnData, SDL_Renderer* renderer)
     }
 }
 
+/*
+Initialized ducks vector with 1 ducks.
+Initialized ducks vector with 114 platforms.
+Tamaño de spawns: 8
+Creando nuevo spawn: 6
+Creando nuevo spawn: 0
+Creando nuevo spawn: 4
+Creando nuevo spawn: 0
+Creando nuevo spawn: 4
+Creando nuevo spawn: 0
+Cambiando el tamaño de las cajas
+Cajas reziseadas.
+Cargando boxes
+Cargando boxes
+Caja sin vida: client_src/spawn/
+Unable to load image client_src/spawn/! SDL_image Error: Unsupported image format
+Failed to load box texture from client_src/spawn/
+SDL_image Error: Unsupported image format
+Failed to load texture for box 1.
+Failed to initialize game or load media.
+^C^C^C^A^CTerminado (killed)
+
+*/
+
 SpawnPlace::~SpawnPlace() {
     // No es necesario hacer nada especial, la textura se libera automáticamente
     std::cout << "SpawnPlace destroyed.\n";

@@ -23,7 +23,7 @@ public:
     
     void initProjectile(float initialVelocity, float initialAngle, float initialX);
     
-    bool updatePosition(projectile_t &projectile, Level* level, float deltaTime, 
+    bool updatePosition(projectile_t &projectile, level_t& level, float deltaTime, 
                        float distance, GameState* gameState);
 
     bool isProjectileActive() const;

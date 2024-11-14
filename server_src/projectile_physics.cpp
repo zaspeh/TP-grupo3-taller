@@ -14,7 +14,7 @@ void ProjectilePhysics::initProjectile(float initialVelocity, float initialAngle
     isActive = true;
 }
 
-bool ProjectilePhysics::updatePosition(projectile_t &projectile, Level* level, 
+bool ProjectilePhysics::updatePosition(projectile_t &projectile, level_t& levelState, 
                                      float deltaTime, float distance, GameState* gameState) {
     if (projectile.is_active == false) {
         return false;
@@ -26,8 +26,7 @@ bool ProjectilePhysics::updatePosition(projectile_t &projectile, Level* level,
     projectile.pos.y += velocity * std::sin(angle) * deltaTime + 
                        0.5f * acceleration * deltaTime * deltaTime;
 
-    // Verificar colisiones con plataformas
-    level_t& levelState = level->getLevel();
+    // colisiones con plataformas.
     for (int i = 0; i < levelState.num_platforms; i++) {
         bool horizontalOverlap = (projectile.pos.x >= levelState.platforms[i].pos.x) && 
                                (projectile.pos.x <= levelState.platforms[i].pos.x + WIDTH_PLATFORM);
@@ -39,12 +38,13 @@ bool ProjectilePhysics::updatePosition(projectile_t &projectile, Level* level,
         }
     }
 
+    // colision con cajas.
     for (int i = 0; i < levelState.num_boxes; i++) {
         if(levelState.boxes[i].health <= 0) continue;
         
         float projectileRadius = 5.0f;
         float boxWidth = 32.0f;
-        float boxHeight = 40.0f;
+        float boxHeight = 40.0f; // usar las constantes
         
         float boxCenterX = levelState.boxes[i].pos.x;
         float boxCenterY = levelState.boxes[i].pos.y;
@@ -59,26 +59,7 @@ bool ProjectilePhysics::updatePosition(projectile_t &projectile, Level* level,
                                 (projectile.pos.y - projectileRadius <= boxBottom);
 
         if (horizontalOverlap && verticalOverlap) {
-            std::cout << "Colisión detectada con caja " << i << std::endl;
             levelState.boxes[i].health--;
-            auto boxes = level->getBoxes();
-            if (boxes[i])
-                boxes[i]->setBoxState(levelState.boxes[i]);
-            // Si la caja se rompió, verificar si tiene un arma para soltar
-            if (levelState.boxes[i].health == 0) {
-                std::cout << "Caja rota, verificando contenido\n";
-                if (i < int(boxes.size())) {
-                    weapon_t weaponState = boxes[i]->getWeaponState();
-                    boxes[i]->setBoxState(levelState.boxes[i]);
-                    if (weaponState.type != NULL_WEAPON) {
-                        std::cout << "Droppeando arma\n";
-                        gameState->checkIfDropWeapon(weaponState);
-                    }
-                }
-            }
-            
-            // Actualizar el estado del nivel después de modificar la caja
-            level->updateState(levelState);
             return false;
         }
     }
@@ -92,6 +73,45 @@ bool ProjectilePhysics::updatePosition(projectile_t &projectile, Level* level,
     if (abs(projectile.pos.x - initialX) > distance*32) {
         return false;
     }
+
+    // colision con jugadores
+    auto players = gameState->getPlayers();
+    for (int i = 0; i < levelState.num_ducks; i++) {
+        std::cout << "Colision con jugador: " << i << std::endl;
+        if (levelState.ducks[i].isAlive == false || !players[i]->isAlive()) continue;
+        
+        float duckCenterX = levelState.ducks[i].pos.x;
+        float duckCenterY = levelState.ducks[i].pos.y;
+        float duckLeft = duckCenterX - (WIDTH_DUCK/2);
+        float duckRight = duckCenterX + (WIDTH_DUCK/2);
+        float duckTop = duckCenterY - (HEIGHT_DUCK/2);
+        float duckBottom = duckCenterY + (HEIGHT_DUCK/2);
+
+        bool horizontalOverlap = (projectile.pos.x + PROJECTILE_RADIUS >= duckLeft) && 
+                                (projectile.pos.x - PROJECTILE_RADIUS <= duckRight);
+        bool verticalOverlap = (projectile.pos.y + PROJECTILE_RADIUS >= duckTop) && 
+                                (projectile.pos.y - PROJECTILE_RADIUS <= duckBottom);
+
+        if (horizontalOverlap && verticalOverlap) {
+
+
+            if (levelState.ducks[i].helmet.type != NULL_ARMOR) { // 1ro le saco el casco
+                levelState.ducks[i].helmet.type = NULL_ARMOR;
+                players[i]->setHelmetEquipped(levelState.ducks[i].helmet);
+            } else if (levelState.ducks[i].chestplate.type != NULL_ARMOR) { // 2do le saco la pechera
+                levelState.ducks[i].chestplate.type = NULL_ARMOR;
+                players[i]->setArmorEquipped(levelState.ducks[i].chestplate);
+            } else { // 3ro lo mato
+                levelState.ducks[i].isAlive = false;
+                players[i]->setAlive();
+                std::cout << "jugador " << i << " muertoOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO" << std::endl;
+            }
+
+            return false;
+        }
+    }
+
+
 
     return true;
 }

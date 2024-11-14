@@ -35,7 +35,7 @@ bool Weapon::loadTexture(){
         case LASERRIFLE_WEAPON:
             return (guns[LASERRIFLE_WEAPON]->loadFromFile("client_src/guns/laserrifle.png"));
         case COWBOY_WEAPON:
-            return (guns[LASERRIFLE_WEAPON]->loadFromFile("client_src/guns/cowboypistol.png"));
+            return (guns[COWBOY_WEAPON]->loadFromFile("client_src/guns/cowboypistol.png"));
         case MAGNUM_WEAPON:
             return (guns[MAGNUM_WEAPON]->loadFromFile("client_src/guns/magnum.png"));
         case SHOTGUN_WEAPON:

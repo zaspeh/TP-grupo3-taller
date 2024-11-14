@@ -147,8 +147,9 @@ weapon_t PlayerState::dropWeapon() {
     return weaponST;
 }
 
-void PlayerState::shoot(){
-    if (weapon != nullptr && !weapon->canShoot()) {
-        weapon->shoot(); // se hacen los cambios de balas y eso
+bool PlayerState::shoot(){
+    if (weapon != nullptr) {
+        return weapon->shoot(); // se hacen los cambios de balas y eso
     }
+    return false;
 }

@@ -203,7 +203,7 @@ void Game::render() {
     }
 
     for (const auto& duck : ducks) {
-        if (duck) duck->render();
+        if (duck && duck->isAlive()) duck->render();
     }
 
     for (const auto& spawn : spawns) {

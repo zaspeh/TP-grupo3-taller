@@ -33,6 +33,7 @@ public:
     bool loadTexture();
     void updateState(const duck_t& newDuckState);
     int getId() const { return duckState.id; }
+    bool isAlive() const { return duckState.isAlive; }
 
 private:
     duck_t duckState;

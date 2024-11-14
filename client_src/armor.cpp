@@ -1,6 +1,8 @@
 #include "armor.h"
 #include <iostream>
 
+armor_t nullArmor = {{0, 0}, NULL_ARMOR};
+
 Armor::Armor(armor_t armorState, SDL_Renderer* renderer) {
     updateState(armorState);
     try {
@@ -79,12 +81,18 @@ void Armor::updateState(armor_t arm) {
         chestplateState = arm;
     } else if (arm.type == HELMET_ARMOR) {
         helmetState = arm;
+    } else {
+        chestplateState = nullArmor;
+        helmetState = nullArmor;
     }
 }
 
 armor_t Armor::getState() {
+    
     if (chestplateState.type == CHESTPLATE_ARMOR)
         return chestplateState;
-    else 
+    else if (helmetState.type == HELMET_ARMOR)
         return helmetState;
+    else 
+        return nullArmor;
 }

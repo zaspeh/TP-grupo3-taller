@@ -29,7 +29,6 @@ public:
     {
         duck.pos = {x, y};
         duck.isAlive = true;
-        duck.health = 100;
         duck.isJumping = false;
         duck.isFalling = false;  // Aseguramos que inicie en false
         duck.id = clientID;
@@ -51,7 +50,7 @@ public:
     uint8_t getAmmo() const { return weapon->getAmmo(); } // ahora en weapon
     void setAmmo(uint8_t newAmmo) { weapon->setAmmo(newAmmo); }
 
-    bool isAlive() const { return duck.isAlive; }
+    bool isAlive()  { return duck.isAlive; }
     void setAlive() { duck.isAlive = !duck.isAlive; }
 
     bool isFalling() const { return duck.isFalling; }
@@ -63,17 +62,18 @@ public:
     bool hasArmorEquipped() const { return armor.isEquipped(); }
     void setArmorEquipped(armor_t armr) { 
         duck.chestplate = armr;
-        armor.equip(); 
+        armor.unequip();
+        if (duck.chestplate.type != NULL_ARMOR)
+            armor.equip(); 
         }    
 
     bool hasHelmetEquipped() const { return helmet.isEquipped(); }
     void setHelmetEquipped(armor_t hmt) { 
         duck.helmet = hmt;
-        helmet.equip(); 
+        helmet.unequip();
+        if (duck.helmet.type != NULL_ARMOR)
+            helmet.equip(); 
         }
-
-    uint8_t getHealth() const { return duck.health; }  
-    void setHealth(uint8_t newHealth) { duck.health = newHealth; }
 
     uint8_t getFacingDirection() const { return duck.faceLeft; }
     void setFacingDirection(uint8_t direction) { duck.faceLeft = direction; }; 
@@ -91,7 +91,7 @@ public:
 
     void takeDamage(uint8_t damage);
 
-    void shoot();
+    bool shoot();
 
     //void crouch() { duck.isCrouched = true; }
 

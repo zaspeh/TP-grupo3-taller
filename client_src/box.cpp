@@ -12,6 +12,10 @@ Box::Box(box_t boxState, SDL_Renderer* renderer)
 }
 
 bool Box::loadTexture() {
+    if (boxState.health == 0) { 
+        return true;
+    }
+    
     std::string path = "client_src/spawn/";
 
     switch (boxState.health) {
@@ -28,6 +32,7 @@ bool Box::loadTexture() {
             path += "box4.png";
             break;
         case 0:
+            std::cout << "Caja sin vida: " << path << std::endl;
             //path += "box0.png";
             break;
         default:
@@ -53,5 +58,6 @@ void Box::render() {
 
 void Box::updateState(const box_t& newState) {
     boxState = newState;
-    loadTexture();
+    if (boxState.health > 0)
+        loadTexture();
 }

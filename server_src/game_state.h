@@ -8,6 +8,7 @@
 #include "player_state.h"
 #include "level.h"
 #include "weapon_physics.h"
+#include "armor_physics.h"
 #include "projectile_physics.h"
 #include "../common_src/utils.h"
 
@@ -20,6 +21,8 @@ private:
     mutable std::mutex mtx;
     std::vector<WeaponPhysics> fallingWeapons;
     std::vector<weapon_t> weaponsInAir;
+    std::vector<ArmorPhysics> fallingArmors; 
+    std::vector<armor_t> armorsInAir;  
     std::vector<ProjectilePhysics> projectilePhysics;
 
 public:
@@ -42,6 +45,8 @@ public:
     void updateProjectilsPhysics(float deltaTime);
     void createProjectile(uint8_t weaponType, position_t origin, bool facingLeft);
     uint8_t checkWeaponDistance(uint8_t weaponType);
+    void checkIfDropArmor(armor_t droppedArmor);
+    void updateArmorsPhysics(float deltaTime);
     void updateBoxes();
 };
 

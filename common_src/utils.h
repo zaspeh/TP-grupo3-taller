@@ -48,6 +48,7 @@
 #define BOX_HEALTH 4    
 #define WIDTH_BOX 32
 #define HEIGHT_BOX 32
+#define PROJECTILE_RADIUS 5
 
 // Protocol side
 #define ERROR_READING_STRING "Error reading string from protocol"

@@ -202,12 +202,12 @@ spawn_place_t Level::getRandomSpawnPlace(int x, int y) {
     };
 
     if (randomIndex < levelState.num_spawn_places / 2) {
+        spawn.armor.pos = {x, y};
+        spawn.armor.type = getRandomArmor();
+    } else {
         spawn.weapon.pos = {x, y};
         spawn.weapon.type = getRandomWeapon();
         std::cout << "random weapon" << std::endl;
-    } else {
-        spawn.armor.pos = {x, y};
-        spawn.armor.type = getRandomArmor();
     }
     std::cout << "Random spawn" << std::endl;
     return spawn;
