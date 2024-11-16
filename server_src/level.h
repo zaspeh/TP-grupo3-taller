@@ -14,9 +14,12 @@
 class Level {
 private:
     // Método estático que inicializa el nivel según su ID
+    
     void createLevelById(int id);
     // Método que crea el nivel 0 con plataformas, cajas, etc.
     void initLevel0();
+    void initLevel1();
+    void initLevel2();
     level_t levelState;
     int chosenLevel;
     std::mt19937 rng;
@@ -24,10 +27,11 @@ private:
 
 public:
     // Constructor
-    explicit Level(int id);
+    explicit Level();
 
     // Métodos para acceder a la información del nivel
     level_t& getLevel();
+    void createNewLevel();
     position_t getSpawnPosition();
     uint8_t getRandomWeapon();
     uint8_t getRandomArmor();

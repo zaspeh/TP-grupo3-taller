@@ -1,7 +1,7 @@
 #include "game_state.h"
 #include <cmath>
 // Constructor
-GameState::GameState() : level(0) {
+GameState::GameState() : level() {
     currentLevel = level.getLevel();
     std::cout << "Instancio el nivel" << std::endl;
     players = std::map<uint8_t, std::shared_ptr<PlayerState>>();
