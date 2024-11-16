@@ -2,12 +2,11 @@
 #include <cmath>
 // Constructor
 GameState::GameState() : level() {
-    currentLevel = level.getLevel();
     std::cout << "Instancio el nivel" << std::endl;
     players = std::map<uint8_t, std::shared_ptr<PlayerState>>();
     projectilePhysics.resize(MAX_PROJECTILES);
     state = {
-        currentLevel,
+        level.getLevel(),
         0,
         0,
         10
@@ -246,10 +245,37 @@ game_state_t GameState::updatePlayers(float deltaTime) {
         updateWeaponsPhysics(deltaTime);
         updateArmorsPhysics(deltaTime);
         updateProjectilsPhysics(deltaTime);
+        checkIfSomeoneWin();
     } catch (const std::exception& e) {
         std::cerr << "Error updating players: " << e.what() << std::endl;
     }
     return state;
+}
+
+void GameState::checkIfSomeoneWin() {
+    int aliveDucks = 0;
+    for (auto& [id, player] : players) {
+        if (player->isAlive()) {
+            aliveDucks++;
+        }
+        //if(state.level.ducks[id].score == state.winning_score)  digo que ganò
+
+    }
+
+    if (aliveDucks == 1 and players.size() > 1) {
+        for (auto& [id, player] : players) {
+            if (player->isAlive()) {
+                state.level.ducks[id].score += 1;
+            }
+        }
+        level.createNewLevel();
+        state.level = level.getLevel();
+        for (auto& [id, player] : players) {
+            position_t pos = level.getSpawnPosition();
+            player->resetPlayer(state.level.ducks[id], pos.x, pos.y);
+            state.level.ducks[id] = player->getState();
+        }
+    }
 }
 
 
@@ -400,7 +426,7 @@ armor_t GameState::getArmorPosition(position_t position, bool helmetEquipped, bo
     return armor;
 }
 
-Weapon* GameState::createWeapon(uint8_t weaponType, uint8_t initialAmmo = 0) {
+Weapon* GameState::createWeapon(uint8_t weaponType, uint8_t initialAmmo) {
     std::cout << "Arma tomada\n";
     Weapon* newWeapon;
     try { 
@@ -441,7 +467,7 @@ Weapon* GameState::createWeapon(uint8_t weaponType, uint8_t initialAmmo = 0) {
                 break;
         }
 
-        if (initialAmmo > 0 && newWeapon != nullptr) {
+        if (newWeapon != nullptr) {
             newWeapon->setAmmo(initialAmmo);
         }
     } catch (const std::exception& e) {

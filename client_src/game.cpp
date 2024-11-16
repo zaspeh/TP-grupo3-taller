@@ -231,40 +231,73 @@ void Game::render() {
 
 
 void Game::update(game_state_t gameState) {
-    std::vector<std::unique_ptr<Duck>> newDucks;
-    newDucks.reserve(gameState.level.num_ducks);
+    // Primero actualizamos los patos existentes y removemos los que ya no están
+    for (size_t i = 0; i < ducks.size(); i++) {
+        bool found = false;
+        for (int j = 0; j < gameState.level.num_ducks; j++) {
+            if (ducks[i] && ducks[i]->getId() == gameState.level.ducks[j].id) {
+                ducks[i]->updateState(gameState.level.ducks[j]);
+                std::cout << "Actualizando estado del pato " << ducks[i]->getId() << std::endl;
+                found = true;
+                break;
+            }
+        }
+        if (!found) {
+            ducks[i] = nullptr;
+        }
+    }
 
+    // Luego ajustamos el tamaño y agregamos los nuevos patos
+    ducks.resize(gameState.level.num_ducks);
+
+    // Finalmente, agregamos los patos que faltan
     for (int i = 0; i < gameState.level.num_ducks; i++) {
-        auto duck_id = gameState.level.ducks[i].id;
-        auto it = std::find_if(ducks.begin(), ducks.end(),
-            [duck_id](const std::unique_ptr<Duck>& duck) {
-                return duck && duck->getId() == duck_id;
-            });
-
-        if (it != ducks.end()) {
-            (*it)->updateState(gameState.level.ducks[i]);
-            newDucks.push_back(std::move(*it));
-        } else {
-            auto newDuck = std::make_unique<Duck>(
+        bool exists = false;
+        for (const auto& duck : ducks) {
+            if (duck && duck->getId() == gameState.level.ducks[i].id) {
+                exists = true;
+                break;
+            }
+        }
+        
+        if (!exists) {
+            ducks[i] = std::make_unique<Duck>(
                 gameState.level.ducks[i],
                 SCREEN_WIDTH,
                 SCREEN_HEIGHT,
                 gRenderer.get()
             );
-            newDuck->loadTexture();
-            newDucks.push_back(std::move(newDuck));
-            std::cout << "New duck initialized with ID " << duck_id << std::endl;
+            std::cout << "Creando nuevo pato " << gameState.level.ducks[i].id << std::endl;
+            if (!ducks[i]->loadTexture()) {
+                std::cout << "Failed to load texture for new duck with ID " << gameState.level.ducks[i].id << std::endl;
+            }
+            std::cout << "New duck initialized with ID " << gameState.level.ducks[i].id << std::endl;
         }
     }
 
-    // Reemplazar el vector antiguo con el nuevo
-    ducks = std::move(newDucks);
-
-    for (int i = 0; i < gameState.level.num_spawn_places; ++i) {
-        if (spawns[i])
-            spawns[i]->updateState(gameState.level.spawn_places[i]);
+    platforms.resize(gameState.level.num_platforms);
+    for (int i = 0; i < gameState.level.num_platforms; ++i) {
+        if (platforms[i]) {
+            platforms[i]->updateState(gameState.level.platforms[i]);
+        }
+        else { 
+            platforms[i] = std::make_unique<Platform>(gameState.level.platforms[i], gRenderer.get());
+            platforms[i]->loadTexture();
+        }
     }
 
+    spawns.resize(gameState.level.num_spawn_places);
+    for (int i = 4; i < gameState.level.num_spawn_places; ++i) {
+        if (spawns[i]) {
+            spawns[i]->updateState(gameState.level.spawn_places[i]);
+        }
+        else {
+            spawns[i] = std::make_unique<SpawnPlace>(gameState.level.spawn_places[i], gRenderer.get());
+            spawns[i]->loadTexture();
+        }
+    }
+
+    droppedWeapons.resize(gameState.level.num_dropped_weapons);
     for (int i = 0; i < gameState.level.num_dropped_weapons; ++i) {
         if (!droppedWeapons[i]) {
             droppedWeapons[i] = std::make_unique<Weapon>(gameState.level.dropped_weapons[i], gRenderer.get());
@@ -275,6 +308,7 @@ void Game::update(game_state_t gameState) {
         }
     }
 
+    droppedArmors.resize(gameState.level.num_dropped_armors);
     for (int i = 0; i < gameState.level.num_dropped_armors; ++i) {
         if (!droppedArmors[i]) {
             droppedArmors[i] = std::make_unique<Armor>(gameState.level.dropped_armors[i], gRenderer.get());
@@ -285,6 +319,7 @@ void Game::update(game_state_t gameState) {
         }
     }
 
+    projectiles.resize(gameState.level.num_projectiles);
     for (int i = 0; i < gameState.level.num_projectiles; ++i) {
         if (!projectiles[i] && gameState.level.projectiles[i].is_active) {
             projectiles[i] = std::make_unique<Projectile>(gameState.level.projectiles[i], gRenderer.get());
@@ -302,15 +337,20 @@ void Game::update(game_state_t gameState) {
             projectiles[i]->updateState(gameState.level.projectiles[i]);
     }   
 
+    boxes.resize(gameState.level.num_boxes);
     for (int i = 0; i < gameState.level.num_boxes; ++i) {            
         if (boxes[i] && gameState.level.boxes[i].health <= 0) {
             boxes[i] = nullptr;
             continue;
-        }
-        if (boxes[i] && gameState.level.boxes[i].health > 0) 
+        } 
+        if (boxes[i] && gameState.level.boxes[i].health > 0) {
             boxes[i]->updateState(gameState.level.boxes[i]);
+        }
+        else {
+            boxes[i] = std::make_unique<Box>(gameState.level.boxes[i], gRenderer.get());
+            boxes[i]->loadTexture();
+        }
     }
-
 }
 
 bool Game::init()

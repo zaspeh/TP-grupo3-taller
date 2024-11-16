@@ -25,6 +25,8 @@ private:
     std::vector<armor_t> armorsInAir;  
     std::vector<ProjectilePhysics> projectilePhysics;
 
+    void checkIfSomeoneWin();
+
 public:
     // Constructor
     GameState();

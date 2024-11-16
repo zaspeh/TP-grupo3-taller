@@ -38,6 +38,13 @@ public:
         
         return duck;
     }
+    void resetPlayer(duck_t newDuck, int x , int y) {
+        duck = newDuck;
+        duck.pos = {x, y};
+        duck.isAlive = true;
+        duck.isJumping = false;
+        duck.isFalling = false;        
+    }
 
     // Getters y Setters para cada atributo
     position_t getPosition() const { return duck.pos; }

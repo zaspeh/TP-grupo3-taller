@@ -10,18 +10,23 @@ armor_t null_armor = {
 };
 
 Level::Level()  {
-    srand(time(NULL));
+    std::random_device rd;  // Obtiene una semilla del hardware
+    rng = std::mt19937(rd());
+    boxDist = std::uniform_int_distribution<int>(1, MAX_BOXES);
+    weaponDist = std::uniform_int_distribution<int>(1, WEAPON_COUNT);
+    armorDist = std::uniform_int_distribution<int>(1, ARMOR_COUNT);
     // hago un random id:
-    int id = rand() % 3;
-    chosenLevel = id;
-    createLevelById(id);
+    std::uniform_int_distribution<int> levelDist(0, 2);
+    chosenLevel = levelDist(rng);
+    createLevelById(chosenLevel);
 }
 
 void Level::createNewLevel(){
     int id = chosenLevel;
-    while (id != chosenLevel) {
-        id = rand() % 3;
-    }
+    std::uniform_int_distribution<int> levelDist(0, 2);
+    while (id == chosenLevel) 
+        id = levelDist(rng);
+    
     chosenLevel = id;
     createLevelById(id);
 }
@@ -443,9 +448,8 @@ position_t Level::getSpawnPosition() {
 }
 
 std::unique_ptr<Box> Level::getRandomBox(int x, int y) {
-    int randomIndex = (rand() % MAX_BOXES)+1;
-    std::cout << "random box" << std::endl;
-
+    int randomIndex = boxDist(rng);
+    
     box_t box = { {x, y}, BOX_HEALTH, false };
     armor_t armor = null_armor;
     weapon_t weapon = null_weapon;
@@ -462,23 +466,17 @@ std::unique_ptr<Box> Level::getRandomBox(int x, int y) {
 }
 
 uint8_t Level::getRandomWeapon() {
-    std::cout << "random weapon" << std::endl;
-    int randomIndex = (rand() % WEAPON_COUNT) + 1;
-    std::cout << "random weapon" << std::endl;
-    return randomIndex;
+    return weaponDist(rng);
 }
 
+
 uint8_t Level::getRandomArmor() {
-    std::cout << "random armor" << std::endl;
-    int randomIndex = (rand() % ARMOR_COUNT)+1;
-    std::cout << "random armor" << std::endl;
-    return randomIndex;
+    return armorDist(rng);
 }
 
 spawn_place_t Level::getRandomSpawnPlace(int x, int y) {
-    std::cout << "Random spawn" << std::endl;
-    int randomIndex = (rand() % levelState.num_spawn_places)+1;
-    std::cout << "Random spawn" << std::endl;
+    std::uniform_int_distribution<int> spawnDist(1, levelState.num_spawn_places);
+    int randomIndex = spawnDist(rng);
 
     spawn_place_t spawn = {
         {x, y},
@@ -493,10 +491,9 @@ spawn_place_t Level::getRandomSpawnPlace(int x, int y) {
     } else {
         spawn.weapon.pos = {x, y};
         spawn.weapon.type = getRandomWeapon();
-        spawn.weapon.ammo = 30;
-        std::cout << "random weapon" << std::endl;
+        spawn.weapon.ammo = weaponDist(rng) * 5; // Para variar la munición inicial
     }
-    std::cout << "Random spawn" << std::endl;
+
     return spawn;
 }
 

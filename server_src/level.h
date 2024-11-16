@@ -23,6 +23,9 @@ private:
     level_t levelState;
     int chosenLevel;
     std::mt19937 rng;
+    std::uniform_int_distribution<int> boxDist;
+    std::uniform_int_distribution<int> weaponDist;
+    std::uniform_int_distribution<int> armorDist;
     std::vector<std::shared_ptr<Box>> boxes;
 
 public:
