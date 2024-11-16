@@ -119,38 +119,6 @@ game_state_t GameState::doAction(uint8_t id, uint8_t action) {
     return state;
 }
 
-void GameState::updateWeaponsPhysics(float deltaTime) {
-    try {
-        for (size_t i = 0; i < weaponsInAir.size(); ) {
-            int droppedIndex = -1;
-            for (int j = 0; j < state.level.num_dropped_weapons; j++) {
-                if (state.level.dropped_weapons[j].type == weaponsInAir[i].type &&
-                    state.level.dropped_weapons[j].pos.x == weaponsInAir[i].pos.x &&
-                    state.level.dropped_weapons[j].pos.y == weaponsInAir[i].pos.y) {
-                    droppedIndex = j;
-                    break;
-                }
-            }
-            
-            if (fallingWeapons[i].updatePosition(weaponsInAir[i], deltaTime, state.level.platforms, state.level.num_platforms)) {
-                if (droppedIndex != -1) {
-                    state.level.dropped_weapons[droppedIndex].pos = weaponsInAir[i].pos;
-                }
-                
-                weaponsInAir.erase(weaponsInAir.begin() + i);
-                fallingWeapons.erase(fallingWeapons.begin() + i);
-            } else {
-                if (droppedIndex != -1) {
-                    state.level.dropped_weapons[droppedIndex].pos = weaponsInAir[i].pos;
-                }
-                i++; 
-            }
-        }
-    } catch (const std::exception& e) {
-        std::cerr << "Error updating weapons physics: " << e.what() << std::endl;
-    }
-}
-
 void GameState::createProjectile(uint8_t weaponType, position_t origin, bool facingLeft) {
 
     bool projectileLoaded = false;
@@ -205,6 +173,38 @@ void GameState::updateProjectilsPhysics(float deltaTime) {
     }
 }
 
+void GameState::updateWeaponsPhysics(float deltaTime) {
+    try {
+        for (size_t i = 0; i < weaponsInAir.size(); ) {
+            int droppedIndex = -1;
+            for (int j = 0; j < state.level.num_dropped_weapons; j++) {
+                if (state.level.dropped_weapons[j].type == weaponsInAir[i].type &&
+                    state.level.dropped_weapons[j].pos.x == weaponsInAir[i].pos.x &&
+                    state.level.dropped_weapons[j].pos.y == weaponsInAir[i].pos.y) {
+                    droppedIndex = j;
+                    break;
+                }
+            }
+            
+            if (fallingWeapons[i].updatePosition(weaponsInAir[i], deltaTime, state.level.platforms, state.level.num_platforms)) {
+                if (droppedIndex != -1) {
+                    state.level.dropped_weapons[droppedIndex].pos = weaponsInAir[i].pos;
+                }
+                
+                weaponsInAir.erase(weaponsInAir.begin() + i);
+                fallingWeapons.erase(fallingWeapons.begin() + i);
+            } else {
+                if (droppedIndex != -1) {
+                    state.level.dropped_weapons[droppedIndex].pos = weaponsInAir[i].pos;
+                }
+                i++; 
+            }
+        }
+    } catch (const std::exception& e) {
+        std::cerr << "Error updating weapons physics: " << e.what() << std::endl;
+    }
+}
+
 void GameState::updateArmorsPhysics(float deltaTime) {
     for (size_t i = 0; i < armorsInAir.size();) {
         int droppedIndex = -1;
@@ -244,6 +244,7 @@ game_state_t GameState::updatePlayers(float deltaTime) {
         
         updateBoxes();
         updateWeaponsPhysics(deltaTime);
+        updateArmorsPhysics(deltaTime);
         updateProjectilsPhysics(deltaTime);
     } catch (const std::exception& e) {
         std::cerr << "Error updating players: " << e.what() << std::endl;
@@ -265,17 +266,11 @@ void GameState::updateBoxes() {
                 std::cout << "Caja rota\n";
                 
                 if (weaponState.type != NULL_WEAPON) {
-                    state.level.dropped_weapons[state.level.num_dropped_weapons] = weaponState;
-                    state.level.dropped_weapons[state.level.num_dropped_weapons].pos = {boxState.pos.x - 10, boxState.pos.y - 20};
-                    state.level.num_dropped_weapons++;
-                    weaponsInAir.push_back(weaponState);
-                    fallingWeapons.emplace_back();
+                    weaponState.pos = {boxState.pos.x - 10, boxState.pos.y - 20};
+                    checkIfDropWeapon(weaponState);
                 } else if (armorState.type != NULL_ARMOR) {
-                    state.level.dropped_armors[state.level.num_dropped_armors] = armorState;
-                    state.level.dropped_armors[state.level.num_dropped_armors].pos = {boxState.pos.x - 10, boxState.pos.y - 20};
-                    state.level.num_dropped_armors++;
-                    armorsInAir.push_back(armorState);
-                    fallingArmors.emplace_back();
+                    armorState.pos = {boxState.pos.x - 10, boxState.pos.y - 20};
+                    checkIfDropArmor(armorState);
                 }
 
                 box->breakBox();
