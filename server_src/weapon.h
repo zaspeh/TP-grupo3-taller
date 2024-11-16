@@ -3,6 +3,7 @@
 #define WEAPON_H
 
 #include <string>
+#include <iostream>
 #include "../common_src/game_state.h"
 #include "../common_src/utils.h"
 
@@ -27,7 +28,9 @@ public:
     virtual bool canShoot() const { return ammo > 0; }
     
     int getAmmo() const { return ammo; }
-    void setAmmo(uint8_t newAmmo) { ammo = newAmmo; }
+    void setAmmo(uint8_t newAmmo) { 
+        std::cout << "Municiones: " << static_cast<int>(newAmmo) << std::endl;
+        ammo = newAmmo; }
     int getId() const { return id; }
     int getRange() const { return range; }
     

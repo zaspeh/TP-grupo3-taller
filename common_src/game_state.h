@@ -27,6 +27,7 @@ typedef struct {
 typedef struct {
     position_t pos;
     uint8_t type;    // Tipo de arma (ej.: pistola, escopeta, etc.)
+    uint8_t ammo;    
 } weapon_t;
 
 // Representa una armadura o casco en el juego

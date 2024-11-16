@@ -207,6 +207,7 @@ spawn_place_t Level::getRandomSpawnPlace(int x, int y) {
     } else {
         spawn.weapon.pos = {x, y};
         spawn.weapon.type = getRandomWeapon();
+        spawn.weapon.ammo = 30;
         std::cout << "random weapon" << std::endl;
     }
     std::cout << "Random spawn" << std::endl;

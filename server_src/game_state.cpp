@@ -88,7 +88,7 @@ game_state_t GameState::doAction(uint8_t id, uint8_t action) {
 
             weaponST = getWeaponPosition(player->getPosition());
             if (weaponST.type != NULL_WEAPON){ 
-                weapon = createWeapon(weaponST.type);
+                weapon = createWeapon(weaponST.type, weaponST.ammo);  // Pasar la munición guardada
                 checkIfDropWeapon(player->pickWeapon(weapon));
             } else { 
                 checkIfDropWeapon(player->dropWeapon());
@@ -314,6 +314,7 @@ weapon_t GameState::getWeaponPosition(position_t position) { // SE PUEDE MODULAR
     weapon_t weapon = {
         {0, 0},
         NULL_WEAPON,
+        0
     };
     
     const int pickupRadius = 20; // Radio de recogida del arma
@@ -324,9 +325,8 @@ weapon_t GameState::getWeaponPosition(position_t position) { // SE PUEDE MODULAR
         float distance = std::sqrt(std::pow(dx, 2) + std::pow(dy, 2));
         
         if (distance <= pickupRadius && state.level.spawn_places[i].weapon.type != NULL_WEAPON) {
-            weapon_t pickedWeapon = state.level.spawn_places[i].weapon;
-            weapon = pickedWeapon;
-            state.level.spawn_places[i].weapon.type = NULL_WEAPON; // Arma recogida, remover del spawn
+            weapon = state.level.spawn_places[i].weapon;
+            state.level.spawn_places[i].weapon.type = NULL_WEAPON;
             break;
         }
     }
@@ -337,9 +337,8 @@ weapon_t GameState::getWeaponPosition(position_t position) { // SE PUEDE MODULAR
         float distance = std::sqrt(std::pow(dx, 2) + std::pow(dy, 2));
         
         if (distance <= pickupRadius && state.level.dropped_weapons[i].type != NULL_WEAPON) {
-            weapon_t pickedWeapon = state.level.dropped_weapons[i];
-            weapon = pickedWeapon;
-            state.level.dropped_weapons[i].type = NULL_WEAPON; 
+            weapon = state.level.dropped_weapons[i];
+            state.level.dropped_weapons[i].type = NULL_WEAPON;
             break;
         }
     }
@@ -401,7 +400,7 @@ armor_t GameState::getArmorPosition(position_t position, bool helmetEquipped, bo
     return armor;
 }
 
-Weapon* GameState::createWeapon(uint8_t weaponType) {
+Weapon* GameState::createWeapon(uint8_t weaponType, uint8_t initialAmmo = 0) {
     std::cout << "Arma tomada\n";
     Weapon* newWeapon;
     try { 
@@ -440,6 +439,10 @@ Weapon* GameState::createWeapon(uint8_t weaponType) {
                 std::cerr << "Arma no creada\n";
                 newWeapon = nullptr;
                 break;
+        }
+
+        if (initialAmmo > 0 && newWeapon != nullptr) {
+            newWeapon->setAmmo(initialAmmo);
         }
     } catch (const std::exception& e) {
         std::cerr << "Error: " << e.what() << std::endl;

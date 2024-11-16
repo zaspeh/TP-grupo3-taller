@@ -137,17 +137,19 @@ weapon_t PlayerState::pickWeapon(Weapon* newWeapon) {
 weapon_t PlayerState::dropWeapon() {
     weapon_t weaponST = {
         {0, 0},
-        NULL_WEAPON
+        NULL_WEAPON,
+        0
     };
     if (weapon != nullptr) {
         weaponST = duck.equipped_weapon;
+        weaponST.ammo = weapon->getAmmo();  // Guardar la munición actual
         weapon = nullptr;
         duck.equipped_weapon.type = NULL_WEAPON;
     }
     return weaponST;
 }
 
-bool PlayerState::shoot(){
+bool PlayerState::shoot() {
     if (weapon != nullptr) {
         return weapon->shoot(); // se hacen los cambios de balas y eso
     }

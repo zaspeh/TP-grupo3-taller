@@ -38,7 +38,7 @@ public:
     game_state_t updatePlayers(float deltaTime);
     armor_t getArmorPosition(position_t position, bool helmetEquipped, bool armorEquipped);
     weapon_t getWeaponPosition(position_t position);
-    Weapon* createWeapon(uint8_t weaponType);
+    Weapon* createWeapon(uint8_t weaponType, uint8_t ammo);
     void checkIfDropWeapon(weapon_t droppedWeapon);
     void updateWeaponsPhysics(float deltaTime);
     void checkProjectils(std::shared_ptr<PlayerState> player);

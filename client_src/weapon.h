@@ -9,11 +9,13 @@
 #include "../common_src/utils.h"
 #include "../common_src/game_state.h"
 #include <memory>
+#include <map>
 
 class Weapon{
-protected:
+private:
     std::unordered_map<uint8_t, std::unique_ptr<LTexture>> guns;
     weapon_t weaponState;
+    std::map<int, int> weaponYOffsets;
 public:
     Weapon(weapon_t weaponState, SDL_Renderer* renderer);
     void render(float x, float y, bool faceLeft);

@@ -16,10 +16,10 @@ Armor::Armor(armor_t armorState, SDL_Renderer* renderer) {
 bool Armor::loadTexture() {
     bool success = true;
 
-    if (chestplateState.type != NULL_ARMOR && chestplateState.type == CHESTPLATE_ARMOR) 
+    if (chestplateState.type == CHESTPLATE_ARMOR) 
         success &= armors[CHESTPLATE_ARMOR]->loadFromFile("client_src/armors/chestplate.png");
 
-    if (helmetState.type != NULL_ARMOR && helmetState.type == HELMET_ARMOR) 
+    if (helmetState.type == HELMET_ARMOR) 
         success &= armors[HELMET_ARMOR]->loadFromFile("client_src/armors/helmet.png");
 
     if (!success) {
@@ -43,8 +43,8 @@ void Armor::renderArmorPiece(uint8_t armorType, armor_t& armorState, float x, fl
     SDL_Rect scaleRect = {0, 0, 0, 0};
     if (it != armors.end() && armorState.type != NULL_ARMOR) {
         LTexture* texture = it->second.get();
-        scaleRect.w = texture->getWidth() * 2;
-        scaleRect.h = texture->getHeight() * 2;
+        scaleRect.w = texture->getWidth() * 2.15;
+        scaleRect.h = texture->getHeight() * 2.15;
 
         SDL_RendererFlip flip = faceLeft ? SDL_FLIP_HORIZONTAL : SDL_FLIP_NONE;
 
