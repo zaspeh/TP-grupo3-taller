@@ -1,6 +1,7 @@
 #ifndef GAME_H
 #define GAME_H
 
+#include <mutex>
 #include <chrono>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
@@ -40,6 +41,7 @@ class Game : public Thread
         bool processEvents();
         void sendCommand(const uint8_t command);
         void update(game_state_t game_state);
+        std::mutex sdl_mutex;
 
     public:
         Game(std::shared_ptr<Queue<game_state_t>> gameStateQueue, std::shared_ptr<Queue<uint8_t>> commandQueue);

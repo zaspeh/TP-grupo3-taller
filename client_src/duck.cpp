@@ -138,17 +138,21 @@ void Duck::updateState(const duck_t& newDuckState) {
         currentAnimation = WALKING;
     }
 
-    if (duckState.equipped_weapon.type != weapon->getType()) {
-        weapon->updateState(duckState.equipped_weapon);
+    if (weapon) {
+        if (duckState.equipped_weapon.type != weapon->getType()) {
+            weapon->updateState(duckState.equipped_weapon);
+        }
     }
 
-    // Si el tipo de armadura es CHESTPLATE_ARMOR, actualiza el estado
-    if (duckState.chestplate.type == CHESTPLATE_ARMOR) {
-        armor->updateState(duckState.chestplate);
-    }
+    if (armor) {
+        // Si el tipo de armadura es CHESTPLATE_ARMOR, actualiza el estado
+        if (duckState.chestplate.type == CHESTPLATE_ARMOR) {
+            armor->updateState(duckState.chestplate);
+        }
 
-    // Si el tipo de armadura es HELMET_ARMOR, actualiza el estado
-    if (duckState.helmet.type == HELMET_ARMOR) {
-        armor->updateState(duckState.helmet);
+        // Si el tipo de armadura es HELMET_ARMOR, actualiza el estado
+        if (duckState.helmet.type == HELMET_ARMOR) {
+            armor->updateState(duckState.helmet);
+        }
     }
 }

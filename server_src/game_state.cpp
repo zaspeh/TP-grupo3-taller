@@ -34,7 +34,6 @@ void GameState::removePlayer(uint8_t id) {
 
 void GameState::updateState(uint8_t id, std::shared_ptr<PlayerState> player) {
     state.level.ducks[id] = player->getState();
-    std::cout << "Nueva posición del player: " << static_cast<int>(state.level.ducks[id].pos.x) << ", " << static_cast<int>(state.level.ducks[id].pos.x) << std::endl;
 }
 
 std::shared_ptr<PlayerState> GameState::connectPlayer(uint8_t id) {
