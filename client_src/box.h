@@ -3,6 +3,7 @@
 
 #include <memory>
 #include "ltexture.h"
+#include "camera.h"
 #include "../common_src/game_state.h"
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
@@ -22,7 +23,7 @@ public:
     ~Box() = default;
 
     bool loadTexture();
-    void render();
+    void render(const Camera& camera, float zoom);
     void updateState(const box_t& newState);
     box_t getState() const { return boxState; }
 };

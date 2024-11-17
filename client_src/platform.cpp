@@ -26,11 +26,23 @@ void Platform::updateState(const platform_t& newPlatformState){
     platform = newPlatformState;
 }
 
-void Platform::render(){
+void Platform::render(const Camera& camera, float zoom){
     SDL_Rect* scaleRect = new SDL_Rect{0, 0, 0, 0};
     scaleRect->h = platformTexture->getHeight();
     scaleRect->w = platformTexture->getWidth(); 
     scaleRect->x = platformTexture->getHeight();
     scaleRect->y = platformTexture->getWidth(); 
     platformTexture->render(platform.pos.x+32, platform.pos.y+32, NULL, scaleRect, SDL_FLIP_NONE);
+
+    /*SDL_Point screenPos = camera.getScreenPosition(scaleRect->x, scaleRect->y, zoom);
+        
+    SDL_Rect destRect = {
+        screenPos.x,
+        screenPos.y,
+        static_cast<int>(scaleRect->w * zoom),
+        static_cast<int>(scaleRect->h * zoom)
+    };
+
+    platformTexture->render(destRect.x+32, destRect.y+32, NULL, &destRect, SDL_FLIP_NONE);*/
+
 }

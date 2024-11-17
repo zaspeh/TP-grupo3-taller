@@ -1,5 +1,6 @@
 #include "game.h"
 #include <algorithm>  // Añadir este include al principio del archivo
+
 Game::Game(std::shared_ptr<Queue<game_state_t>> gameStateQueue, std::shared_ptr<Queue<uint8_t>> commandQueue)
     : gameStateQueue(gameStateQueue),
       commandQueue(commandQueue),
@@ -173,6 +174,12 @@ void Game::run()
         //std::cout << "Posicion del pato: " << static_cast<int>(gameState.level.ducks[0].pos.x) << " " << static_cast<int>(gameState.level.ducks[0].pos.y) << std::endl; 
         update(gameState);
 
+        SDL_FPoint center = CalculatorManager::calculateCenter(ducks);
+        float maxDistance = CalculatorManager::calculateMaxDistance(ducks);
+        
+        zoom.update(maxDistance);
+        camera.update(center.x, center.y, zoom);
+
         render();
 
         SDL_RenderPresent(gRenderer.get());
@@ -193,17 +200,23 @@ void Game::run()
 void Game::render() {
     SDL_Rect scaleRect = {0, 0, SCREEN_WIDTH, SCREEN_HEIGHT};
     background->render(0, 0, nullptr, &scaleRect, SDL_FLIP_NONE);
+    /*SDL_Rect bgRect = camera.getBackgroundRect(
+            background->getWidth(), 
+            background->getHeight(), 
+            zoom.getCurrentZoom()
+        );
+    background->render(bgRect.x, bgRect.y, NULL, &bgRect, SDL_FLIP_NONE);*/
 
     for (const auto& platform : platforms) {
-        if (platform) platform->render();
+        if (platform) platform->render(camera, zoom.getCurrentZoom());
     }
 
     for (const auto& box : boxes) {
-        if (box && box->getState().health > 0) box->render();
+        if (box && box->getState().health > 0) box->render(camera, zoom.getCurrentZoom());
     }
 
     for (const auto& duck : ducks) {
-        if (duck && duck->isAlive()) duck->render();
+        if (duck && duck->isAlive()) duck->render(camera, zoom.getCurrentZoom());
     }
 
     for (const auto& spawn : spawns) {

@@ -79,7 +79,7 @@ bool Duck::loadTexture() {
     return allLoaded;
 }
 
-void Duck::render() {
+void Duck::render(const Camera& camera, float zoom) {
     bool faceLeft = (duckState.faceLeft == 1);
 
     if (animations[currentAnimation]) {

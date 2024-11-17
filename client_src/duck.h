@@ -10,11 +10,10 @@
 #include "animation.h"
 #include "../common_src/utils.h"
 #include "weapon.h"
+#include "camera.h"
 #include "armor.h"
 #include <memory>
 
-const int SCREEN_WIDTH = 1024;
-const int SCREEN_HEIGHT = 720;
 const int SPRITE_FLAP_WIDTH = 16;
 const int SPRITE_FLAP_HEIGHT = 16;
 const int SPRITE_WIDTH = 32;
@@ -29,10 +28,12 @@ class Duck
 {
 public:
     Duck(duck_t duckState, int screenWidth, int screenHeight, SDL_Renderer* renderer);
-    void render();
+    void render(const Camera& camera, float zoom);
     bool loadTexture();
     void updateState(const duck_t& newDuckState);
     int getId() const { return duckState.id; }
+    int getPosX() const { return duckState.pos.x; }
+    int getPosY() const { return duckState.pos.y; }
     bool isAlive() const { return duckState.isAlive; }
 
 private:
