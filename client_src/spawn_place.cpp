@@ -84,7 +84,7 @@ void SpawnPlace::render(const Camera& camera, float zoom) {
             static_cast<int>(scaledHeight * zoom)
         };
 
-        spawnTexture->render(x, y, nullptr, &destRect, SDL_FLIP_NONE);
+        spawnTexture->render(destRect.x, destRect.y, nullptr, &destRect, SDL_FLIP_NONE);
     }
 
     // El arma se mantiene en su posición original

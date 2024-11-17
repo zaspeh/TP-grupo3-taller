@@ -44,5 +44,5 @@ void Platform::render(const Camera& camera, float zoom){
         static_cast<int>(scaleRect.h * zoom)
     };
 
-    platformTexture->render(destRect.x+32, destRect.y+32, NULL, &destRect, SDL_FLIP_NONE);
+    platformTexture->render(destRect.x+(32*zoom), destRect.y+(32*zoom), NULL, &destRect, SDL_FLIP_NONE);
 }
