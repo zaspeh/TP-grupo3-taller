@@ -50,6 +50,15 @@ std::map<uint8_t, std::shared_ptr<PlayerState>> GameState::getPlayers() {
     return players;
 }
 
+bool GameState::chosedAWeapon(uint8_t id,uint8_t action){
+    if(!pickAnyWeapon) return false;
+    pickAnyWeapon = false;
+    Weapon *weapon = createWeapon(action);
+    if(weapon == nullptr) return false;
+    checkIfDropWeapon(players[id]->pickWeapon(weapon));
+    return true;
+}
+
 game_state_t GameState::doAction(uint8_t id, uint8_t action) {
     std::lock_guard<std::mutex> lock(mtx);
     auto player = players[id];
@@ -61,57 +70,75 @@ game_state_t GameState::doAction(uint8_t id, uint8_t action) {
     armor_t armorST;
     Weapon* weapon = nullptr;
 
-    switch(action) {
-        case MOVE_LEFT:
-            player->move(-10, 0, state.level.platforms, state.level.num_platforms);
-            player->setFacingDirection(1);
-            break;
-        case MOVE_RIGHT:
-            player->move(10, 0, state.level.platforms, state.level.num_platforms);
-            player->setFacingDirection(0);
-            break;
-        case JUMP:
-            player->jump();
-            break;
-        case TAKE_WEAPON:
-            armorST = getArmorPosition(player->getPosition(), player->hasHelmetEquipped(), player->hasArmorEquipped());
-
-            if (armorST.type != NULL_ARMOR) { // si encontre una armadura
-                if (armorST.type == HELMET_ARMOR)
-                    player->setHelmetEquipped(armorST);
-                if (armorST.type == CHESTPLATE_ARMOR)
-                    player->setArmorEquipped(armorST);
-
+    if(!chosedAWeapon(id, action)){
+        std::cout << "Accion a realizarse: " << static_cast<int>(action) << std::endl;
+        switch(action) {
+            case MOVE_LEFT:
+                player->move(-10, 0, state.level.platforms, state.level.num_platforms);
+                player->setFacingDirection(1);
                 break;
-            }
-
-            weaponST = getWeaponPosition(player->getPosition());
-            if (weaponST.type != NULL_WEAPON){ 
-                weapon = createWeapon(weaponST.type, weaponST.ammo);  // Pasar la munición guardada
-                checkIfDropWeapon(player->pickWeapon(weapon));
-            } else { 
-                checkIfDropWeapon(player->dropWeapon());
-            }
-            break;
-
-        case SHOOT:
-            if(player->getWeapon() == nullptr || player->getWeaponType() == NULL_WEAPON) 
+            case MOVE_RIGHT:
+                player->move(10, 0, state.level.platforms, state.level.num_platforms);
+                player->setFacingDirection(0);
                 break;
-            if(player->shoot())
-                createProjectile(player->getWeaponType(), player->getPosition(), player->getFacingDirection());
-            break;
-        case LOOK_UP:
-            break;
-        case FLOOR:
-            player->setCrouched(!player->isCrouched());
-            break;
-        case NEW_CLIENT:
-            std::cout << "Agregando nuevo cliente\n";
-            player = connectPlayer(id);
-            break;
-        default:
-            std::cout << "Unknown action: " << action << std::endl;
-            break;
+            case JUMP:
+                player->jump();
+                break;
+            case TAKE_WEAPON:
+                armorST = getArmorPosition(player->getPosition(), player->hasHelmetEquipped(), player->hasArmorEquipped());
+
+                if (armorST.type != NULL_ARMOR) { // si encontre una armadura
+                    if (armorST.type == HELMET_ARMOR)
+                        player->setHelmetEquipped(armorST);
+                    if (armorST.type == CHESTPLATE_ARMOR)
+                        player->setArmorEquipped(armorST);
+            
+                    break;
+                }
+
+                weaponST = getWeaponPosition(player->getPosition());
+                if (weaponST.type != NULL_WEAPON){ 
+                    weapon = createWeapon(weaponST.type);  // Pasar la munición guardada
+                    checkIfDropWeapon(player->pickWeapon(weapon));
+                } else { 
+                    checkIfDropWeapon(player->dropWeapon());
+                }
+                break;
+
+            case SHOOT:
+                if(player->getWeapon() == nullptr || player->getWeaponType() == NULL_WEAPON) 
+                    break;
+                if(player->shoot())
+                    createProjectile(player->getWeaponType(), player->getPosition(), player->getFacingDirection());
+                break;
+            case LOOK_UP:
+                break;
+            case FLOOR:
+                player->setCrouched(!player->isCrouched());
+                break;
+            case NEW_CLIENT:
+                std::cout << "Agregando nuevo cliente\n";
+                player = connectPlayer(id);
+                break;
+            case INFINIT_AMMO:
+                std::cout << "Infinite ammo: " << player->isInfiniteAmmo() << std::endl;
+                player->setInfiniteAmmo(!player->isInfiniteAmmo());
+                break;
+            case PICK_ANY_WEAPON:
+                pickAnyWeapon = !pickAnyWeapon;
+                break;
+            case CHESTPLATE_ARMOR:
+                armorST = { {0,0} , CHESTPLATE_ARMOR };
+                player->setArmorEquipped(armorST);
+                break;
+            case HELMET_ARMOR:
+                armorST = { {0,0} , HELMET_ARMOR };
+                player->setHelmetEquipped(armorST);
+                break;
+            default:
+                std::cout << "Unknown action: " << action << std::endl;
+                break;
+        }
     }
 
     updateState(id, player);
@@ -246,6 +273,7 @@ game_state_t GameState::updatePlayers(float deltaTime) {
         updateWeaponsPhysics(deltaTime);
         updateArmorsPhysics(deltaTime);
         updateProjectilsPhysics(deltaTime);
+        updateSpawns(deltaTime);
         checkIfSomeoneWin();
     } catch (const std::exception& e) {
         std::cerr << "Error updating players: " << e.what() << std::endl;
@@ -253,13 +281,34 @@ game_state_t GameState::updatePlayers(float deltaTime) {
     return state;
 }
 
+void GameState::updateSpawns(float deltaTime) {
+    std::vector<std::shared_ptr<Spawn>> spawns = level.getSpawns();
+    for (size_t i = 0; i < state.level.num_spawn_places; i++) {
+
+        // Si no tiene un arma, decrementa el temporizador
+        if (!spawns[i]->hasSomething && !spawns[i]->duckCanSpawn) {
+            spawns[i]->respawnTimer -= deltaTime;
+
+            // Si el temporizador llega a 0, reaparece un arma
+            if (spawns[i]->respawnTimer <= 0.0f) {
+                spawns[i]->hasSomething = true;
+                spawns[i]->respawnTimer = 0.0f; // Reset del temporizador
+                position_t pos = state.level.spawn_places[i].pos;
+                state.level.spawn_places[i] = level.getRandomSpawnPlace(pos.x, pos.y);
+            }
+        }
+    }
+}
+
 void GameState::checkIfSomeoneWin() {
     int aliveDucks = 0;
     for (auto& [id, player] : players) {
-        if (player->isAlive()) {
+        if (player->isAlive()) 
             aliveDucks++;
-        }
-    }
+        
+        //if (state.level.ducks[id].score >= state.winning_score) 
+        //    finishMatch(id);
+    }   
 
     if (aliveDucks == 1 and players.size() > 1) {
         // Guarda el estado actual de los patos antes de resetear
@@ -284,6 +333,13 @@ void GameState::checkIfSomeoneWin() {
     }
 }
 
+/*
+void GameState::finishMatch(uint8_t id) {
+    if (id != 0) {
+        players[id]->setScore(state.level.ducks[id].score);
+    }
+    state.level.ducks[id].isAlive = false;
+}*/
 
 void GameState::updateBoxes() {
     int i = 0;
@@ -350,7 +406,8 @@ weapon_t GameState::getWeaponPosition(position_t position) { // SE PUEDE MODULAR
     };
     
     const int pickupRadius = 20; // Radio de recogida del arma
-    
+    std::vector<std::shared_ptr<Spawn>> spawns = level.getSpawns();
+
     for (int i = 4; i < state.level.num_spawn_places; i++) {
         float dx = state.level.spawn_places[i].pos.x - position.x;
         float dy = state.level.spawn_places[i].pos.y - position.y;
@@ -359,6 +416,8 @@ weapon_t GameState::getWeaponPosition(position_t position) { // SE PUEDE MODULAR
         if (distance <= pickupRadius && state.level.spawn_places[i].weapon.type != NULL_WEAPON) {
             weapon = state.level.spawn_places[i].weapon;
             state.level.spawn_places[i].weapon.type = NULL_WEAPON;
+            spawns[i]->hasSomething = false;
+            spawns[i]->respawnTimer = 5.0f;
             break;
         }
     }
@@ -371,6 +430,8 @@ weapon_t GameState::getWeaponPosition(position_t position) { // SE PUEDE MODULAR
         if (distance <= pickupRadius && state.level.dropped_weapons[i].type != NULL_WEAPON) {
             weapon = state.level.dropped_weapons[i];
             state.level.dropped_weapons[i].type = NULL_WEAPON;
+            spawns[i]->hasSomething = false;
+            spawns[i]->respawnTimer = 5.0f;
             break;
         }
     }
@@ -385,7 +446,8 @@ armor_t GameState::getArmorPosition(position_t position, bool helmetEquipped, bo
     };
     
     const int pickupRadius = 20; 
-    
+    std::vector<std::shared_ptr<Spawn>> spawns = level.getSpawns();
+
     for (int i = 4; i < state.level.num_spawn_places; i++) {
         float dx = state.level.spawn_places[i].pos.x - position.x;
         float dy = state.level.spawn_places[i].pos.y - position.y;
@@ -397,12 +459,17 @@ armor_t GameState::getArmorPosition(position_t position, bool helmetEquipped, bo
             if(pickedarmor.type == HELMET_ARMOR && !helmetEquipped) {   
                 armor = pickedarmor;
                 state.level.spawn_places[i].armor.type = NULL_ARMOR; 
+
+                spawns[i]->hasSomething = false;
+                spawns[i]->respawnTimer = 5.0f;
                 return armor;
             }
 
             if(pickedarmor.type == CHESTPLATE_ARMOR && !armorEquipped) {
                 armor = pickedarmor;
                 state.level.spawn_places[i].armor.type = NULL_ARMOR; 
+                spawns[i]->hasSomething = false;
+                spawns[i]->respawnTimer = 5.0f;
                 return armor;
             }
         }
@@ -418,12 +485,17 @@ armor_t GameState::getArmorPosition(position_t position, bool helmetEquipped, bo
             if(pickedarmor.type == HELMET_ARMOR && !helmetEquipped) {   
                 armor = pickedarmor;
                 state.level.dropped_armors[i].type = NULL_ARMOR; 
+                spawns[i]->hasSomething = false;
+                spawns[i]->respawnTimer = 5.0f;
                 return armor;
             }
 
             if(pickedarmor.type == CHESTPLATE_ARMOR && !armorEquipped) {
                 armor = pickedarmor;
                 state.level.dropped_armors[i].type = NULL_ARMOR; 
+
+                spawns[i]->hasSomething = false;
+                spawns[i]->respawnTimer = 5.0f;
                 return armor;
             }
         }
@@ -432,7 +504,7 @@ armor_t GameState::getArmorPosition(position_t position, bool helmetEquipped, bo
     return armor;
 }
 
-Weapon* GameState::createWeapon(uint8_t weaponType, uint8_t initialAmmo) {
+Weapon* GameState::createWeapon(uint8_t weaponType) {
     std::cout << "Arma tomada\n";
     Weapon* newWeapon;
     try { 
@@ -473,9 +545,6 @@ Weapon* GameState::createWeapon(uint8_t weaponType, uint8_t initialAmmo) {
                 break;
         }
 
-        if (newWeapon != nullptr) {
-            newWeapon->setAmmo(initialAmmo);
-        }
     } catch (const std::exception& e) {
         std::cerr << "Error: " << e.what() << std::endl;
     }

@@ -5,8 +5,8 @@ Level::Level()  {
     std::random_device rd;  // Obtiene una semilla del hardware
     rng = std::mt19937(rd());
     boxDist = std::uniform_int_distribution<int>(1, MAX_BOXES);
-    weaponDist = std::uniform_int_distribution<int>(1, WEAPON_COUNT);
-    armorDist = std::uniform_int_distribution<int>(1, ARMOR_COUNT);
+    weaponDist = std::uniform_int_distribution<int>(20, 29);
+    armorDist = std::uniform_int_distribution<int>(30, 31);
     // hago un random id:
     std::uniform_int_distribution<int> levelDist(0, 2);
     chosenLevel = levelDist(rng);
@@ -161,11 +161,25 @@ void Level::initLevel0() {
     levelState.spawn_places[3].weapon = nullWeapon;
     levelState.spawn_places[3].armor = nullArmor;
 
+
+
     std::cout << levelState.spawn_places[0].pos.x << " " << levelState.spawn_places[0].pos.y << std::endl;
     levelState.spawn_places[4] = getRandomSpawnPlace(75, 418);
     levelState.spawn_places[5] = getRandomSpawnPlace(425, 518);
     levelState.spawn_places[6] = getRandomSpawnPlace(510, 518);
     levelState.spawn_places[7] = getRandomSpawnPlace(875, 418);
+
+    this->spawns.clear();
+    this->spawns.push_back(std::make_unique<Spawn>(50, 500, false, true, 0.0f));
+    this->spawns.push_back(std::make_unique<Spawn>(100, 500, false, true, 0.0f));
+    this->spawns.push_back(std::make_unique<Spawn>(874, 500, false, true, 0.0f));
+    this->spawns.push_back(std::make_unique<Spawn>(924, 500, false, true, 0.0f));
+    this->spawns.push_back(std::make_unique<Spawn>(75, 418, true, false, 0.0f));
+    this->spawns.push_back(std::make_unique<Spawn>(425, 518, true, false, 0.0f));
+    this->spawns.push_back(std::make_unique<Spawn>(510, 518, true, false, 0.0f));
+    this->spawns.push_back(std::make_unique<Spawn>(875, 418, true, false, 0.0f));
+
+
 
     // Inicialización de cajas y proyectiles
     this->boxes.clear();
@@ -298,6 +312,18 @@ void Level::initLevel1() {
     levelState.spawn_places[8] = getRandomSpawnPlace(460, 267);
     levelState.spawn_places[9] = getRandomSpawnPlace(510, 267);
 
+    this->spawns.clear();
+    this->spawns.push_back(std::make_unique<Spawn>(14*32, 140, false, true, 0.0f));
+    this->spawns.push_back(std::make_unique<Spawn>(15*32, 140, false, true, 0.0f));
+    this->spawns.push_back(std::make_unique<Spawn>(16*32, 140, false, true, 0.0f));
+    this->spawns.push_back(std::make_unique<Spawn>(17*32, 140, false, true, 0.0f));
+    this->spawns.push_back(std::make_unique<Spawn>(100, 467, true, false, 0.0f));
+    this->spawns.push_back(std::make_unique<Spawn>(150, 467, true, false, 0.0f));
+    this->spawns.push_back(std::make_unique<Spawn>(830, 467, true, false, 0.0f));
+    this->spawns.push_back(std::make_unique<Spawn>(880, 467, true, false, 0.0f));
+    this->spawns.push_back(std::make_unique<Spawn>(460, 267, true, false, 0.0f));
+    this->spawns.push_back(std::make_unique<Spawn>(510, 267, true, false, 0.0f));
+
     // Inicialización de cajas y proyectiles
     this->boxes.clear();
     this->boxes.push_back(getRandomBox(100, 294));
@@ -406,6 +432,19 @@ void Level::initLevel2() {
     levelState.spawn_places[7] = getRandomSpawnPlace(510, 242);
     levelState.spawn_places[8] = getRandomSpawnPlace(247, 117 + HEIGHT_PLATFORM);
     levelState.spawn_places[9] = getRandomSpawnPlace(695, 117 + HEIGHT_PLATFORM);
+
+    this->spawns.clear();
+    this->spawns.push_back(std::make_unique<Spawn>(5*32, 360, false, true, 0.0f));
+    this->spawns.push_back(std::make_unique<Spawn>(25*32, 360, false, true, 0.0f));
+    this->spawns.push_back(std::make_unique<Spawn>(6*32, 360, false, true, 0.0f));
+    this->spawns.push_back(std::make_unique<Spawn>(26*32, 360, false, true, 0.0f));
+    this->spawns.push_back(std::make_unique<Spawn>(430, 367 + HEIGHT_PLATFORM, true, false, 0.0f));
+    this->spawns.push_back(std::make_unique<Spawn>(510, 367 + HEIGHT_PLATFORM, true, false, 0.0f));
+    this->spawns.push_back(std::make_unique<Spawn>(430, 242, true, false, 0.0f));
+    this->spawns.push_back(std::make_unique<Spawn>(510, 242, true, false, 0.0f));
+    this->spawns.push_back(std::make_unique<Spawn>(247, 117 + HEIGHT_PLATFORM, true, false, 0.0f));
+    this->spawns.push_back(std::make_unique<Spawn>(695, 117 + HEIGHT_PLATFORM, true, false, 0.0f));
+
 
     // Inicialización de cajas y proyectiles
     this->boxes.clear();

@@ -6,8 +6,8 @@
 #include "utils.h"
 
 #define MAX_DUCKS 10
-#define MAX_PROJECTILES 300
-#define MAX_ITEMS 50
+#define MAX_PROJECTILES 3000
+#define MAX_ITEMS 500
 #define MAX_LEVELS 5
 #define MAX_PLATFORMS 1000
 #define MAX_SPAWN_PLACES 20
