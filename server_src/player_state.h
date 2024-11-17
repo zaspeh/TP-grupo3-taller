@@ -53,7 +53,9 @@ public:
         return duck;
     }
     void resetPlayer(duck_t newDuck, int x , int y) {
+        std::cout << "Score del pato antes de ser modificado " << static_cast<int>(duck.score) << std::endl; 
         duck = newDuck;
+        std::cout << "Score del pato después de ser modificado " << static_cast<int>(duck.score) << std::endl; 
         duck.pos = {x, y};
         duck.isAlive = true;
         duck.isJumping = false;

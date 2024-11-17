@@ -34,6 +34,7 @@ private:
     void initLevel0();
     void initLevel1();
     void initLevel2();
+    void winningLevel();
     level_t levelState;
     int chosenLevel;
     std::mt19937 rng;
@@ -50,6 +51,7 @@ public:
     // Métodos para acceder a la información del nivel
     level_t& getLevel();
     void createNewLevel();
+    void initWinningLevel(); 
     position_t getSpawnPosition();
     uint8_t getRandomWeapon();
     uint8_t getRandomArmor();

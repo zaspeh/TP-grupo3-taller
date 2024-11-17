@@ -171,6 +171,7 @@ bool Game::processEvents() {
                 case SDLK_8: sendCommand(MAGNUM_WEAPON); break;
                 case SDLK_9: sendCommand(SHOTGUN_WEAPON); break;
                 case SDLK_0: sendCommand(SNIPER_WEAPON); break;
+                case SDLK_g: sendCommand(RESTART_MATCH); break;
                 default: break;
             }
         } else if (e.type == SDL_KEYUP) {

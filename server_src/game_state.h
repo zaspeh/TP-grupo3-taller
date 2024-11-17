@@ -20,6 +20,7 @@ private:
     level_t currentLevel;
     mutable std::mutex mtx;
     bool pickAnyWeapon = false;
+    bool matchFinished = false;
     std::vector<WeaponPhysics> fallingWeapons;
     std::vector<weapon_t> weaponsInAir;
     std::vector<ArmorPhysics> fallingArmors; 
@@ -27,7 +28,7 @@ private:
     std::vector<ProjectilePhysics> projectilePhysics;
 
     void checkIfSomeoneWin();
-
+    void finishMatch(uint8_t id);
 public:
     // Constructor
     GameState();

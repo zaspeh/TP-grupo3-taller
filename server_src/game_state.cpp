@@ -5,11 +5,12 @@ GameState::GameState() : level() {
     std::cout << "Instancio el nivel" << std::endl;
     players = std::map<uint8_t, std::shared_ptr<PlayerState>>();
     projectilePhysics.resize(MAX_PROJECTILES);
+    
     state = {
         level.getLevel(),
         0,
         0,
-        10
+        5
     };
 }
 
@@ -65,7 +66,13 @@ game_state_t GameState::doAction(uint8_t id, uint8_t action) {
     if (player && !player->isAlive()) {
         return state;
     }
-
+    if (matchFinished && action == RESTART_MATCH) {
+        //level.createNewLevel(); -> hacer lo mismo que en checkIfSomeoneWin
+        //matchFinished = false;
+        //pickAnyWeapon = false;
+        //updateState(id, player);
+        //return state;
+    }
     weapon_t weaponST;
     armor_t armorST;
     Weapon* weapon = nullptr;
@@ -181,12 +188,19 @@ void GameState::createProjectile(uint8_t weaponType, position_t origin, bool fac
     }
     
     float initialVelocity = 2000.0f;
-    float initialAngle = facingLeft ? M_PI : 0.0f; 
-    //if (weaponType == GRENADE_WEAPON || weaponType == BANANA_WEAPON) 
-        //initialAngle = facingLeft ? M_PI : 1.0f; // por si tiene que tener caìda
+    float initialAngle;
+    float gravity = 980.0f;
+    if (weaponType == GRENADE_WEAPON || weaponType == BANANA_WEAPON) {
+        initialVelocity = 1000.0f;  // Velocidad más baja para la granada
+        gravity = 2500.0f;
+        initialAngle = facingLeft ? M_PI - 5.5f : 5.5f;  // Aproximadamente 28.6 grados hacia arriba
+    } else {
+        initialAngle = facingLeft ? M_PI : 0.0f;
+    }
 
-    projectilePhysics[index].initProjectile(initialVelocity, initialAngle, origin.x);
+    projectilePhysics[index].initProjectile(initialVelocity, initialAngle, origin.x, gravity);
     
+
     if(index == state.level.num_projectiles)
         state.level.num_projectiles++;
 }
@@ -300,20 +314,48 @@ void GameState::updateSpawns(float deltaTime) {
     }
 }
 
+void GameState::finishMatch(uint8_t id) {
+    std::cout << "EL JUGADOR : " << static_cast<int>(id) << " HA GANADO" << std::endl;
+    matchFinished = true;
+    
+    //modularizar
+    std::map<uint8_t, duck_t> currentDucks;
+    for (auto& [id, player] : players) {
+        state.level.ducks[id].score = 0;
+        currentDucks[id] = state.level.ducks[id];
+    }
+
+    level.initWinningLevel();
+    state.level = level.getLevel();
+
+    // Restaura los patos en el nuevo nivel
+    for (auto& [id, player] : players) {
+        position_t pos = level.getSpawnPosition();
+        player->resetPlayer(currentDucks[id], pos.x, pos.y);
+        state.level.ducks[id] = player->getState(); // Actualiza explícitamente el estado
+    }
+        
+    // Actualiza el número de patos
+    state.level.num_ducks = players.size();
+}
+
 void GameState::checkIfSomeoneWin() {
     int aliveDucks = 0;
     for (auto& [id, player] : players) {
         if (player->isAlive()) 
             aliveDucks++;
         
-        //if (state.level.ducks[id].score >= state.winning_score) 
-        //    finishMatch(id);
+        if (state.level.ducks[id].score >= state.winning_score) {
+            finishMatch(id);
+            return;
+        }
     }   
 
-    if (aliveDucks == 1 and players.size() > 1) {
+    if (aliveDucks == 1 && players.size() > 1) {
         // Guarda el estado actual de los patos antes de resetear
         std::map<uint8_t, duck_t> currentDucks;
         for (auto& [id, player] : players) {
+            if(state.level.ducks[id].isAlive) state.level.ducks[id].score += 1;
             currentDucks[id] = state.level.ducks[id];
         }
 

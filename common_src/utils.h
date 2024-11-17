@@ -69,7 +69,7 @@
 #define NULL_ARMOR 0x0
 #define HELMET_ARMOR 30
 #define CHESTPLATE_ARMOR 31
-
+#define RESTART_MATCH 14
 
 
 constexpr const uint8_t GRASS_PLATFORM = 1;

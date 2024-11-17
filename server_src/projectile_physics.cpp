@@ -1,6 +1,6 @@
 #include "projectile_physics.h"
 #include "game_state.h"
-
+/*
 ProjectilePhysics::ProjectilePhysics() :
     velocity(0.0f),
     acceleration(0.0f),
@@ -119,3 +119,4 @@ bool ProjectilePhysics::updatePosition(projectile_t &projectile, level_t& levelS
 bool ProjectilePhysics::isProjectileActive() const { 
     return isActive; 
 }
+*/

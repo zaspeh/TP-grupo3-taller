@@ -23,6 +23,11 @@ void Level::createNewLevel(){
     createLevelById(id);
 }
 
+void Level::initWinningLevel() {
+    chosenLevel = 3;
+    winningLevel();
+}
+
 // Implementación de getLevelById
 void Level::createLevelById(int id) {
     switch (id) {
@@ -39,10 +44,15 @@ void Level::createLevelById(int id) {
             std::cout << "Creando nivel 2\n";
             initLevel2();
             break;
+        case 3:
+            std::cout << "Creando nivel ganador\n";
+            winningLevel();
+            break;
         default:
             initLevel0();  // Nivel predeterminado si el ID no coincide
     }
 }
+
 
 void Level::clearLevelState() {
     levelState.num_ducks = 0;
@@ -461,6 +471,64 @@ void Level::initLevel2() {
 
 }
 
+// Implementación de getLevel0
+void Level::winningLevel() {
+    clearLevelState();
+
+    // Configuración de plataformas 
+    levelState.num_platforms = 15;
+    for (int i = 0; i < 15; ++i) {
+        levelState.platforms[i].pos = {32*7 + i * WIDTH_PLATFORM, 400};
+        levelState.platforms[i].type = GRASS_PLATFORM;
+        if(i == 0 || i == 14){
+            levelState.platforms[i].type = DIRT_PLATFORM;
+        }
+    }
+    levelState.num_platforms += 5;
+    for(int i = 15; i < 20; ++i){
+        levelState.platforms[i].pos = {32*7, 400 - 32*i + 32*14};
+        levelState.platforms[i].type = DIRT_PLATFORM;
+        if(i == 19){
+            levelState.platforms[i].type = GRASS_PLATFORM;
+        }
+    }
+
+    levelState.num_platforms += 5;
+    for(int i = 20; i < 25; ++i){
+        levelState.platforms[i].pos = {32*21, 400 - 32*i + 32*19};
+        levelState.platforms[i].type = DIRT_PLATFORM;
+        if(i == 24){
+            levelState.platforms[i].type = GRASS_PLATFORM;
+        }
+    }
+
+    levelState.num_platforms += 13;
+    for (int i = 25; i < 38; ++i) {
+        levelState.platforms[i].pos = {32*7 + i * WIDTH_PLATFORM - 24*WIDTH_PLATFORM, 400 - 32*5};
+        levelState.platforms[i].type = GRASS_PLATFORM;
+    }
+    //          --------------------------
+    //  --------------  -----  -----------------                
+    //  -----------------------------  -  -  -----
+    // Configuración de lugares de aparición (spawn)
+    levelState.num_spawn_places = 4;
+    this->spawns.clear();
+    for (int i = 0; i < 4; ++i) {
+        levelState.spawn_places[i].pos = {470, 360};
+        levelState.spawn_places[i].is_active = true;
+        levelState.spawn_places[i].weapon = nullWeapon;
+        levelState.spawn_places[i].armor = nullArmor;
+        this->spawns.push_back(std::make_unique<Spawn>(470, 360, false, true, 0.0f));
+    }
+
+    
+
+
+    // Inicialización de cajas y proyectiles
+    this->boxes.clear();
+
+}
+
 // Métodos para acceder a la información del nivel
 level_t& Level::getLevel() {
     return levelState;
@@ -530,6 +598,9 @@ spawn_place_t Level::getRandomSpawnPlace(int x, int y) {
 void Level::updateState(level_t& state) {
     levelState = state;
 }
+
+
+
 
 /*
 ==20851== Thread 3:
