@@ -29,18 +29,18 @@ bool Armor::loadTexture() {
     return success;
 }
 
-void Armor::render(float x, float y, bool faceLeft, uint8_t type) {
+void Armor::render(int x, int y, bool faceLeft, uint8_t type, const Camera& camera, float zoom) {
     std::cout << "Armors por renderizar\n";
     if (type == CHESTPLATE_ARMOR)
-        renderArmorPiece(CHESTPLATE_ARMOR, chestplateState, x, y, faceLeft);
+        renderArmorPiece(CHESTPLATE_ARMOR, chestplateState, x, y, faceLeft, camera, zoom);
     if (type == HELMET_ARMOR)
-        renderArmorPiece(HELMET_ARMOR, helmetState, x, y, faceLeft);
+        renderArmorPiece(HELMET_ARMOR, helmetState, x, y, faceLeft, camera, zoom);
     std::cout << "Armors renderizados\n";
 }
 
-void Armor::renderArmorPiece(uint8_t armorType, armor_t& armorState, float x, float y, bool faceLeft) {
+void Armor::renderArmorPiece(uint8_t armorType, armor_t& armorState, int x, int y, bool faceLeft, const Camera& camera, float zoom) {
     auto it = armors.find(armorType);
-    SDL_Rect scaleRect = {0, 0, 0, 0};
+    SDL_Rect scaleRect = {x, y, 0, 0};
     if (it != armors.end() && armorState.type != NULL_ARMOR) {
         LTexture* texture = it->second.get();
         scaleRect.w = texture->getWidth() * 2.15;
@@ -60,8 +60,19 @@ void Armor::renderArmorPiece(uint8_t armorType, armor_t& armorState, float x, fl
             yOffset = 0; // Ajuste vertical para el helmet
         }
 
+        //SDL_Rect destRect = scaleRect;
+
+        SDL_Point screenPos = camera.getScreenPosition(scaleRect.x, scaleRect.y, zoom);
+        
+        SDL_Rect destRect = {
+            screenPos.x,
+            screenPos.y,
+            static_cast<int>(scaleRect.w * zoom),
+            static_cast<int>(scaleRect.h * zoom)
+        };
+
         // Aplica los desplazamientos
-        texture->render(x + xOffset * (faceLeft ? -1 : 1), y + yOffset, nullptr, &scaleRect, flip);
+        texture->render(destRect.x + xOffset * (faceLeft ? -1 : 1), destRect.y + yOffset, nullptr, &destRect, flip);
     } else {
         std::cerr << "Texture not found or invalid for armor type: " << static_cast<int>(armorType) << std::endl;
     }

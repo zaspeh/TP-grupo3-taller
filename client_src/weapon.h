@@ -19,7 +19,7 @@ private:
     std::map<int, int> weaponYOffsets;
 public:
     Weapon(weapon_t weaponState, SDL_Renderer* renderer);
-    void render(int x, int y, bool faceLeft/*, const Camera& camera, float zoom*/);
+    void render(int x, int y, bool faceLeft, const Camera& camera, float zoom);
     bool loadTexture();
     void updateState(const weapon_t& newWeaponState);
     int getType() const { return weaponState.type; }

@@ -73,26 +73,26 @@ void SpawnPlace::render(const Camera& camera, float zoom) {
         int y = spawnData.pos.y + platformOffset;
         int scaledWidth = static_cast<int>(originalWidth * 2.5);
         int scaledHeight = static_cast<int>(originalHeight * 2.5);
-        SDL_Rect destRect = {x, y, scaledWidth, scaledHeight};
+        //SDL_Rect destRect = {x, y, scaledWidth, scaledHeight};
 
-        /*SDL_Point screenPos = camera.getScreenPosition(x, y, zoom);
+        SDL_Point screenPos = camera.getScreenPosition(x, y, zoom);
         
         SDL_Rect destRect = {
             screenPos.x,
             screenPos.y,
             static_cast<int>(scaledWidth * zoom),
             static_cast<int>(scaledHeight * zoom)
-        };*/
+        };
 
         spawnTexture->render(x, y, nullptr, &destRect, SDL_FLIP_NONE);
     }
 
     // El arma se mantiene en su posición original
     if (spawnData.weapon.type != NULL_WEAPON) 
-        weapon->render(spawnData.weapon.pos.x, spawnData.weapon.pos.y, false);
+        weapon->render(spawnData.weapon.pos.x, spawnData.weapon.pos.y, false, camera, zoom);
     
     if (spawnData.armor.type != NULL_ARMOR)
-        armor->render(spawnData.armor.pos.x, spawnData.armor.pos.y, false, spawnData.armor.type);
+        armor->render(spawnData.armor.pos.x, spawnData.armor.pos.y, false, spawnData.armor.type, camera, zoom);
 }
 
 void SpawnPlace::updateState(const spawn_place_t& newState) {

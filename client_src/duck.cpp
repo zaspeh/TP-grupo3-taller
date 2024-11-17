@@ -85,15 +85,15 @@ void Duck::render(const Camera& camera, float zoom) {
     scaleRect.x = duckState.pos.x;
     scaleRect.y = duckState.pos.y;
 
-    SDL_Rect destRect = scaleRect;
+    //SDL_Rect destRect = scaleRect;
 
-    /*SDL_Point screenPos = camera.getScreenPosition(scaleRect.x, scaleRect.y, zoom);
+    SDL_Point screenPos = camera.getScreenPosition(scaleRect.x, scaleRect.y, zoom);
     SDL_Rect destRect = {
         screenPos.x,
         screenPos.y,
         static_cast<int>(scaleRect.w * zoom),
         static_cast<int>(scaleRect.h * zoom)
-    };*/
+    };
 
     if (animations[currentAnimation]) {
         animations[currentAnimation]->renderAnimation(destRect.x, destRect.y, destRect, faceLeft, isMoving);
@@ -115,23 +115,23 @@ void Duck::render(const Camera& camera, float zoom) {
             if (!armor->loadTexture())
                 std::cout << "Failed to load texture weapon\n"; 
             if (faceLeft)
-                armor->render(duckState.pos.x + 5, duckState.pos.y - 15, faceLeft, HELMET_ARMOR);
+                armor->render(duckState.pos.x + 5, duckState.pos.y - 15, faceLeft, HELMET_ARMOR, camera, zoom);
             else
-                armor->render(duckState.pos.x - 11, duckState.pos.y - 15, faceLeft, HELMET_ARMOR);
+                armor->render(duckState.pos.x - 11, duckState.pos.y - 15, faceLeft, HELMET_ARMOR, camera, zoom);
         } 
         if (duckState.chestplate.type == CHESTPLATE_ARMOR) {
             if (!armor->loadTexture())
                 std::cout << "Failed to load texture weapon\n"; 
             if (faceLeft)
-                armor->render(duckState.pos.x + 37, duckState.pos.y, faceLeft, CHESTPLATE_ARMOR);
+                armor->render(duckState.pos.x + 37, duckState.pos.y, faceLeft, CHESTPLATE_ARMOR, camera, zoom);
             else 
-                armor->render(duckState.pos.x - 6, duckState.pos.y, faceLeft, CHESTPLATE_ARMOR);
+                armor->render(duckState.pos.x - 6, duckState.pos.y, faceLeft, CHESTPLATE_ARMOR, camera, zoom);
         }
 
         if (weapon->getType() != NULL_WEAPON) {
             if (!weapon->loadTexture())
                 std::cout << "Failed to load texture weapon\n"; 
-            weapon->render(duckState.pos.x, duckState.pos.y, faceLeft);
+            weapon->render(duckState.pos.x, duckState.pos.y, faceLeft, camera, zoom);
         }
 
     } else {

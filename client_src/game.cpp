@@ -224,11 +224,11 @@ void Game::render() {
     }
 
     for (const auto& weapon : droppedWeapons) {
-        if (weapon && weapon->getState().type != NULL_WEAPON) weapon->render(weapon->getState().pos.x, weapon->getState().pos.y, false);
+        if (weapon && weapon->getState().type != NULL_WEAPON) weapon->render(weapon->getState().pos.x, weapon->getState().pos.y, false, camera, zoom.getCurrentZoom());
     }
 
     for (const auto& armor : droppedArmors) {
-        if (armor && armor->getState().type != NULL_ARMOR) armor->render(armor->getState().pos.x, armor->getState().pos.y, false, armor->getState().type);
+        if (armor && armor->getState().type != NULL_ARMOR) armor->render(armor->getState().pos.x, armor->getState().pos.y, false, armor->getState().type, camera, zoom.getCurrentZoom());
     }
 
     for (const auto& projectile : projectiles) {
