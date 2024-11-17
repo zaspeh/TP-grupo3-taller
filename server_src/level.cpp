@@ -1,13 +1,5 @@
 #include "level.h"
 
-weapon_t null_weapon = {
-    {0, 0},
-    NULL_WEAPON
-};
-armor_t null_armor = {
-    {0, 0},
-    NULL_ARMOR
-};
 
 Level::Level()  {
     std::random_device rd;  // Obtiene una semilla del hardware
@@ -52,11 +44,44 @@ void Level::createLevelById(int id) {
     }
 }
 
+void Level::clearLevelState() {
+    levelState.num_ducks = 0;
+    levelState.num_platforms = 0;
+    levelState.num_spawn_places = 0;
+    levelState.num_boxes = 0;
+    levelState.num_projectiles = 0;
+    levelState.num_dropped_weapons = 0;
+    levelState.num_dropped_armors = 0;
+
+    // Inicializamos las estructuras internas
+    for (auto& duck : levelState.ducks)
+        duck = {{0, 0}, 0, false, false, false, false, false, 0, false, 0, 0, nullWeapon, nullArmor, nullArmor};
+
+    for (auto& platform : levelState.platforms)
+        platform = {{0, 0}, 0};
+
+    for (auto& spawn : levelState.spawn_places) {
+        spawn.pos = {0, 0};
+        spawn.is_active = false;
+        spawn.weapon = nullWeapon;
+        spawn.armor = nullArmor;
+    }
+
+    for (auto& box : levelState.boxes)
+        box = {{0, 0}, 0, false};
+
+    for (auto& projectile : levelState.projectiles)
+        projectile = {{0, 0}, 0, false};
+
+    for (auto& weapon : levelState.dropped_weapons)
+        weapon = nullWeapon;
+
+    for (auto& armor : levelState.dropped_armors)
+        armor = nullArmor;
+}
 
 void Level::initLevel0() {
-    levelState.num_ducks = 0;  // Ejemplo: 4 patos en este nivel
-    for (int i = 0; i < levelState.num_ducks; ++i)
-        levelState.ducks[i] = {};
+    clearLevelState(); 
 
     // Configuración de plataformas 
     levelState.num_platforms = 30;
@@ -118,23 +143,23 @@ void Level::initLevel0() {
     
     levelState.spawn_places[0].pos = {50, 500};
     levelState.spawn_places[0].is_active = true;
-    levelState.spawn_places[0].weapon = null_weapon;
-    levelState.spawn_places[0].armor = null_armor;
+    levelState.spawn_places[0].weapon = nullWeapon;
+    levelState.spawn_places[0].armor = nullArmor;
     
     levelState.spawn_places[1].pos = {100, 500};
     levelState.spawn_places[1].is_active = true;
-    levelState.spawn_places[1].weapon = null_weapon;
-    levelState.spawn_places[1].armor = null_armor;
+    levelState.spawn_places[1].weapon = nullWeapon;
+    levelState.spawn_places[1].armor = nullArmor;
 
     levelState.spawn_places[2].pos = {874, 500};
     levelState.spawn_places[2].is_active = true;
-    levelState.spawn_places[2].weapon = null_weapon;
-    levelState.spawn_places[2].armor = null_armor;
+    levelState.spawn_places[2].weapon = nullWeapon;
+    levelState.spawn_places[2].armor = nullArmor;
 
     levelState.spawn_places[3].pos = {924, 500}; // no mas de cuatro jugadores.
     levelState.spawn_places[3].is_active = true;
-    levelState.spawn_places[3].weapon = null_weapon;
-    levelState.spawn_places[3].armor = null_armor;
+    levelState.spawn_places[3].weapon = nullWeapon;
+    levelState.spawn_places[3].armor = nullArmor;
 
     std::cout << levelState.spawn_places[0].pos.x << " " << levelState.spawn_places[0].pos.y << std::endl;
     levelState.spawn_places[4] = getRandomSpawnPlace(75, 418);
@@ -150,29 +175,19 @@ void Level::initLevel0() {
     this->boxes.push_back(getRandomBox(535, 642));
     this->boxes.push_back(getRandomBox(635, 642)); // 642
     
+
+
     levelState.num_boxes = 5;
     for (int i = 0; i < levelState.num_boxes; ++i)
         levelState.boxes[i] = boxes[i]->getBoxState();
 
-    levelState.num_projectiles = 0;
-    for (int i = 0; i < levelState.num_projectiles; ++i)
-        levelState.projectiles[i] = {};
-    
-    levelState.num_dropped_weapons = 0;
-    for (int i = 0; i < levelState.num_dropped_weapons; ++i)
-        levelState.dropped_weapons[i] = {};
 
-    levelState.num_dropped_armors = 0;
-    for (int i = 0; i < levelState.num_dropped_armors; ++i)
-        levelState.dropped_armors[i] = {};
 }
 
 
 // Implementación de getLevel0
 void Level::initLevel1() {
-    levelState.num_ducks = 0;  // Ejemplo: 4 patos en este nivel
-    for (int i = 0; i < levelState.num_ducks; ++i)
-        levelState.ducks[i] = {};
+    clearLevelState();
 
     // Configuración de plataformas 
     levelState.num_platforms = 20;
@@ -257,23 +272,23 @@ void Level::initLevel1() {
     
     levelState.spawn_places[0].pos = {14*32, 140};
     levelState.spawn_places[0].is_active = true;
-    levelState.spawn_places[0].weapon = null_weapon;
-    levelState.spawn_places[0].armor = null_armor;
+    levelState.spawn_places[0].weapon = nullWeapon;
+    levelState.spawn_places[0].armor = nullArmor;
     
     levelState.spawn_places[1].pos = {15*32, 140};
     levelState.spawn_places[1].is_active = true;
-    levelState.spawn_places[1].weapon = null_weapon;
-    levelState.spawn_places[1].armor = null_armor;
+    levelState.spawn_places[1].weapon = nullWeapon;
+    levelState.spawn_places[1].armor = nullArmor;
 
     levelState.spawn_places[2].pos = {16*32, 140};
     levelState.spawn_places[2].is_active = true;
-    levelState.spawn_places[2].weapon = null_weapon;
-    levelState.spawn_places[2].armor = null_armor;
+    levelState.spawn_places[2].weapon = nullWeapon;
+    levelState.spawn_places[2].armor = nullArmor;
 
     levelState.spawn_places[3].pos = {17*32, 140}; // no mas de cuatro jugadores.
     levelState.spawn_places[3].is_active = true;
-    levelState.spawn_places[3].weapon = null_weapon;
-    levelState.spawn_places[3].armor = null_armor;
+    levelState.spawn_places[3].weapon = nullWeapon;
+    levelState.spawn_places[3].armor = nullArmor;
 
     std::cout << levelState.spawn_places[0].pos.x << " " << levelState.spawn_places[0].pos.y << std::endl;
     levelState.spawn_places[4] = getRandomSpawnPlace(100, 467);
@@ -296,26 +311,12 @@ void Level::initLevel1() {
     for (int i = 0; i < levelState.num_boxes; ++i)
         levelState.boxes[i] = boxes[i]->getBoxState();
 
-    levelState.num_projectiles = 0;
-    for (int i = 0; i < levelState.num_projectiles; ++i)
-        levelState.projectiles[i] = {};
-    
-    levelState.num_dropped_weapons = 0;
-    for (int i = 0; i < levelState.num_dropped_weapons; ++i)
-        levelState.dropped_weapons[i] = {};
-
-    levelState.num_dropped_armors = 0;
-    for (int i = 0; i < levelState.num_dropped_armors; ++i)
-        levelState.dropped_armors[i] = {};
 }
 
 
 // Implementación de getLevel0
 void Level::initLevel2() {
-    levelState.num_ducks = 0;  // Ejemplo: 4 patos en este nivel
-    for (int i = 0; i < levelState.num_ducks; ++i)
-        levelState.ducks[i] = {};
-
+    clearLevelState();
 
     // Configuración de plataformas 
     levelState.num_platforms = 22;
@@ -380,23 +381,23 @@ void Level::initLevel2() {
     
     levelState.spawn_places[0].pos = {5*32, 360};
     levelState.spawn_places[0].is_active = true;
-    levelState.spawn_places[0].weapon = null_weapon;
-    levelState.spawn_places[0].armor = null_armor;
+    levelState.spawn_places[0].weapon = nullWeapon;
+    levelState.spawn_places[0].armor = nullArmor;
     
     levelState.spawn_places[1].pos = {25*32, 360};
     levelState.spawn_places[1].is_active = true;
-    levelState.spawn_places[1].weapon = null_weapon;
-    levelState.spawn_places[1].armor = null_armor;
+    levelState.spawn_places[1].weapon = nullWeapon;
+    levelState.spawn_places[1].armor = nullArmor;
 
     levelState.spawn_places[2].pos = {6*32, 360};
     levelState.spawn_places[2].is_active = true;
-    levelState.spawn_places[2].weapon = null_weapon;
-    levelState.spawn_places[2].armor = null_armor;
+    levelState.spawn_places[2].weapon = nullWeapon;
+    levelState.spawn_places[2].armor = nullArmor;
 
     levelState.spawn_places[3].pos = {26*32, 360}; // no mas de cuatro jugadores.
     levelState.spawn_places[3].is_active = true;
-    levelState.spawn_places[3].weapon = null_weapon;
-    levelState.spawn_places[3].armor = null_armor;
+    levelState.spawn_places[3].weapon = nullWeapon;
+    levelState.spawn_places[3].armor = nullArmor;
 
     std::cout << levelState.spawn_places[0].pos.x << " " << levelState.spawn_places[0].pos.y << std::endl;
     levelState.spawn_places[4] = getRandomSpawnPlace(430, 367 + HEIGHT_PLATFORM);
@@ -419,17 +420,6 @@ void Level::initLevel2() {
     for (int i = 0; i < levelState.num_boxes; ++i)
         levelState.boxes[i] = boxes[i]->getBoxState();
 
-    levelState.num_projectiles = 0;
-    for (int i = 0; i < levelState.num_projectiles; ++i)
-        levelState.projectiles[i] = {};
-    
-    levelState.num_dropped_weapons = 0;
-    for (int i = 0; i < levelState.num_dropped_weapons; ++i)
-        levelState.dropped_weapons[i] = {};
-
-    levelState.num_dropped_armors = 0;
-    for (int i = 0; i < levelState.num_dropped_armors; ++i)
-        levelState.dropped_armors[i] = {};
 }
 
 // Métodos para acceder a la información del nivel
@@ -451,15 +441,16 @@ std::unique_ptr<Box> Level::getRandomBox(int x, int y) {
     int randomIndex = boxDist(rng);
     
     box_t box = { {x, y}, BOX_HEALTH, false };
-    armor_t armor = null_armor;
-    weapon_t weapon = null_weapon;
+    armor_t armor = nullArmor;
+    weapon_t weapon = nullWeapon;
 
     if (randomIndex < MAX_BOXES / 3) {
         box.is_explosive = true;
     } else if (randomIndex < 2 * MAX_BOXES / 3) {
         armor = {{x, y}, getRandomArmor()};
     } else {
-        weapon = {{x, y}, getRandomWeapon()};
+        uint8_t type = getRandomWeapon();
+        weapon = {{x, y}, type, ammoForWeapons[type]};
     }
 
     return std::make_unique<Box>(box, armor, weapon);
@@ -481,8 +472,8 @@ spawn_place_t Level::getRandomSpawnPlace(int x, int y) {
     spawn_place_t spawn = {
         {x, y},
         false,
-        null_weapon,
-        null_armor
+        nullWeapon,
+        nullArmor
     };
 
     if (randomIndex < levelState.num_spawn_places / 2) {
@@ -491,7 +482,7 @@ spawn_place_t Level::getRandomSpawnPlace(int x, int y) {
     } else {
         spawn.weapon.pos = {x, y};
         spawn.weapon.type = getRandomWeapon();
-        spawn.weapon.ammo = weaponDist(rng) * 5; // Para variar la munición inicial
+        spawn.weapon.ammo = ammoForWeapons[spawn.weapon.type]; // Para variar la munición inicial
     }
 
     return spawn;
@@ -501,3 +492,87 @@ void Level::updateState(level_t& state) {
     levelState = state;
 }
 
+/*
+==20851== Thread 3:
+==20851== Invalid read of size 8
+==20851==    at 0x49364E4: std::_Rb_tree_increment(std::_Rb_tree_node_base*) (in /usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.30)
+==20851==    by 0x126024: std::_Rb_tree_iterator<std::pair<unsigned char const, std::shared_ptr<PlayerState> > >::operator++() (stl_tree.h:287)
+==20851==    by 0x122260: GameState::updatePlayers(float) (game_state.cpp:240)
+==20851==    by 0x11BA7C: GameLoop::run() (gameloop.cpp:46)
+==20851==    by 0x11466B: Thread::main() (thread.h:43)
+==20851==    by 0x11B69F: void std::__invoke_impl<void, void (Thread::*)(), Thread*>(std::__invoke_memfun_deref, void (Thread::*&&)(), Thread*&&) (invoke.h:74)
+==20851==    by 0x11B5F2: std::__invoke_result<void (Thread::*)(), Thread*>::type std::__invoke<void (Thread::*)(), Thread*>(void (Thread::*&&)(), Thread*&&) (invoke.h:96)
+==20851==    by 0x11B552: void std::thread::_Invoker<std::tuple<void (Thread::*)(), Thread*> >::_M_invoke<0ul, 1ul>(std::_Index_tuple<0ul, 1ul>) (std_thread.h:259)
+==20851==    by 0x11B399: std::thread::_Invoker<std::tuple<void (Thread::*)(), Thread*> >::operator()() (std_thread.h:266)
+==20851==    by 0x11B259: std::thread::_State_impl<std::thread::_Invoker<std::tuple<void (Thread::*)(), Thread*> > >::_M_run() (std_thread.h:211)
+==20851==    by 0x494C252: ??? (in /usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.30)
+==20851==    by 0x4C37AC2: start_thread (pthread_create.c:442)
+==20851==  Address 0x4f70e08 is 24 bytes inside a block of size 56 free'd
+==20851==    at 0x484BB6F: operator delete(void*, unsigned long) (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==20851==    by 0x120311: __gnu_cxx::new_allocator<std::_Rb_tree_node<std::pair<unsigned char const, std::shared_ptr<PlayerState> > > >::deallocate(std::_Rb_tree_node<std::pair<unsigned char const, std::shared_ptr<PlayerState> > >*, unsigned long) (new_allocator.h:145)
+==20851==    by 0x11FFA6: std::allocator_traits<std::allocator<std::_Rb_tree_node<std::pair<unsigned char const, std::shared_ptr<PlayerState> > > > >::deallocate(std::allocator<std::_Rb_tree_node<std::pair<unsigned char const, std::shared_ptr<PlayerState> > > >&, std::_Rb_tree_node<std::pair<unsigned char const, std::shared_ptr<PlayerState> > >*, unsigned long) (alloc_traits.h:496)
+==20851==    by 0x11F9D8: std::_Rb_tree<unsigned char, std::pair<unsigned char const, std::shared_ptr<PlayerState> >, std::_Select1st<std::pair<unsigned char const, std::shared_ptr<PlayerState> > >, std::less<unsigned char>, std::allocator<std::pair<unsigned char const, std::shared_ptr<PlayerState> > > >::_M_put_node(std::_Rb_tree_node<std::pair<unsigned char const, std::shared_ptr<PlayerState> > >*) (stl_tree.h:565)
+==20851==    by 0x11F3ED: std::_Rb_tree<unsigned char, std::pair<unsigned char const, std::shared_ptr<PlayerState> >, std::_Select1st<std::pair<unsigned char const, std::shared_ptr<PlayerState> > >, std::less<unsigned char>, std::allocator<std::pair<unsigned char const, std::shared_ptr<PlayerState> > > >::_M_drop_node(std::_Rb_tree_node<std::pair<unsigned char const, std::shared_ptr<PlayerState> > >*) (stl_tree.h:632)
+==20851==    by 0x11E71A: std::_Rb_tree<unsigned char, std::pair<unsigned char const, std::shared_ptr<PlayerState> >, std::_Select1st<std::pair<unsigned char const, std::shared_ptr<PlayerState> > >, std::less<unsigned char>, std::allocator<std::pair<unsigned char const, std::shared_ptr<PlayerState> > > >::_M_erase(std::_Rb_tree_node<std::pair<unsigned char const, std::shared_ptr<PlayerState> > >*) (stl_tree.h:1891)
+==20851==    by 0x128A5F: std::_Rb_tree<unsigned char, std::pair<unsigned char const, std::shared_ptr<PlayerState> >, std::_Select1st<std::pair<unsigned char const, std::shared_ptr<PlayerState> > >, std::less<unsigned char>, std::allocator<std::pair<unsigned char const, std::shared_ptr<PlayerState> > > >::clear() (stl_tree.h:1254)
+==20851==    by 0x129660: std::_Rb_tree<unsigned char, std::pair<unsigned char const, std::shared_ptr<PlayerState> >, std::_Select1st<std::pair<unsigned char const, std::shared_ptr<PlayerState> > >, std::less<unsigned char>, std::allocator<std::pair<unsigned char const, std::shared_ptr<PlayerState> > > >::_M_erase_aux(std::_Rb_tree_const_iterator<std::pair<unsigned char const, std::shared_ptr<PlayerState> > >, std::_Rb_tree_const_iterator<std::pair<unsigned char const, std::shared_ptr<PlayerState> > >) (stl_tree.h:2498)
+==20851==    by 0x127122: std::_Rb_tree<unsigned char, std::pair<unsigned char const, std::shared_ptr<PlayerState> >, std::_Select1st<std::pair<unsigned char const, std::shared_ptr<PlayerState> > >, std::less<unsigned char>, std::allocator<std::pair<unsigned char const, std::shared_ptr<PlayerState> > > >::erase(unsigned char const&) (stl_tree.h:2512)
+==20851==    by 0x125678: std::map<unsigned char, std::shared_ptr<PlayerState>, std::less<unsigned char>, std::allocator<std::pair<unsigned char const, std::shared_ptr<PlayerState> > > >::erase(unsigned char const&) (stl_map.h:1069)
+==20851==    by 0x120B08: GameState::removePlayer(unsigned char) (game_state.cpp:25)
+==20851==    by 0x11BCC5: GameLoop::removePlayer(unsigned char) (gameloop.cpp:75)
+==20851==  Block was alloc'd at
+==20851==    at 0x4849013: operator new(unsigned long) (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==20851==    by 0x12D547: __gnu_cxx::new_allocator<std::_Rb_tree_node<std::pair<unsigned char const, std::shared_ptr<PlayerState> > > >::allocate(unsigned long, void const*) (new_allocator.h:127)
+==20851==    by 0x12C5C9: std::allocator_traits<std::allocator<std::_Rb_tree_node<std::pair<unsigned char const, std::shared_ptr<PlayerState> > > > >::allocate(std::allocator<std::_Rb_tree_node<std::pair<unsigned char const, std::shared_ptr<PlayerState> > > >&, unsigned long) (alloc_traits.h:464)
+==20851==    by 0x12B07C: std::_Rb_tree<unsigned char, std::pair<unsigned char const, std::shared_ptr<PlayerState> >, std::_Select1st<std::pair<unsigned char const, std::shared_ptr<PlayerState> > >, std::less<unsigned char>, std::allocator<std::pair<unsigned char const, std::shared_ptr<PlayerState> > > >::_M_get_node() (stl_tree.h:561)
+==20851==    by 0x128E8A: std::_Rb_tree_node<std::pair<unsigned char const, std::shared_ptr<PlayerState> > >* std::_Rb_tree<unsigned char, std::pair<unsigned char const, std::shared_ptr<PlayerState> >, std::_Select1st<std::pair<unsigned char const, std::shared_ptr<PlayerState> > >, std::less<unsigned char>, std::allocator<std::pair<unsigned char const, std::shared_ptr<PlayerState> > > >::_M_create_node<std::piecewise_construct_t const&, std::tuple<unsigned char const&>, std::tuple<> >(std::piecewise_construct_t const&, std::tuple<unsigned char const&>&&, std::tuple<>&&) (stl_tree.h:611)
+==20851==    by 0x126F90: std::_Rb_tree_iterator<std::pair<unsigned char const, std::shared_ptr<PlayerState> > > std::_Rb_tree<unsigned char, std::pair<unsigned char const, std::shared_ptr<PlayerState> >, std::_Select1st<std::pair<unsigned char const, std::shared_ptr<PlayerState> > >, std::less<unsigned char>, std::allocator<std::pair<unsigned char const, std::shared_ptr<PlayerState> > > >::_M_emplace_hint_unique<std::piecewise_construct_t const&, std::tuple<unsigned char const&>, std::tuple<> >(std::_Rb_tree_const_iterator<std::pair<unsigned char const, std::shared_ptr<PlayerState> > >, std::piecewise_construct_t const&, std::tuple<unsigned char const&>&&, std::tuple<>&&) (stl_tree.h:2431)
+==20851==    by 0x1255DF: std::map<unsigned char, std::shared_ptr<PlayerState>, std::less<unsigned char>, std::allocator<std::pair<unsigned char const, std::shared_ptr<PlayerState> > > >::operator[](unsigned char const&) (stl_map.h:501)
+==20851==    by 0x120FAF: GameState::doAction(unsigned char, unsigned char) (game_state.cpp:56)
+==20851==    by 0x11BC31: GameLoop::doActionGameState(unsigned char, unsigned char) (gameloop.cpp:70)
+==20851==    by 0x13A13F: Receiver::run()::{lambda()#1}::operator()() const (receiver.cpp:25)
+==20851==    by 0x13A8E3: void std::__invoke_impl<void, Receiver::run()::{lambda()#1}&>(std::__invoke_other, Receiver::run()::{lambda()#1}&) (invoke.h:61)
+==20851==    by 0x13A7D7: std::enable_if<is_invocable_r_v<void, Receiver::run()::{lambda()#1}&>, void>::type std::__invoke_r<void, Receiver::run()::{lambda()#1}&>(Receiver::run()::{lambda()#1}&) (invoke.h:111)
+==20851== 
+==20851== Invalid read of size 8
+==20851==    at 0x4936500: std::_Rb_tree_increment(std::_Rb_tree_node_base*) (in /usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.30)
+==20851==    by 0x126024: std::_Rb_tree_iterator<std::pair<unsigned char const, std::shared_ptr<PlayerState> > >::operator++() (stl_tree.h:287)
+==20851==    by 0x122260: GameState::updatePlayers(float) (game_state.cpp:240)
+==20851==    by 0x11BA7C: GameLoop::run() (gameloop.cpp:46)
+==20851==    by 0x11466B: Thread::main() (thread.h:43)
+==20851==    by 0x11B69F: void std::__invoke_impl<void, void (Thread::*)(), Thread*>(std::__invoke_memfun_deref, void (Thread::*&&)(), Thread*&&) (invoke.h:74)
+==20851==    by 0x11B5F2: std::__invoke_result<void (Thread::*)(), Thread*>::type std::__invoke<void (Thread::*)(), Thread*>(void (Thread::*&&)(), Thread*&&) (invoke.h:96)
+==20851==    by 0x11B552: void std::thread::_Invoker<std::tuple<void (Thread::*)(), Thread*> >::_M_invoke<0ul, 1ul>(std::_Index_tuple<0ul, 1ul>) (std_thread.h:259)
+==20851==    by 0x11B399: std::thread::_Invoker<std::tuple<void (Thread::*)(), Thread*> >::operator()() (std_thread.h:266)
+==20851==    by 0x11B259: std::thread::_State_impl<std::thread::_Invoker<std::tuple<void (Thread::*)(), Thread*> > >::_M_run() (std_thread.h:211)
+==20851==    by 0x494C252: ??? (in /usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.30)
+==20851==    by 0x4C37AC2: start_thread (pthread_create.c:442)
+==20851==  Address 0x4f70df8 is 8 bytes inside a block of size 56 free'd
+==20851==    at 0x484BB6F: operator delete(void*, unsigned long) (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==20851==    by 0x120311: __gnu_cxx::new_allocator<std::_Rb_tree_node<std::pair<unsigned char const, std::shared_ptr<PlayerState> > > >::deallocate(std::_Rb_tree_node<std::pair<unsigned char const, std::shared_ptr<PlayerState> > >*, unsigned long) (new_allocator.h:145)
+==20851==    by 0x11FFA6: std::allocator_traits<std::allocator<std::_Rb_tree_node<std::pair<unsigned char const, std::shared_ptr<PlayerState> > > > >::deallocate(std::allocator<std::_Rb_tree_node<std::pair<unsigned char const, std::shared_ptr<PlayerState> > > >&, std::_Rb_tree_node<std::pair<unsigned char const, std::shared_ptr<PlayerState> > >*, unsigned long) (alloc_traits.h:496)
+==20851==    by 0x11F9D8: std::_Rb_tree<unsigned char, std::pair<unsigned char const, std::shared_ptr<PlayerState> >, std::_Select1st<std::pair<unsigned char const, std::shared_ptr<PlayerState> > >, std::less<unsigned char>, std::allocator<std::pair<unsigned char const, std::shared_ptr<PlayerState> > > >::_M_put_node(std::_Rb_tree_node<std::pair<unsigned char const, std::shared_ptr<PlayerState> > >*) (stl_tree.h:565)
+==20851==    by 0x11F3ED: std::_Rb_tree<unsigned char, std::pair<unsigned char const, std::shared_ptr<PlayerState> >, std::_Select1st<std::pair<unsigned char const, std::shared_ptr<PlayerState> > >, std::less<unsigned char>, std::allocator<std::pair<unsigned char const, std::shared_ptr<PlayerState> > > >::_M_drop_node(std::_Rb_tree_node<std::pair<unsigned char const, std::shared_ptr<PlayerState> > >*) (stl_tree.h:632)
+==20851==    by 0x11E71A: std::_Rb_tree<unsigned char, std::pair<unsigned char const, std::shared_ptr<PlayerState> >, std::_Select1st<std::pair<unsigned char const, std::shared_ptr<PlayerState> > >, std::less<unsigned char>, std::allocator<std::pair<unsigned char const, std::shared_ptr<PlayerState> > > >::_M_erase(std::_Rb_tree_node<std::pair<unsigned char const, std::shared_ptr<PlayerState> > >*) (stl_tree.h:1891)
+==20851==    by 0x128A5F: std::_Rb_tree<unsigned char, std::pair<unsigned char const, std::shared_ptr<PlayerState> >, std::_Select1st<std::pair<unsigned char const, std::shared_ptr<PlayerState> > >, std::less<unsigned char>, std::allocator<std::pair<unsigned char const, std::shared_ptr<PlayerState> > > >::clear() (stl_tree.h:1254)
+==20851==    by 0x129660: std::_Rb_tree<unsigned char, std::pair<unsigned char const, std::shared_ptr<PlayerState> >, std::_Select1st<std::pair<unsigned char const, std::shared_ptr<PlayerState> > >, std::less<unsigned char>, std::allocator<std::pair<unsigned char const, std::shared_ptr<PlayerState> > > >::_M_erase_aux(std::_Rb_tree_const_iterator<std::pair<unsigned char const, std::shared_ptr<PlayerState> > >, std::_Rb_tree_const_iterator<std::pair<unsigned char const, std::shared_ptr<PlayerState> > >) (stl_tree.h:2498)
+==20851==    by 0x127122: std::_Rb_tree<unsigned char, std::pair<unsigned char const, std::shared_ptr<PlayerState> >, std::_Select1st<std::pair<unsigned char const, std::shared_ptr<PlayerState> > >, std::less<unsigned char>, std::allocator<std::pair<unsigned char const, std::shared_ptr<PlayerState> > > >::erase(unsigned char const&) (stl_tree.h:2512)
+==20851==    by 0x125678: std::map<unsigned char, std::shared_ptr<PlayerState>, std::less<unsigned char>, std::allocator<std::pair<unsigned char const, std::shared_ptr<PlayerState> > > >::erase(unsigned char const&) (stl_map.h:1069)
+==20851==    by 0x120B08: GameState::removePlayer(unsigned char) (game_state.cpp:25)
+==20851==    by 0x11BCC5: GameLoop::removePlayer(unsigned char) (gameloop.cpp:75)
+==20851==  Block was alloc'd at
+==20851==    at 0x4849013: operator new(unsigned long) (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==20851==    by 0x12D547: __gnu_cxx::new_allocator<std::_Rb_tree_node<std::pair<unsigned char const, std::shared_ptr<PlayerState> > > >::allocate(unsigned long, void const*) (new_allocator.h:127)
+==20851==    by 0x12C5C9: std::allocator_traits<std::allocator<std::_Rb_tree_node<std::pair<unsigned char const, std::shared_ptr<PlayerState> > > > >::allocate(std::allocator<std::_Rb_tree_node<std::pair<unsigned char const, std::shared_ptr<PlayerState> > > >&, unsigned long) (alloc_traits.h:464)
+==20851==    by 0x12B07C: std::_Rb_tree<unsigned char, std::pair<unsigned char const, std::shared_ptr<PlayerState> >, std::_Select1st<std::pair<unsigned char const, std::shared_ptr<PlayerState> > >, std::less<unsigned char>, std::allocator<std::pair<unsigned char const, std::shared_ptr<PlayerState> > > >::_M_get_node() (stl_tree.h:561)
+==20851==    by 0x128E8A: std::_Rb_tree_node<std::pair<unsigned char const, std::shared_ptr<PlayerState> > >* std::_Rb_tree<unsigned char, std::pair<unsigned char const, std::shared_ptr<PlayerState> >, std::_Select1st<std::pair<unsigned char const, std::shared_ptr<PlayerState> > >, std::less<unsigned char>, std::allocator<std::pair<unsigned char const, std::shared_ptr<PlayerState> > > >::_M_create_node<std::piecewise_construct_t const&, std::tuple<unsigned char const&>, std::tuple<> >(std::piecewise_construct_t const&, std::tuple<unsigned char const&>&&, std::tuple<>&&) (stl_tree.h:611)
+==20851==    by 0x126F90: std::_Rb_tree_iterator<std::pair<unsigned char const, std::shared_ptr<PlayerState> > > std::_Rb_tree<unsigned char, std::pair<unsigned char const, std::shared_ptr<PlayerState> >, std::_Select1st<std::pair<unsigned char const, std::shared_ptr<PlayerState> > >, std::less<unsigned char>, std::allocator<std::pair<unsigned char const, std::shared_ptr<PlayerState> > > >::_M_emplace_hint_unique<std::piecewise_construct_t const&, std::tuple<unsigned char const&>, std::tuple<> >(std::_Rb_tree_const_iterator<std::pair<unsigned char const, std::shared_ptr<PlayerState> > >, std::piecewise_construct_t const&, std::tuple<unsigned char const&>&&, std::tuple<>&&) (stl_tree.h:2431)
+==20851==    by 0x1255DF: std::map<unsigned char, std::shared_ptr<PlayerState>, std::less<unsigned char>, std::allocator<std::pair<unsigned char const, std::shared_ptr<PlayerState> > > >::operator[](unsigned char const&) (stl_map.h:501)
+==20851==    by 0x120FAF: GameState::doAction(unsigned char, unsigned char) (game_state.cpp:56)
+==20851==    by 0x11BC31: GameLoop::doActionGameState(unsigned char, unsigned char) (gameloop.cpp:70)
+==20851==    by 0x13A13F: Receiver::run()::{lambda()#1}::operator()() const (receiver.cpp:25)
+==20851==    by 0x13A8E3: void std::__invoke_impl<void, Receiver::run()::{lambda()#1}&>(std::__invoke_other, Receiver::run()::{lambda()#1}&) (invoke.h:61)
+==20851==    by 0x13A7D7: std::enable_if<is_invocable_r_v<void, Receiver::run()::{lambda()#1}&>, void>::type std::__invoke_r<void, Receiver::run()::{lambda()#1}&>(Receiver::run()::{lambda()#1}&) (invoke.h:111)
+==20851== 
+
+*/

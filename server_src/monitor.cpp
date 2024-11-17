@@ -37,8 +37,6 @@ void Monitor::procesar_mensaje(const game_state_t gameState) {
     }
 } */
 
-
-
 void Monitor::agregar_cliente(std::shared_ptr<ServerProtocol> client) {
     std::lock_guard<std::mutex> lock(mutex_clientes);
     clientes.push_back(client);
@@ -46,15 +44,14 @@ void Monitor::agregar_cliente(std::shared_ptr<ServerProtocol> client) {
 
 void Monitor::eliminar_cliente(std::shared_ptr<ServerProtocol> client) {
     std::lock_guard<std::mutex> lock(mutex_clientes);
-
+    client->closeSocket();
+ 
     auto it = std::remove(clientes.begin(), clientes.end(), client);
     if (it != clientes.end()) {
         clientes.erase(it, clientes.end());  
     }
     client = nullptr;
 }
-
-
 
 std::vector<std::shared_ptr<ServerProtocol>> Monitor::obtener_clientes() {
     std::lock_guard<std::mutex> lock(mutex_clientes);
@@ -63,8 +60,6 @@ std::vector<std::shared_ptr<ServerProtocol>> Monitor::obtener_clientes() {
 
 void Monitor::cerrar_clientes() {
     std::lock_guard<std::mutex> lock(mutex_clientes);
-    for (auto& client: clientes) {
-        client->closeSocket();
-    }
+
     clientes.clear();
 }

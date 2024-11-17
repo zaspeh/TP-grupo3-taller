@@ -34,6 +34,7 @@ void GameState::removePlayer(uint8_t id) {
 
 void GameState::updateState(uint8_t id, std::shared_ptr<PlayerState> player) {
     state.level.ducks[id] = player->getState();
+    std::cout << "Nueva posición del player: " << static_cast<int>(state.level.ducks[id].pos.x) << ", " << static_cast<int>(state.level.ducks[id].pos.x) << std::endl;
 }
 
 std::shared_ptr<PlayerState> GameState::connectPlayer(uint8_t id) {
@@ -167,6 +168,7 @@ void GameState::createProjectile(uint8_t weaponType, position_t origin, bool fac
 void GameState::updateProjectilsPhysics(float deltaTime) {
     for (size_t i = 0; i < state.level.num_projectiles; i++) {
         uint8_t maxDistance = checkWeaponDistance(state.level.projectiles[i].type);
+        std::cout << "Max distance: " << maxDistance << std::endl;
         state.level.projectiles[i].is_active = projectilePhysics[i].updatePosition(state.level.projectiles[i] , state.level, deltaTime, maxDistance, this);
         // if false -> lo elimino asì no aparece otra vez.
     }
@@ -258,23 +260,28 @@ void GameState::checkIfSomeoneWin() {
         if (player->isAlive()) {
             aliveDucks++;
         }
-        //if(state.level.ducks[id].score == state.winning_score)  digo que ganò
-
     }
 
     if (aliveDucks == 1 and players.size() > 1) {
+        // Guarda el estado actual de los patos antes de resetear
+        std::map<uint8_t, duck_t> currentDucks;
         for (auto& [id, player] : players) {
-            if (player->isAlive()) {
-                state.level.ducks[id].score += 1;
-            }
+            currentDucks[id] = state.level.ducks[id];
         }
+
+        // Crea nuevo nivel
         level.createNewLevel();
         state.level = level.getLevel();
+
+        // Restaura los patos en el nuevo nivel
         for (auto& [id, player] : players) {
             position_t pos = level.getSpawnPosition();
-            player->resetPlayer(state.level.ducks[id], pos.x, pos.y);
-            state.level.ducks[id] = player->getState();
+            player->resetPlayer(currentDucks[id], pos.x, pos.y);
+            state.level.ducks[id] = player->getState(); // Actualiza explícitamente el estado
         }
+        
+        // Actualiza el número de patos
+        state.level.num_ducks = players.size();
     }
 }
 

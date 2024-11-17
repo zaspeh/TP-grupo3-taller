@@ -7,6 +7,13 @@ Game::Game(std::shared_ptr<Queue<game_state_t>> gameStateQueue, std::shared_ptr<
       gRenderer(nullptr, SDL_DestroyRenderer)
 {
     gameState = gameStateQueue->pop();
+    ducks.reserve(MAX_DUCKS);
+    platforms.reserve(MAX_PLATFORMS);
+    spawns.reserve(MAX_SPAWN_PLACES);
+    droppedWeapons.reserve(MAX_ITEMS);
+    droppedArmors.reserve(MAX_ITEMS);
+    projectiles.reserve(MAX_PROJECTILES);
+    boxes.reserve(MAX_BOXES);
 }
 
 Game::~Game()
@@ -15,7 +22,7 @@ Game::~Game()
     printf("Game destroyed.\n");
 }
 
-bool Game::loadMedia()
+/* bool Game::loadMedia()
 {
     bool charged = true;
     ducks.resize(gameState.level.num_ducks);  // Ajuste: asegurar el tamaño correcto del vector ducks
@@ -78,6 +85,48 @@ bool Game::loadMedia()
     }
 
     return charged;
+} */
+
+bool Game::loadMedia() {
+    bool success = true;
+    
+    try {
+        // Load background
+        background = std::make_unique<LTexture>(gRenderer.get());
+        if (!background || !background->loadFromFile("client_src/forest.png")) {
+            throw std::runtime_error("Failed to load background texture");
+        }
+
+        // Initialize game objects with proper error handling
+        initializeGameObjects();
+        
+    } catch (const std::exception& e) {
+        std::cerr << "Error loading media: " << e.what() << std::endl;
+        success = false;
+    }
+    
+    return success;
+}
+
+void Game::initializeGameObjects() {
+    // Initialize with proper error checking and exception handling
+    if (gameState.level.num_ducks > MAX_DUCKS ||
+        gameState.level.num_platforms > MAX_PLATFORMS ||
+        gameState.level.num_spawn_places > MAX_SPAWN_PLACES ||
+        gameState.level.num_boxes > MAX_BOXES) {
+        throw std::runtime_error("Game state exceeds maximum allowed objects");
+    }
+
+    // Initialize vectors with proper sizes
+    ducks.clear();
+    platforms.clear();
+    spawns.clear();
+    boxes.clear();
+    
+    ducks.resize(gameState.level.num_ducks);
+    platforms.resize(gameState.level.num_platforms);
+    spawns.resize(gameState.level.num_spawn_places);
+    boxes.resize(gameState.level.num_boxes);
 }
 
 #include <chrono>
@@ -191,8 +240,19 @@ void Game::run()
 }
 
 void Game::render() {
-    SDL_Rect scaleRect = {0, 0, SCREEN_WIDTH, SCREEN_HEIGHT};
-    background->render(0, 0, nullptr, &scaleRect, SDL_FLIP_NONE);
+    if (!gRenderer) {
+        std::cerr << "Renderer is null" << std::endl;
+        return;
+    }
+    
+    SDL_SetRenderDrawColor(gRenderer.get(), 0xFF, 0xFF, 0xFF, 0xFF);
+    SDL_RenderClear(gRenderer.get());
+
+    // Render background
+    if (background) {
+        SDL_Rect scaleRect = {0, 0, SCREEN_WIDTH, SCREEN_HEIGHT};
+        background->render(0, 0, nullptr, &scaleRect, SDL_FLIP_NONE);
+    }
 
     for (const auto& platform : platforms) {
         if (platform) platform->render();
@@ -220,15 +280,12 @@ void Game::render() {
 
     for (const auto& projectile : projectiles) {
         if (projectile) { 
-            std::cout << "Renderizando projectile\n";
             projectile->render();
         }
     }
 
-
     SDL_RenderPresent(gRenderer.get());
 }
-
 
 void Game::update(game_state_t gameState) {
     // Primero actualizamos los patos existentes y removemos los que ya no están
@@ -237,7 +294,6 @@ void Game::update(game_state_t gameState) {
         for (int j = 0; j < gameState.level.num_ducks; j++) {
             if (ducks[i] && ducks[i]->getId() == gameState.level.ducks[j].id) {
                 ducks[i]->updateState(gameState.level.ducks[j]);
-                std::cout << "Actualizando estado del pato " << ducks[i]->getId() << std::endl;
                 found = true;
                 break;
             }
@@ -390,9 +446,283 @@ bool Game::init()
 }
 
 
-void Game::stop()
-{
-    IMG_Quit();
-    SDL_Quit();
-    printf("Game stopped.\n");
+void Game::stop() {
+    try {
+        Thread::stop();
+        // Clear game-specific resources
+        ducks.clear();
+        platforms.clear();
+        spawns.clear();
+        droppedWeapons.clear();
+        droppedArmors.clear();
+        projectiles.clear();
+        boxes.clear();
+        background.reset();
+
+        // Clear SDL-specific resources
+        if (gRenderer) {
+            gRenderer.reset();
+            std::cout << "Renderer destroyed successfully." << std::endl;
+        }
+        
+        if (gWindow) {
+            gWindow.reset();
+            std::cout << "Window destroyed successfully." << std::endl;
+        }
+
+        // Quit SDL subsystems
+        IMG_Quit();
+        std::cout << "SDL_image subsystem terminated." << std::endl;
+        
+        SDL_Quit();
+        std::cout << "SDL subsystems terminated." << std::endl;
+
+        std::cout << "Game stopped successfully." << std::endl;
+    } catch (const std::exception& e) {
+        std::cerr << "Error during game shutdown: " << e.what() << std::endl;
+    } catch (...) {
+        std::cerr << "Unknown error during game shutdown." << std::endl;
+    }
 }
+
+
+/*
+Error: socket recv failedBad file descriptor
+==22915== Thread 4:
+==22915== Invalid read of size 8
+==22915==    at 0x493F99F: ??? (in /usr/lib/x86_64-linux-gnu/libSDL2-2.0.so.0.18.2)
+==22915==    by 0x12403C: Game::render() (game.cpp:288)
+==22915==    by 0x12375E: Game::run() (game.cpp:225)
+==22915==    by 0x1257FF: Thread::main() (thread.h:43)
+==22915==    by 0x131C5B: void std::__invoke_impl<void, void (Thread::*)(), Thread*>(std::__invoke_memfun_deref, void (Thread::*&&)(), Thread*&&) (invoke.h:74)
+==22915==    by 0x131BAE: std::__invoke_result<void (Thread::*)(), Thread*>::type std::__invoke<void (Thread::*)(), Thread*>(void (Thread::*&&)(), Thread*&&) (invoke.h:96)
+==22915==    by 0x131B0E: void std::thread::_Invoker<std::tuple<void (Thread::*)(), Thread*> >::_M_invoke<0ul, 1ul>(std::_Index_tuple<0ul, 1ul>) (std_thread.h:259)
+==22915==    by 0x131AC3: std::thread::_Invoker<std::tuple<void (Thread::*)(), Thread*> >::operator()() (std_thread.h:266)
+==22915==    by 0x131AA3: std::thread::_State_impl<std::thread::_Invoker<std::tuple<void (Thread::*)(), Thread*> > >::_M_run() (std_thread.h:211)
+==22915==    by 0x4B0F252: ??? (in /usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.30)
+==22915==    by 0x4D15AC2: start_thread (pthread_create.c:442)
+==22915==    by 0x4DA6A03: clone (clone.S:100)
+==22915==  Address 0x154a6f60 is 0 bytes inside a block of size 240 free'd
+==22915==    at 0x484B27F: free (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==22915==    by 0x4945559: ??? (in /usr/lib/x86_64-linux-gnu/libSDL2-2.0.so.0.18.2)
+==22915==    by 0x49456F0: ??? (in /usr/lib/x86_64-linux-gnu/libSDL2-2.0.so.0.18.2)
+==22915==    by 0x489C1E3: ??? (in /usr/lib/x86_64-linux-gnu/libSDL2-2.0.so.0.18.2)
+==22915==    by 0x489C4B5: ??? (in /usr/lib/x86_64-linux-gnu/libSDL2-2.0.so.0.18.2)
+==22915==    by 0x1251CD: Game::stop() (game.cpp:453)
+==22915==    by 0x116916: Client::stop() (client.cpp:91)
+==22915==    by 0x1162A4: Client::checkIfClose() (client.cpp:14)
+==22915==    by 0x116849: Client::run() (client.cpp:79)
+==22915==    by 0x132071: main (main.cpp:11)
+==22915==  Block was alloc'd at
+==22915==    at 0x484DA83: calloc (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==22915==    by 0x493D0C1: ??? (in /usr/lib/x86_64-linux-gnu/libSDL2-2.0.so.0.18.2)
+==22915==    by 0x124FF3: Game::init() (game.cpp:420)
+==22915==    by 0x123645: Game::run() (game.cpp:200)
+==22915==    by 0x1257FF: Thread::main() (thread.h:43)
+==22915==    by 0x131C5B: void std::__invoke_impl<void, void (Thread::*)(), Thread*>(std::__invoke_memfun_deref, void (Thread::*&&)(), Thread*&&) (invoke.h:74)
+==22915==    by 0x131BAE: std::__invoke_result<void (Thread::*)(), Thread*>::type std::__invoke<void (Thread::*)(), Thread*>(void (Thread::*&&)(), Thread*&&) (invoke.h:96)
+==22915==    by 0x131B0E: void std::thread::_Invoker<std::tuple<void (Thread::*)(), Thread*> >::_M_invoke<0ul, 1ul>(std::_Index_tuple<0ul, 1ul>) (std_thread.h:259)
+==22915==    by 0x131AC3: std::thread::_Invoker<std::tuple<void (Thread::*)(), Thread*> >::operator()() (std_thread.h:266)
+==22915==    by 0x131AA3: std::thread::_State_impl<std::thread::_Invoker<std::tuple<void (Thread::*)(), Thread*> > >::_M_run() (std_thread.h:211)
+==22915==    by 0x4B0F252: ??? (in /usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.30)
+==22915==    by 0x4D15AC2: start_thread (pthread_create.c:442)
+==22915== 
+==22915== Invalid read of size 8
+==22915==    at 0x493F99F: ??? (in /usr/lib/x86_64-linux-gnu/libSDL2-2.0.so.0.18.2)
+==22915==    by 0x123776: Game::run() (game.cpp:227)
+==22915==    by 0x1257FF: Thread::main() (thread.h:43)
+==22915==    by 0x131C5B: void std::__invoke_impl<void, void (Thread::*)(), Thread*>(std::__invoke_memfun_deref, void (Thread::*&&)(), Thread*&&) (invoke.h:74)
+==22915==    by 0x131BAE: std::__invoke_result<void (Thread::*)(), Thread*>::type std::__invoke<void (Thread::*)(), Thread*>(void (Thread::*&&)(), Thread*&&) (invoke.h:96)
+==22915==    by 0x131B0E: void std::thread::_Invoker<std::tuple<void (Thread::*)(), Thread*> >::_M_invoke<0ul, 1ul>(std::_Index_tuple<0ul, 1ul>) (std_thread.h:259)
+==22915==    by 0x131AC3: std::thread::_Invoker<std::tuple<void (Thread::*)(), Thread*> >::operator()() (std_thread.h:266)
+==22915==    by 0x131AA3: std::thread::_State_impl<std::thread::_Invoker<std::tuple<void (Thread::*)(), Thread*> > >::_M_run() (std_thread.h:211)
+==22915==    by 0x4B0F252: ??? (in /usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.30)
+==22915==    by 0x4D15AC2: start_thread (pthread_create.c:442)
+==22915==    by 0x4DA6A03: clone (clone.S:100)
+==22915==  Address 0x154a6f60 is 0 bytes inside a block of size 240 free'd
+==22915==    at 0x484B27F: free (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==22915==    by 0x4945559: ??? (in /usr/lib/x86_64-linux-gnu/libSDL2-2.0.so.0.18.2)
+==22915==    by 0x49456F0: ??? (in /usr/lib/x86_64-linux-gnu/libSDL2-2.0.so.0.18.2)
+==22915==    by 0x489C1E3: ??? (in /usr/lib/x86_64-linux-gnu/libSDL2-2.0.so.0.18.2)
+==22915==    by 0x489C4B5: ??? (in /usr/lib/x86_64-linux-gnu/libSDL2-2.0.so.0.18.2)
+==22915==    by 0x1251CD: Game::stop() (game.cpp:453)
+==22915==    by 0x116916: Client::stop() (client.cpp:91)
+==22915==    by 0x1162A4: Client::checkIfClose() (client.cpp:14)
+==22915==    by 0x116849: Client::run() (client.cpp:79)
+==22915==    by 0x132071: main (main.cpp:11)
+==22915==  Block was alloc'd at
+==22915==    at 0x484DA83: calloc (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==22915==    by 0x493D0C1: ??? (in /usr/lib/x86_64-linux-gnu/libSDL2-2.0.so.0.18.2)
+==22915==    by 0x124FF3: Game::init() (game.cpp:420)
+==22915==    by 0x123645: Game::run() (game.cpp:200)
+==22915==    by 0x1257FF: Thread::main() (thread.h:43)
+==22915==    by 0x131C5B: void std::__invoke_impl<void, void (Thread::*)(), Thread*>(std::__invoke_memfun_deref, void (Thread::*&&)(), Thread*&&) (invoke.h:74)
+==22915==    by 0x131BAE: std::__invoke_result<void (Thread::*)(), Thread*>::type std::__invoke<void (Thread::*)(), Thread*>(void (Thread::*&&)(), Thread*&&) (invoke.h:96)
+==22915==    by 0x131B0E: void std::thread::_Invoker<std::tuple<void (Thread::*)(), Thread*> >::_M_invoke<0ul, 1ul>(std::_Index_tuple<0ul, 1ul>) (std_thread.h:259)
+==22915==    by 0x131AC3: std::thread::_Invoker<std::tuple<void (Thread::*)(), Thread*> >::operator()() (std_thread.h:266)
+==22915==    by 0x131AA3: std::thread::_State_impl<std::thread::_Invoker<std::tuple<void (Thread::*)(), Thread*> > >::_M_run() (std_thread.h:211)
+==22915==    by 0x4B0F252: ??? (in /usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.30)
+==22915==    by 0x4D15AC2: start_thread (pthread_create.c:442)
+==22915== 
+==22915== Invalid read of size 8
+==22915==    at 0x94EA891: ??? (in /usr/lib/x86_64-linux-gnu/dri/vmwgfx_dri.so)
+==22915==    by 0x8C3DE62: ??? (in /usr/lib/x86_64-linux-gnu/dri/vmwgfx_dri.so)
+==22915==    by 0x8C01C60: ??? (in /usr/lib/x86_64-linux-gnu/dri/vmwgfx_dri.so)
+==22915==    by 0x48D7022: ??? (in /usr/lib/x86_64-linux-gnu/libSDL2-2.0.so.0.18.2)
+==22915==    by 0x48D2D83: ??? (in /usr/lib/x86_64-linux-gnu/libSDL2-2.0.so.0.18.2)
+==22915==    by 0x131E58: LTexture::free() (ltexture.cpp:36)
+==22915==    by 0x131D44: LTexture::loadFromFile(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) (ltexture.cpp:13)
+==22915==    by 0x115F9D: Box::loadTexture() (box.cpp:43)
+==22915==    by 0x116165: Box::updateState(box_t const&) (box.cpp:62)
+==22915==    by 0x124E99: Game::update(game_state_t) (game.cpp:404)
+==22915==    by 0x12374B: Game::run() (game.cpp:223)
+==22915==    by 0x1257FF: Thread::main() (thread.h:43)
+==22915==  Address 0x895c140 is 576 bytes inside a block of size 86,896 free'd
+==22915==    at 0x484B27F: free (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==22915==    by 0x8B6FD9B: ??? (in /usr/lib/x86_64-linux-gnu/dri/vmwgfx_dri.so)
+==22915==    by 0x85EF1DA: ??? (in /usr/lib/x86_64-linux-gnu/libGLX_mesa.so.0.0.0)
+==22915==    by 0x85E0F21: ??? (in /usr/lib/x86_64-linux-gnu/libGLX_mesa.so.0.0.0)
+==22915==    by 0x85E106C: ??? (in /usr/lib/x86_64-linux-gnu/libGLX_mesa.so.0.0.0)
+==22915==    by 0x510A891: XCloseDisplay (in /usr/lib/x86_64-linux-gnu/libX11.so.6.4.0)
+==22915==    by 0x496A53D: ??? (in /usr/lib/x86_64-linux-gnu/libSDL2-2.0.so.0.18.2)
+==22915==    by 0x494583A: ??? (in /usr/lib/x86_64-linux-gnu/libSDL2-2.0.so.0.18.2)
+==22915==    by 0x489C1E3: ??? (in /usr/lib/x86_64-linux-gnu/libSDL2-2.0.so.0.18.2)
+==22915==    by 0x489C4B5: ??? (in /usr/lib/x86_64-linux-gnu/libSDL2-2.0.so.0.18.2)
+==22915==    by 0x1251CD: Game::stop() (game.cpp:453)
+==22915==    by 0x116916: Client::stop() (client.cpp:91)
+==22915==  Block was alloc'd at
+==22915==    at 0x484DA83: calloc (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==22915==    by 0x94DB8D3: ??? (in /usr/lib/x86_64-linux-gnu/dri/vmwgfx_dri.so)
+==22915==    by 0x8B66937: ??? (in /usr/lib/x86_64-linux-gnu/dri/vmwgfx_dri.so)
+==22915==    by 0x91A7EA6: ??? (in /usr/lib/x86_64-linux-gnu/dri/vmwgfx_dri.so)
+==22915==    by 0x8B687D3: ??? (in /usr/lib/x86_64-linux-gnu/dri/vmwgfx_dri.so)
+==22915==    by 0x8B70748: ??? (in /usr/lib/x86_64-linux-gnu/dri/vmwgfx_dri.so)
+==22915==    by 0x85EF762: ??? (in /usr/lib/x86_64-linux-gnu/libGLX_mesa.so.0.0.0)
+==22915==    by 0x85E1330: ??? (in /usr/lib/x86_64-linux-gnu/libGLX_mesa.so.0.0.0)
+==22915==    by 0x85DCD77: ??? (in /usr/lib/x86_64-linux-gnu/libGLX_mesa.so.0.0.0)
+==22915==    by 0x4967B2C: ??? (in /usr/lib/x86_64-linux-gnu/libSDL2-2.0.so.0.18.2)
+==22915==    by 0x4967F0C: ??? (in /usr/lib/x86_64-linux-gnu/libSDL2-2.0.so.0.18.2)
+==22915==    by 0x493EE3B: ??? (in /usr/lib/x86_64-linux-gnu/libSDL2-2.0.so.0.18.2)
+==22915== 
+==22915== Invalid read of size 1
+==22915==    at 0x94EA898: ??? (in /usr/lib/x86_64-linux-gnu/dri/vmwgfx_dri.so)
+==22915==    by 0x8C3DE62: ??? (in /usr/lib/x86_64-linux-gnu/dri/vmwgfx_dri.so)
+==22915==    by 0x8C01C60: ??? (in /usr/lib/x86_64-linux-gnu/dri/vmwgfx_dri.so)
+==22915==    by 0x48D7022: ??? (in /usr/lib/x86_64-linux-gnu/libSDL2-2.0.so.0.18.2)
+==22915==    by 0x48D2D83: ??? (in /usr/lib/x86_64-linux-gnu/libSDL2-2.0.so.0.18.2)
+==22915==    by 0x131E58: LTexture::free() (ltexture.cpp:36)
+==22915==    by 0x131D44: LTexture::loadFromFile(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) (ltexture.cpp:13)
+==22915==    by 0x115F9D: Box::loadTexture() (box.cpp:43)
+==22915==    by 0x116165: Box::updateState(box_t const&) (box.cpp:62)
+==22915==    by 0x124E99: Game::update(game_state_t) (game.cpp:404)
+==22915==    by 0x12374B: Game::run() (game.cpp:223)
+==22915==    by 0x1257FF: Thread::main() (thread.h:43)
+==22915==  Address 0x895a150 is 256 bytes inside a block of size 544 free'd
+==22915==    at 0x484B27F: free (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==22915==    by 0x94DB670: ??? (in /usr/lib/x86_64-linux-gnu/dri/vmwgfx_dri.so)
+==22915==    by 0x8B6FD9B: ??? (in /usr/lib/x86_64-linux-gnu/dri/vmwgfx_dri.so)
+==22915==    by 0x85EF1DA: ??? (in /usr/lib/x86_64-linux-gnu/libGLX_mesa.so.0.0.0)
+==22915==    by 0x85E0F21: ??? (in /usr/lib/x86_64-linux-gnu/libGLX_mesa.so.0.0.0)
+==22915==    by 0x85E106C: ??? (in /usr/lib/x86_64-linux-gnu/libGLX_mesa.so.0.0.0)
+==22915==    by 0x510A891: XCloseDisplay (in /usr/lib/x86_64-linux-gnu/libX11.so.6.4.0)
+==22915==    by 0x496A53D: ??? (in /usr/lib/x86_64-linux-gnu/libSDL2-2.0.so.0.18.2)
+==22915==    by 0x494583A: ??? (in /usr/lib/x86_64-linux-gnu/libSDL2-2.0.so.0.18.2)
+==22915==    by 0x489C1E3: ??? (in /usr/lib/x86_64-linux-gnu/libSDL2-2.0.so.0.18.2)
+==22915==    by 0x489C4B5: ??? (in /usr/lib/x86_64-linux-gnu/libSDL2-2.0.so.0.18.2)
+==22915==    by 0x1251CD: Game::stop() (game.cpp:453)
+==22915==  Block was alloc'd at
+==22915==    at 0x484DA83: calloc (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==22915==    by 0x952093E: ??? (in /usr/lib/x86_64-linux-gnu/dri/vmwgfx_dri.so)
+==22915==    by 0x951E6AE: ??? (in /usr/lib/x86_64-linux-gnu/dri/vmwgfx_dri.so)
+==22915==    by 0x8B6692A: ??? (in /usr/lib/x86_64-linux-gnu/dri/vmwgfx_dri.so)
+==22915==    by 0x91A7EA6: ??? (in /usr/lib/x86_64-linux-gnu/dri/vmwgfx_dri.so)
+==22915==    by 0x8B687D3: ??? (in /usr/lib/x86_64-linux-gnu/dri/vmwgfx_dri.so)
+==22915==    by 0x8B70748: ??? (in /usr/lib/x86_64-linux-gnu/dri/vmwgfx_dri.so)
+==22915==    by 0x85EF762: ??? (in /usr/lib/x86_64-linux-gnu/libGLX_mesa.so.0.0.0)
+==22915==    by 0x85E1330: ??? (in /usr/lib/x86_64-linux-gnu/libGLX_mesa.so.0.0.0)
+==22915==    by 0x85DCD77: ??? (in /usr/lib/x86_64-linux-gnu/libGLX_mesa.so.0.0.0)
+==22915==    by 0x4967B2C: ??? (in /usr/lib/x86_64-linux-gnu/libSDL2-2.0.so.0.18.2)
+==22915==    by 0x4967F0C: ??? (in /usr/lib/x86_64-linux-gnu/libSDL2-2.0.so.0.18.2)
+==22915== 
+==22915== Invalid read of size 8
+==22915==    at 0x8C1A3A6: ??? (in /usr/lib/x86_64-linux-gnu/dri/vmwgfx_dri.so)
+==22915==    by 0x8BEEDEC: ??? (in /usr/lib/x86_64-linux-gnu/dri/vmwgfx_dri.so)
+==22915==    by 0x8C0193F: ??? (in /usr/lib/x86_64-linux-gnu/dri/vmwgfx_dri.so)
+==22915==    by 0x8C01A5C: ??? (in /usr/lib/x86_64-linux-gnu/dri/vmwgfx_dri.so)
+==22915==    by 0x8C01C6C: ??? (in /usr/lib/x86_64-linux-gnu/dri/vmwgfx_dri.so)
+==22915==    by 0x48D7022: ??? (in /usr/lib/x86_64-linux-gnu/libSDL2-2.0.so.0.18.2)
+==22915==    by 0x48D2D83: ??? (in /usr/lib/x86_64-linux-gnu/libSDL2-2.0.so.0.18.2)
+==22915==    by 0x131E58: LTexture::free() (ltexture.cpp:36)
+==22915==    by 0x131D44: LTexture::loadFromFile(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) (ltexture.cpp:13)
+==22915==    by 0x115F9D: Box::loadTexture() (box.cpp:43)
+==22915==    by 0x116165: Box::updateState(box_t const&) (box.cpp:62)
+==22915==    by 0x124E99: Game::update(game_state_t) (game.cpp:404)
+==22915==  Address 0x895bff0 is 240 bytes inside a block of size 86,896 free'd
+==22915==    at 0x484B27F: free (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==22915==    by 0x8B6FD9B: ??? (in /usr/lib/x86_64-linux-gnu/dri/vmwgfx_dri.so)
+==22915==    by 0x85EF1DA: ??? (in /usr/lib/x86_64-linux-gnu/libGLX_mesa.so.0.0.0)
+==22915==    by 0x85E0F21: ??? (in /usr/lib/x86_64-linux-gnu/libGLX_mesa.so.0.0.0)
+==22915==    by 0x85E106C: ??? (in /usr/lib/x86_64-linux-gnu/libGLX_mesa.so.0.0.0)
+==22915==    by 0x510A891: XCloseDisplay (in /usr/lib/x86_64-linux-gnu/libX11.so.6.4.0)
+==22915==    by 0x496A53D: ??? (in /usr/lib/x86_64-linux-gnu/libSDL2-2.0.so.0.18.2)
+==22915==    by 0x494583A: ??? (in /usr/lib/x86_64-linux-gnu/libSDL2-2.0.so.0.18.2)
+==22915==    by 0x489C1E3: ??? (in /usr/lib/x86_64-linux-gnu/libSDL2-2.0.so.0.18.2)
+==22915==    by 0x489C4B5: ??? (in /usr/lib/x86_64-linux-gnu/libSDL2-2.0.so.0.18.2)
+==22915==    by 0x1251CD: Game::stop() (game.cpp:453)
+==22915==    by 0x116916: Client::stop() (client.cpp:91)
+==22915==  Block was alloc'd at
+==22915==    at 0x484DA83: calloc (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==22915==    by 0x94DB8D3: ??? (in /usr/lib/x86_64-linux-gnu/dri/vmwgfx_dri.so)
+==22915==    by 0x8B66937: ??? (in /usr/lib/x86_64-linux-gnu/dri/vmwgfx_dri.so)
+==22915==    by 0x91A7EA6: ??? (in /usr/lib/x86_64-linux-gnu/dri/vmwgfx_dri.so)
+==22915==    by 0x8B687D3: ??? (in /usr/lib/x86_64-linux-gnu/dri/vmwgfx_dri.so)
+==22915==    by 0x8B70748: ??? (in /usr/lib/x86_64-linux-gnu/dri/vmwgfx_dri.so)
+==22915==    by 0x85EF762: ??? (in /usr/lib/x86_64-linux-gnu/libGLX_mesa.so.0.0.0)
+==22915==    by 0x85E1330: ??? (in /usr/lib/x86_64-linux-gnu/libGLX_mesa.so.0.0.0)
+==22915==    by 0x85DCD77: ??? (in /usr/lib/x86_64-linux-gnu/libGLX_mesa.so.0.0.0)
+==22915==    by 0x4967B2C: ??? (in /usr/lib/x86_64-linux-gnu/libSDL2-2.0.so.0.18.2)
+==22915==    by 0x4967F0C: ??? (in /usr/lib/x86_64-linux-gnu/libSDL2-2.0.so.0.18.2)
+==22915==    by 0x493EE3B: ??? (in /usr/lib/x86_64-linux-gnu/libSDL2-2.0.so.0.18.2)
+==22915== 
+==22915== Invalid read of size 4
+==22915==    at 0x94ED2C0: ??? (in /usr/lib/x86_64-linux-gnu/dri/vmwgfx_dri.so)
+==22915==    by 0x8C1A3AB: ??? (in /usr/lib/x86_64-linux-gnu/dri/vmwgfx_dri.so)
+==22915==    by 0x8BEEDEC: ??? (in /usr/lib/x86_64-linux-gnu/dri/vmwgfx_dri.so)
+==22915==    by 0x8C0193F: ??? (in /usr/lib/x86_64-linux-gnu/dri/vmwgfx_dri.so)
+==22915==    by 0x8C01A5C: ??? (in /usr/lib/x86_64-linux-gnu/dri/vmwgfx_dri.so)
+==22915==    by 0x8C01C6C: ??? (in /usr/lib/x86_64-linux-gnu/dri/vmwgfx_dri.so)
+==22915==    by 0x48D7022: ??? (in /usr/lib/x86_64-linux-gnu/libSDL2-2.0.so.0.18.2)
+==22915==    by 0x48D2D83: ??? (in /usr/lib/x86_64-linux-gnu/libSDL2-2.0.so.0.18.2)
+==22915==    by 0x131E58: LTexture::free() (ltexture.cpp:36)
+==22915==    by 0x131D44: LTexture::loadFromFile(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) (ltexture.cpp:13)
+==22915==    by 0x115F9D: Box::loadTexture() (box.cpp:43)
+==22915==    by 0x116165: Box::updateState(box_t const&) (box.cpp:62)
+==22915==  Address 0x895c184 is 644 bytes inside a block of size 86,896 free'd
+==22915==    at 0x484B27F: free (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==22915==    by 0x8B6FD9B: ??? (in /usr/lib/x86_64-linux-gnu/dri/vmwgfx_dri.so)
+==22915==    by 0x85EF1DA: ??? (in /usr/lib/x86_64-linux-gnu/libGLX_mesa.so.0.0.0)
+==22915==    by 0x85E0F21: ??? (in /usr/lib/x86_64-linux-gnu/libGLX_mesa.so.0.0.0)
+==22915==    by 0x85E106C: ??? (in /usr/lib/x86_64-linux-gnu/libGLX_mesa.so.0.0.0)
+==22915==    by 0x510A891: XCloseDisplay (in /usr/lib/x86_64-linux-gnu/libX11.so.6.4.0)
+==22915==    by 0x496A53D: ??? (in /usr/lib/x86_64-linux-gnu/libSDL2-2.0.so.0.18.2)
+==22915==    by 0x494583A: ??? (in /usr/lib/x86_64-linux-gnu/libSDL2-2.0.so.0.18.2)
+==22915==    by 0x489C1E3: ??? (in /usr/lib/x86_64-linux-gnu/libSDL2-2.0.so.0.18.2)
+==22915==    by 0x489C4B5: ??? (in /usr/lib/x86_64-linux-gnu/libSDL2-2.0.so.0.18.2)
+==22915==    by 0x1251CD: Game::stop() (game.cpp:453)
+==22915==    by 0x116916: Client::stop() (client.cpp:91)
+==22915==  Block was alloc'd at
+==22915==    at 0x484DA83: calloc (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==22915==    by 0x94DB8D3: ??? (in /usr/lib/x86_64-linux-gnu/dri/vmwgfx_dri.so)
+==22915==    by 0x8B66937: ??? (in /usr/lib/x86_64-linux-gnu/dri/vmwgfx_dri.so)
+==22915==    by 0x91A7EA6: ??? (in /usr/lib/x86_64-linux-gnu/dri/vmwgfx_dri.so)
+==22915==    by 0x8B687D3: ??? (in /usr/lib/x86_64-linux-gnu/dri/vmwgfx_dri.so)
+==22915==    by 0x8B70748: ??? (in /usr/lib/x86_64-linux-gnu/dri/vmwgfx_dri.so)
+==22915==    by 0x85EF762: ??? (in /usr/lib/x86_64-linux-gnu/libGLX_mesa.so.0.0.0)
+==22915==    by 0x85E1330: ??? (in /usr/lib/x86_64-linux-gnu/libGLX_mesa.so.0.0.0)
+==22915==    by 0x85DCD77: ??? (in /usr/lib/x86_64-linux-gnu/libGLX_mesa.so.0.0.0)
+==22915==    by 0x4967B2C: ??? (in /usr/lib/x86_64-linux-gnu/libSDL2-2.0.so.0.18.2)
+==22915==    by 0x4967F0C: ??? (in /usr/lib/x86_64-linux-gnu/libSDL2-2.0.so.0.18.2)
+==22915==    by 0x493EE3B: ??? (in /usr/lib/x86_64-linux-gnu/libSDL2-2.0.so.0.18.2)
+==22915== 
+
+*/

@@ -24,7 +24,7 @@ class Client {
         std::unique_ptr<Sender> sendThread;
         std::unique_ptr<Receiver> recvThread;
         std::unique_ptr<Game> gameThread;
-
+        void checkIfClose();
 
     public:
         void requestId();

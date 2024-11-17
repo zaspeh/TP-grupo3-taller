@@ -46,6 +46,7 @@ class Game : public Thread
         ~Game();
 
         bool init();
+        void initializeGameObjects();
         bool loadMedia();
         void run() override;
         void stop() override;

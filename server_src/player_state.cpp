@@ -79,7 +79,7 @@ void PlayerState::updatePosition(float deltaTime, platform_t* platforms, uint8_t
     }
 
     float maxFallSpeed = 800.0f;
-    if (duck.isFlaping){
+    if (duck.isFlaping) {
         maxFallSpeed = 300.0f;
     }
     if (verticalVelocity > maxFallSpeed) {
@@ -89,6 +89,39 @@ void PlayerState::updatePosition(float deltaTime, platform_t* platforms, uint8_t
     if(duck.pos.y > 1024)   
         duck.isAlive = false;
 }
+
+/*
+==14369== Thread 3:
+==14369== Conditional jump or move depends on uninitialised value(s)
+==14369==    at 0x1383BF: PlayerState::updatePosition(float, platform_t*, unsigned char) (player_state.cpp:45)
+==14369==    by 0x1221BB: GameState::updatePlayers(float) (game_state.cpp:240)
+==14369==    by 0x11BAC0: GameLoop::run() (gameloop.cpp:46)
+==14369==    by 0x11466B: Thread::main() (thread.h:43)
+==14369==    by 0x11B69F: void std::__invoke_impl<void, void (Thread::*)(), Thread*>(std::__invoke_memfun_deref, void (Thread::*&&)(), Thread*&&) (invoke.h:74)
+==14369==    by 0x11B5F2: std::__invoke_result<void (Thread::*)(), Thread*>::type std::__invoke<void (Thread::*)(), Thread*>(void (Thread::*&&)(), Thread*&&) (invoke.h:96)
+==14369==    by 0x11B552: void std::thread::_Invoker<std::tuple<void (Thread::*)(), Thread*> >::_M_invoke<0ul, 1ul>(std::_Index_tuple<0ul, 1ul>) (std_thread.h:259)
+==14369==    by 0x11B399: std::thread::_Invoker<std::tuple<void (Thread::*)(), Thread*> >::operator()() (std_thread.h:266)
+==14369==    by 0x11B259: std::thread::_State_impl<std::thread::_Invoker<std::tuple<void (Thread::*)(), Thread*> > >::_M_run() (std_thread.h:211)
+==14369==    by 0x494C252: ??? (in /usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.30)
+==14369==    by 0x4C37AC2: start_thread (pthread_create.c:442)
+==14369==    by 0x4CC8A03: clone (clone.S:100)
+==14369== 
+==14369== Conditional jump or move depends on uninitialised value(s)
+==14369==    at 0x1383EB: PlayerState::updatePosition(float, platform_t*, unsigned char) (player_state.cpp:45)
+==14369==    by 0x1221BB: GameState::updatePlayers(float) (game_state.cpp:240)
+==14369==    by 0x11BAC0: GameLoop::run() (gameloop.cpp:46)
+==14369==    by 0x11466B: Thread::main() (thread.h:43)
+==14369==    by 0x11B69F: void std::__invoke_impl<void, void (Thread::*)(), Thread*>(std::__invoke_memfun_deref, void (Thread::*&&)(), Thread*&&) (invoke.h:74)
+==14369==    by 0x11B5F2: std::__invoke_result<void (Thread::*)(), Thread*>::type std::__invoke<void (Thread::*)(), Thread*>(void (Thread::*&&)(), Thread*&&) (invoke.h:96)
+==14369==    by 0x11B552: void std::thread::_Invoker<std::tuple<void (Thread::*)(), Thread*> >::_M_invoke<0ul, 1ul>(std::_Index_tuple<0ul, 1ul>) (std_thread.h:259)
+==14369==    by 0x11B399: std::thread::_Invoker<std::tuple<void (Thread::*)(), Thread*> >::operator()() (std_thread.h:266)
+==14369==    by 0x11B259: std::thread::_State_impl<std::thread::_Invoker<std::tuple<void (Thread::*)(), Thread*> > >::_M_run() (std_thread.h:211)
+==14369==    by 0x494C252: ??? (in /usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.30)
+==14369==    by 0x4C37AC2: start_thread (pthread_create.c:442)
+==14369==    by 0x4CC8A03: clone (clone.S:100)
+==14369== 
+
+*/
 
 void PlayerState::jump() {
     // Solo permitir saltar si estamos en el suelo y no estamos levitando

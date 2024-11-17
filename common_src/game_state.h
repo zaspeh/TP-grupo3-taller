@@ -3,6 +3,7 @@
 
 #include <stdbool.h>
 #include <stdint.h>
+#include "utils.h"
 
 #define MAX_DUCKS 10
 #define MAX_PROJECTILES 300
@@ -11,6 +12,10 @@
 #define MAX_PLATFORMS 1000
 #define MAX_SPAWN_PLACES 20
 #define MAX_BOXES 20
+
+
+
+
 
 typedef struct {
     int x;
@@ -30,11 +35,15 @@ typedef struct {
     uint8_t ammo;    
 } weapon_t;
 
+
+
 // Representa una armadura o casco en el juego
 typedef struct {
     position_t pos;
     uint8_t type;     // Tipo de armadura/casco
 } armor_t;
+
+
 
 // Representa puntos de aparición donde aparecen armas y armaduras
 typedef struct {
@@ -72,7 +81,7 @@ typedef struct {
     bool isAlive;             // Estado de vida del pato (vivo o muerto)
     uint8_t score;              // Puntaje acumulado del pato
     uint8_t color;              // Color asignado al pato   
-    weapon_t equipped_weapon; // Arma equipada por el pato
+    weapon_t equipped_weapon;    // Arma equipada por el pato
     armor_t helmet;   // Armadura o casco equipado por el pato
     armor_t chestplate;
 } duck_t;

@@ -41,6 +41,7 @@ void Sender::run() {
 
         } catch (const std::exception& e) {
             std::cerr << EXCEPTION << "sender - " << e.what() << std::endl;
+            break;
         }
     }
 }

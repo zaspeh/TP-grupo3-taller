@@ -4,33 +4,45 @@
 
 #include <string>
 #include <iostream>
+#include <map>
 #include "../common_src/game_state.h"
 #include "../common_src/utils.h"
 
 
+static std::map<int, uint8_t> ammoForWeapons = {
+    {GRENADE_WEAPON, 1},
+    {BANANA_WEAPON, 1},
+    {DARTGUN_WEAPON, 20},
+    {AK_47_WEAPON, 25},
+    {PEWPEWLASER_WEAPON, 15},
+    {LASERRIFLE_WEAPON, 20},
+    {COWBOY_WEAPON, 10},
+    {MAGNUM_WEAPON, 12},
+    {SHOTGUN_WEAPON, 7},
+    {SNIPER_WEAPON, 5},
+};
+
 class Weapon {
 protected:
-    weapon_t weapon;
+    weapon_t weaponState;
     int id;
     int range;
-    int ammo;
 
 public:
     Weapon(int initialAmmo, int weaponRange, int id) :
         id(id),
         range(weaponRange) {
-            ammo = initialAmmo;
         }
     
     virtual ~Weapon() = default;
     
     virtual bool shoot() = 0;
-    virtual bool canShoot() const { return ammo > 0; }
+    virtual bool canShoot() const { return weaponState.ammo > 0; }
     
-    int getAmmo() const { return ammo; }
+    int getAmmo() const { return weaponState.ammo; }
     void setAmmo(uint8_t newAmmo) { 
         std::cout << "Municiones: " << static_cast<int>(newAmmo) << std::endl;
-        ammo = newAmmo; }
+        weaponState.ammo = newAmmo; }
     int getId() const { return id; }
     int getRange() const { return range; }
     
