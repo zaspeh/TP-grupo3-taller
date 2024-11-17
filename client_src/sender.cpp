@@ -9,7 +9,7 @@ void Sender::run() {
     bool wasClosed = false;
     while (!wasClosed && _keep_running) {
         try {
-            std::cout << "Popeando el mensaje" << std::endl;
+            //std::cout << "Popeando el mensaje" << std::endl;
             uint8_t command = commandQueue->pop();
 
             if (wasClosed)

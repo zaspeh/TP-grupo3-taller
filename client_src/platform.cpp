@@ -16,7 +16,7 @@ bool Platform::loadTexture(){
     bool loaded = false;
     if(platform.type == GRASS_PLATFORM){
         loaded = platformTexture->loadFromFile("client_src/platform.png");
-    }else{
+    } else {
         loaded = platformTexture->loadFromFile("client_src/platformdirt.png");
     }
     return loaded;

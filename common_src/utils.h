@@ -1,8 +1,14 @@
 #ifndef UTILS_H
 #define UTILS_H
 
+#include <cstdint>
+
 // Client side
 #define CLIENT_USAGE_COMMAND_ERROR "Error of usage: ./client <ip> <port>"
+#define LEVEL_WIDTH 1024
+#define LEVEL_HEIGHT 720
+#define SPRITE_PROJECTILE_WIDTH 16
+#define SPRITE_PROJECTILE_HEIGHT 16
 
 // Server side
 //#define MOVEMENT 0x15
@@ -10,11 +16,39 @@
 #define SLEEP_DURATION_MS = 0.03333
 #define MAX_CLIENTS_PER_QUEUE 100
 
+#define NULL_WEAPON 0x0
 #define GRENADE_WEAPON 0x1
 #define BANANA_WEAPON 0x2
 #define PEWPEWLASER_WEAPON 0x3
 #define LASERRIFLE_WEAPON 0x4
+#define AK_47_WEAPON 0x5
+#define DARTGUN_WEAPON 0x6
+#define COWBOY_WEAPON 0x7
+#define MAGNUM_WEAPON 0x8
+#define SHOTGUN_WEAPON 0x9
+#define SNIPER_WEAPON 0xa
 
+#define GRENADE_DISTANCE 25
+#define BANANA_DISTANCE 25
+#define PEWPEWLASER_DISTANCE 38
+#define LASERRIFLE_DISTANCE 30
+#define AK_47_DISTANCE 13
+#define DARTGUN_DISTANCE 5
+#define COWBOY_DISTANCE 20
+#define MAGNUM_DISTANCE 20
+#define SHOTGUN_DISTANCE 9
+#define SNIPER_DISTANCE 64
+#define WEAPON_COUNT 10
+
+#define NULL_ARMOR 0x0
+#define HELMET_ARMOR 0x1
+#define CHESTPLATE_ARMOR 0x2
+#define ARMOR_COUNT 2
+
+#define BOX_HEALTH 4    
+#define WIDTH_BOX 32
+#define HEIGHT_BOX 32
+#define PROJECTILE_RADIUS 5
 
 // Protocol side
 #define ERROR_READING_STRING "Error reading string from protocol"
@@ -33,6 +67,9 @@
 #define START_MATCH 0x99
 
 #define NEW_CLIENT 0x77
+
+
+
 
 constexpr const uint8_t GRASS_PLATFORM = 1;
 constexpr const uint8_t DIRT_PLATFORM = 2;

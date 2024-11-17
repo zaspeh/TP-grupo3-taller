@@ -19,14 +19,28 @@ void ServerProtocol::sendGameState(game_state_t& game, bool &wasClosed) {
 void ServerProtocol::sendArmor(armor_t armor, bool &wasClosed) {
     sendPosition(armor.pos, wasClosed);
     sendUint8(armor.type, wasClosed);
-    sendUint8(armor.is_equipped, wasClosed);
 }
+
+/**
+ * In file included from /usr/include/c++/11/vector:66,
+                 from common_src/protocol.h:6,
+                 from common_src/serverprotocol.h:4,
+                 from common_src/serverprotocol.cpp:1:
+/usr/include/c++/11/bits/stl_uninitialized.h: In instantiation of ‘_ForwardIterator std::uninitialized_copy(_InputIterator, _InputIterator, _ForwardIterator) [with _InputIterator = __gnu_cxx::__normal_iterator<const std::unique_ptr<Box>*, std::vector<std::unique_ptr<Box> > >; _ForwardIterator = std::unique_ptr<Box>*]’:
+/usr/include/c++/11/bits/stl_uninitialized.h:333:37:   required from ‘_ForwardIterator std::__uninitialized_copy_a(_InputIterator, _InputIterator, _ForwardIterator, std::allocator<_Tp>&) [with _InputIterator = __gnu_cxx::__normal_iterator<const std::unique_ptr<Box>*, std::vector<std::unique_ptr<Box> > >; _ForwardIterator = std::unique_ptr<Box>*; _Tp = std::unique_ptr<Box>]’
+/usr/include/c++/11/bits/stl_vector.h:558:31:   required from ‘std::vector<_Tp, _Alloc>::vector(const std::vector<_Tp, _Alloc>&) [with _Tp = std::unique_ptr<Box>; _Alloc = std::allocator<std::unique_ptr<Box> >]’
+common_src/../server_src/level.h:34:59:   required from here
+/usr/include/c++/11/bits/stl_uninitialized.h:138:72: error: static assertion failed: result type must be constructible from value type of input range
+  138 |       static_assert(is_constructible<_ValueType2, decltype(*__first)>::value,
+      |                                                                        ^~~~~
+/usr/include/c++/11/bits/stl_uninitialized.h:138:72: note: ‘std::integral_constant<bool, false>::value’ evaluates to false
+make: *** [<integrado>: common_src/serverprotocol.o] Error 1
+ * 
+ */
 
 void ServerProtocol::sendWeapon(weapon_t weapon, bool &wasClosed) {
     sendPosition(weapon.pos, wasClosed);
     sendUint8(weapon.type, wasClosed);
-    sendUint8(weapon.ammo, wasClosed);
-    sendUint8(weapon.is_equipped, wasClosed);
 }
 
 void ServerProtocol::sendPosition(position_t position, bool &wasClosed) {
@@ -47,7 +61,8 @@ void ServerProtocol::sendDuck(duck_t duck, bool &wasClosed) {
     sendUint8(duck.score, wasClosed);
     sendUint8(duck.color, wasClosed);
     sendWeapon(duck.equipped_weapon, wasClosed);
-    sendArmor(duck.equipped_armor, wasClosed);
+    sendArmor(duck.helmet, wasClosed);
+    sendArmor(duck.chestplate, wasClosed);
 }
 
 void ServerProtocol::sendDucks(duck_t ducks[MAX_DUCKS], uint8_t num_ducks, bool &wasClosed) {
@@ -75,10 +90,8 @@ void ServerProtocol::sendSpawnPlaces(spawn_place_t spawn_places[MAX_SPAWN_PLACES
 void ServerProtocol::sendBoxes(box_t boxes[MAX_BOXES], uint8_t num_boxes, bool &wasClosed) {
     for (int i = 0; i < num_boxes; i++) {
         sendPosition(boxes[i].pos, wasClosed);
+        sendUint8(boxes[i].health, wasClosed);
         sendUint8(boxes[i].is_explosive, wasClosed);
-        sendUint8(boxes[i].is_destroyed, wasClosed);
-        sendWeapon(boxes[i].weapon, wasClosed);
-        sendArmor(boxes[i].armor, wasClosed);
     }
 }   
 
@@ -87,6 +100,18 @@ void ServerProtocol::sendProjectiles(projectile_t projectiles[MAX_PROJECTILES], 
         sendPosition(projectiles[i].pos, wasClosed);
         sendUint8(projectiles[i].type, wasClosed);
         sendUint8(projectiles[i].is_active, wasClosed);
+    }
+}
+
+void ServerProtocol::sendDroppedWeapons(weapon_t droppedWeapons[MAX_ITEMS], uint8_t numDroppedWeapons, bool wasClosed) {
+    for (uint8_t i = 0; i < numDroppedWeapons; i++) {
+        sendWeapon(droppedWeapons[i], wasClosed);
+    }
+}
+
+void ServerProtocol::sendDroppedArmors(armor_t droppedArmors[MAX_ITEMS], uint8_t numDroppedArmors, bool wasClosed) {
+    for (int i = 0; i < numDroppedArmors; i++) {
+        sendArmor(droppedArmors[i], wasClosed);
     }
 }
 
@@ -101,4 +126,8 @@ void ServerProtocol::sendLevel(level_t& level, bool &wasClosed) {
     sendBoxes(level.boxes, level.num_boxes, wasClosed);
     sendUint8(level.num_projectiles, wasClosed);
     sendProjectiles(level.projectiles, level.num_projectiles, wasClosed);
+    sendUint8(level.num_dropped_weapons, wasClosed);
+    sendDroppedWeapons(level.dropped_weapons, level.num_dropped_weapons, wasClosed);
+    sendUint8(level.num_dropped_armors, wasClosed);
+    sendDroppedArmors(level.dropped_armors, level.num_dropped_armors, wasClosed);
 }

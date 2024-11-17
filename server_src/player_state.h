@@ -29,7 +29,6 @@ public:
     {
         duck.pos = {x, y};
         duck.isAlive = true;
-        duck.health = 100;
         duck.isJumping = false;
         duck.isFalling = false;  // Aseguramos que inicie en false
         duck.id = clientID;
@@ -39,19 +38,26 @@ public:
         
         return duck;
     }
+    void resetPlayer(duck_t newDuck, int x , int y) {
+        duck = newDuck;
+        duck.pos = {x, y};
+        duck.isAlive = true;
+        duck.isJumping = false;
+        duck.isFalling = false;        
+    }
 
     // Getters y Setters para cada atributo
     position_t getPosition() const { return duck.pos; }
     void setPosition(const position_t& newPosition)  { duck.pos = newPosition; }
 
-    uint8_t getWeapon() const { return weapon->getId(); } // ahora en weapon
-    void pickWeapon(Weapon* newWeapon);
+    Weapon* getWeapon() const { return weapon; }
+    uint8_t getWeaponType() const { return weapon->getId(); } // ahora en weapon
+    weapon_t pickWeapon(Weapon* newWeapon);
 
     uint8_t getAmmo() const { return weapon->getAmmo(); } // ahora en weapon
     void setAmmo(uint8_t newAmmo) { weapon->setAmmo(newAmmo); }
-    void reload(uint8_t newAmmo);
 
-    bool isAlive() const { return duck.isAlive; }
+    bool isAlive()  { return duck.isAlive; }
     void setAlive() { duck.isAlive = !duck.isAlive; }
 
     bool isFalling() const { return duck.isFalling; }
@@ -61,13 +67,20 @@ public:
     void setCrouched(bool isCrouched) { duck.isDucking = isCrouched; }
 
     bool hasArmorEquipped() const { return armor.isEquipped(); }
-    void setArmorEquipped() { armor.equip(); }    
+    void setArmorEquipped(armor_t armr) { 
+        duck.chestplate = armr;
+        armor.unequip();
+        if (duck.chestplate.type != NULL_ARMOR)
+            armor.equip(); 
+        }    
 
     bool hasHelmetEquipped() const { return helmet.isEquipped(); }
-    void setHelmetEquipped() { helmet.equip(); }
-
-    uint8_t getHealth() const { return duck.health; }  
-    void setHealth(uint8_t newHealth) { duck.health = newHealth; }
+    void setHelmetEquipped(armor_t hmt) { 
+        duck.helmet = hmt;
+        helmet.unequip();
+        if (duck.helmet.type != NULL_ARMOR)
+            helmet.equip(); 
+        }
 
     uint8_t getFacingDirection() const { return duck.faceLeft; }
     void setFacingDirection(uint8_t direction) { duck.faceLeft = direction; }; 
@@ -85,11 +98,11 @@ public:
 
     void takeDamage(uint8_t damage);
 
-    void shoot();
+    bool shoot();
 
     //void crouch() { duck.isCrouched = true; }
 
-    void dropWeapon();
+    weapon_t dropWeapon();
     void equipArmor() { armor.equip(); }
     void equipHelmet() { helmet.equip(); }
 

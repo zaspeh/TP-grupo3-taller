@@ -4,28 +4,44 @@
 
 #include "../common_src/game_state.h"
 #include "../common_src/utils.h"
+#include "box.h"
 #include <vector>
+#include <random>
+#include <chrono>
+#include <iostream>
+#include <memory>
 
 class Level {
 private:
     // Método estático que inicializa el nivel según su ID
-    static level_t getLevelById(int id);
-
+    
+    void createLevelById(int id);
     // Método que crea el nivel 0 con plataformas, cajas, etc.
-    static level_t getLevel0();
-    static void FillRect(level_t &level, int xIni, int xFin, int height);
-
-protected:
-    level_t level;
+    void initLevel0();
+    void initLevel1();
+    void initLevel2();
+    level_t levelState;
     int chosenLevel;
+    std::mt19937 rng;
+    std::uniform_int_distribution<int> boxDist;
+    std::uniform_int_distribution<int> weaponDist;
+    std::uniform_int_distribution<int> armorDist;
+    std::vector<std::shared_ptr<Box>> boxes;
 
 public:
     // Constructor
-    explicit Level(int id);
+    explicit Level();
 
     // Métodos para acceder a la información del nivel
-    level_t getLevel();
+    level_t& getLevel();
+    void createNewLevel();
     position_t getSpawnPosition();
+    uint8_t getRandomWeapon();
+    uint8_t getRandomArmor();
+    std::vector<std::shared_ptr<Box>> getBoxes() { return boxes; }
+    std::unique_ptr<Box> getRandomBox(int x, int y);
+    spawn_place_t getRandomSpawnPlace(int x, int y);
+    void updateState(level_t& state);
 
     // Destructor
     ~Level() = default;

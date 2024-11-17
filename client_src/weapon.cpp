@@ -5,34 +5,88 @@ Weapon::Weapon(weapon_t weaponState, SDL_Renderer* renderer)
 : weaponState(weaponState)
 {
     try {
-        guns.emplace(0, std::make_unique<LTexture>(renderer));
-        guns.emplace(1, std::make_unique<LTexture>(renderer));
-        guns.emplace(2, std::make_unique<LTexture>(renderer));
-        guns.emplace(3, std::make_unique<LTexture>(renderer));
+        guns.emplace(AK_47_WEAPON, std::make_unique<LTexture>(renderer));
+        guns.emplace(DARTGUN_WEAPON, std::make_unique<LTexture>(renderer));
+        guns.emplace(BANANA_WEAPON, std::make_unique<LTexture>(renderer));
+        guns.emplace(GRENADE_WEAPON, std::make_unique<LTexture>(renderer));
+        guns.emplace(PEWPEWLASER_WEAPON, std::make_unique<LTexture>(renderer));
+        guns.emplace(LASERRIFLE_WEAPON, std::make_unique<LTexture>(renderer));
+        guns.emplace(COWBOY_WEAPON, std::make_unique<LTexture>(renderer));
+        guns.emplace(MAGNUM_WEAPON, std::make_unique<LTexture>(renderer));
+        guns.emplace(SHOTGUN_WEAPON, std::make_unique<LTexture>(renderer));
+        guns.emplace(SNIPER_WEAPON, std::make_unique<LTexture>(renderer));
+
+        weaponYOffsets = {
+            {AK_47_WEAPON, 10},
+            {DARTGUN_WEAPON, 15},
+            {BANANA_WEAPON, 5},
+            {GRENADE_WEAPON, 8},
+            {PEWPEWLASER_WEAPON, 12},
+            {LASERRIFLE_WEAPON, 10},
+            {COWBOY_WEAPON, 30},
+            {MAGNUM_WEAPON, 6},
+            {SHOTGUN_WEAPON, 25},
+            {SNIPER_WEAPON, 11}
+        };
+
     }catch (const std::bad_alloc& e){
         std::cerr << "Failed to create weapons: " << e.what() << std::endl;
     }
 }
 
 bool Weapon::loadTexture(){
-    return (guns[0]->loadFromFile("client_src/guns/dartgun.png"));
+    switch (weaponState.type) {
+        case AK_47_WEAPON:
+            return (guns[AK_47_WEAPON]->loadFromFile("client_src/guns/ak47.png"));
+        case DARTGUN_WEAPON:
+            return (guns[DARTGUN_WEAPON]->loadFromFile("client_src/guns/dartgun.png"));
+        case BANANA_WEAPON:
+            return (guns[BANANA_WEAPON]->loadFromFile("client_src/guns/banana.png"));
+        case GRENADE_WEAPON:
+            return (guns[GRENADE_WEAPON]->loadFromFile("client_src/guns/granade.png"));
+        case PEWPEWLASER_WEAPON:
+            return (guns[PEWPEWLASER_WEAPON]->loadFromFile("client_src/guns/pewpewlaser.png"));
+        case LASERRIFLE_WEAPON:
+            return (guns[LASERRIFLE_WEAPON]->loadFromFile("client_src/guns/laserrifle.png"));
+        case COWBOY_WEAPON:
+            return (guns[COWBOY_WEAPON]->loadFromFile("client_src/guns/cowboypistol.png"));
+        case MAGNUM_WEAPON:
+            return (guns[MAGNUM_WEAPON]->loadFromFile("client_src/guns/magnum.png"));
+        case SHOTGUN_WEAPON:
+            return (guns[SHOTGUN_WEAPON]->loadFromFile("client_src/guns/shotgun.png"));
+        case SNIPER_WEAPON:
+            return (guns[SNIPER_WEAPON]->loadFromFile("client_src/guns/sniper.png"));
+        default:
+            std::cerr << "Error: Invalid weapon type " << static_cast<int>(weaponState.type) << std::endl;
+            return true;
+    }
+
 }
 
 void Weapon::updateState(const weapon_t& newWeaponState){
     weaponState = newWeaponState;
 }
 
-void Weapon::render(float x, float y, bool faceLeft){
-    SDL_Rect* scaleRect = new SDL_Rect{0, 0, 0, 0};
-    scaleRect->h = guns[0]->getHeight() * 2;
-    scaleRect->w = guns[0]->getWidth() * 2; 
-    scaleRect->x = guns[0]->getHeight();
-    scaleRect->y = guns[0]->getWidth(); 
-    if(faceLeft){
-        x = x-10;
-    }else{
-        x = x+10;
+void Weapon::render(float x, float y, bool faceLeft) {
+    SDL_Rect scaleRect = {0, 0, 0, 0};
+    auto it = guns.find(weaponState.type);
+    if (it != guns.end()) {
+        LTexture* texture = it->second.get();
+        scaleRect.w = texture->getWidth() * 2;
+        scaleRect.h = texture->getHeight() * 2;
+        
+        // Obtener el offset Y específico para esta arma
+        int yOffset = weaponYOffsets[weaponState.type];
+        
+        SDL_RendererFlip flip = faceLeft ? SDL_FLIP_HORIZONTAL : SDL_FLIP_NONE;
+        texture->render(
+            x + (faceLeft ? -10 : 10), 
+            y + yOffset,  // Usar el offset específico del arma
+            nullptr, 
+            &scaleRect, 
+            flip
+        );
+    } else {
+        std::cerr << "Weapon texture not found for type: " << static_cast<int>(weaponState.type) << std::endl;
     }
-    SDL_RendererFlip flip = faceLeft ? SDL_FLIP_HORIZONTAL : SDL_FLIP_NONE;
-    guns[0]->render(x, y+10, NULL, scaleRect, flip);
 }

@@ -28,6 +28,8 @@ public:
     void readSpawnPlaces(spawn_place_t spawn_places[MAX_SPAWN_PLACES], uint8_t numSpawnPlaces, bool &wasClosed);
     void readBoxes(box_t boxes[MAX_BOXES], uint8_t numBoxes, bool &wasClosed);
     void readProjectiles(projectile_t projectiles[MAX_PROJECTILES], uint8_t numProjectiles, bool &wasClosed);
+    void readDroppedWeapons(weapon_t droppedWeapons[MAX_ITEMS], uint8_t numDroppedWeapons, bool& wasClosed);
+    void readDroppedArmors(armor_t droppedArmors[MAX_ITEMS], uint8_t numDroppedArmors, bool& wasClosed);
     void readLevel(level_t &level, bool &wasClosed);
 };
 

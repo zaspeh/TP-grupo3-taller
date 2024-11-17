@@ -8,7 +8,9 @@
 #include "ltexture.h"
 #include "../common_src/game_state.h"
 #include "animation.h"
+#include "../common_src/utils.h"
 #include "weapon.h"
+#include "armor.h"
 #include <memory>
 
 const int SCREEN_WIDTH = 1024;
@@ -31,6 +33,7 @@ public:
     bool loadTexture();
     void updateState(const duck_t& newDuckState);
     int getId() const { return duckState.id; }
+    bool isAlive() const { return duckState.isAlive; }
 
 private:
     duck_t duckState;
@@ -44,6 +47,7 @@ private:
     DuckAnimationType currentAnimation;
     std::unique_ptr<Animation> wings;
     std::unique_ptr<Weapon> weapon;
+    std::unique_ptr<Armor> armor;
 };
 
 #endif

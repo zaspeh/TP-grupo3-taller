@@ -9,7 +9,6 @@ armor_t ClientProtocol::readArmor(bool& wasClosed){
     armor_t armor;
     armor.pos = readPosition(wasClosed);
     armor.type = recvUint8(wasClosed);
-    armor.is_equipped = recvUint8(wasClosed) ? true : false;
     return armor;
 }
 
@@ -17,8 +16,6 @@ weapon_t ClientProtocol::readWeapon(bool& wasClosed){
     weapon_t weapon;
     weapon.pos = readPosition(wasClosed);
     weapon.type = recvUint8(wasClosed);
-    weapon.ammo = recvUint8(wasClosed);
-    weapon.is_equipped = recvUint8(wasClosed) ? true : false;
     return weapon;
 }
 
@@ -43,7 +40,8 @@ duck_t ClientProtocol::readDuck(bool& wasClosed){
     duck.score = recvUint8(wasClosed);
     duck.color = recvUint8(wasClosed);
     duck.equipped_weapon = readWeapon(wasClosed);
-    duck.equipped_armor = readArmor(wasClosed);
+    duck.helmet = readArmor(wasClosed);
+    duck.chestplate = readArmor(wasClosed);
     return duck;
 }
 
@@ -72,10 +70,8 @@ void ClientProtocol::readSpawnPlaces(spawn_place_t spawn_places[MAX_SPAWN_PLACES
 void ClientProtocol::readBoxes(box_t boxes[MAX_BOXES], uint8_t numBoxes, bool &wasClosed) {
     for (uint8_t i = 0; i < numBoxes; i++) {
         boxes[i].pos = readPosition(wasClosed);
+        boxes[i].health = recvUint8(wasClosed);
         boxes[i].is_explosive = recvUint8(wasClosed);
-        boxes[i].is_destroyed = recvUint8(wasClosed);
-        boxes[i].weapon = readWeapon(wasClosed);
-        boxes[i].armor = readArmor(wasClosed);
     }
 }
 
@@ -84,6 +80,18 @@ void ClientProtocol::readProjectiles(projectile_t projectiles[MAX_PROJECTILES], 
         projectiles[i].pos = readPosition(wasClosed);
         projectiles[i].type = recvUint8(wasClosed);
         projectiles[i].is_active = recvUint8(wasClosed);
+    }
+}
+
+void ClientProtocol::readDroppedWeapons(weapon_t droppedWeapons[MAX_ITEMS], uint8_t numDroppedWeapons, bool& wasClosed) {
+    for (int i = 0; i < numDroppedWeapons; i++) {
+        droppedWeapons[i] = readWeapon(wasClosed);
+    }
+}
+
+void ClientProtocol::readDroppedArmors(armor_t droppedArmors[MAX_ITEMS], uint8_t numDroppedArmors, bool& wasClosed) {
+    for (int i = 0; i < numDroppedArmors; i++) {
+        droppedArmors[i] = readArmor(wasClosed);
     }
 }
 
@@ -98,6 +106,10 @@ void ClientProtocol::readLevel(level_t& level, bool &wasClosed) {
     readBoxes(level.boxes, level.num_boxes, wasClosed);
     level.num_projectiles = recvUint8(wasClosed);
     readProjectiles(level.projectiles, level.num_projectiles, wasClosed);
+    level.num_dropped_weapons = recvUint8(wasClosed);
+    readDroppedWeapons(level.dropped_weapons, level.num_dropped_weapons, wasClosed);
+    level.num_dropped_armors = recvUint8(wasClosed);
+    readDroppedArmors(level.dropped_armors, level.num_dropped_armors, wasClosed);
 }
 
 game_state_t ClientProtocol::readFromServer(bool &wasClosed) {
@@ -106,7 +118,6 @@ game_state_t ClientProtocol::readFromServer(bool &wasClosed) {
     game_state.current_level = recvUint8(wasClosed);    
     game_state.round = recvUint8(wasClosed);    
     game_state.winning_score = recvUint8(wasClosed);    
-    std::cout << "winning score: " << static_cast<int>(game_state.winning_score) << std::endl; // verifico si se envia bien, deberìa ser 10
     return game_state;
 }
 

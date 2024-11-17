@@ -5,7 +5,7 @@
 #include <stdint.h>
 
 #define MAX_DUCKS 10
-#define MAX_PROJECTILES 100
+#define MAX_PROJECTILES 300
 #define MAX_ITEMS 50
 #define MAX_LEVELS 5
 #define MAX_PLATFORMS 1000
@@ -27,21 +27,19 @@ typedef struct {
 typedef struct {
     position_t pos;
     uint8_t type;    // Tipo de arma (ej.: pistola, escopeta, etc.)
-    int ammo;        // Munición restante del arma
-    bool is_equipped; // Indica si el arma está equipada por un jugador
+    uint8_t ammo;    
 } weapon_t;
 
 // Representa una armadura o casco en el juego
 typedef struct {
     position_t pos;
     uint8_t type;     // Tipo de armadura/casco
-    bool is_equipped; // Indica si está equipada por un jugador
 } armor_t;
 
 // Representa puntos de aparición donde aparecen armas y armaduras
 typedef struct {
     position_t pos;    // Posición del spawn place en el nivel
-    bool is_active;    // Si actualmente hay un item disponible en el spawn place
+    bool is_active;    // Si se puede spawnear
     weapon_t weapon;   // Arma que puede aparecer en este spawn place
     armor_t armor;     // Armadura o casco que puede aparecer en este spawn place
 } spawn_place_t;
@@ -49,10 +47,9 @@ typedef struct {
 // Representa cajas en el escenario que pueden contener items o ser explosivas
 typedef struct {
     position_t pos;      // Posición de la caja en el nivel
+    uint8_t health;       // Salud de la caja
     bool is_explosive;   // Si la caja es explosiva
-    bool is_destroyed;   // Estado de destrucción de la caja
-    weapon_t weapon;     // Arma en la caja (si aplica)
-    armor_t armor;       // Armadura o casco en la caja (si aplica)
+    // bool is_broken;
 } box_t;
 
 // Representa proyectiles lanzados por armas en el juego
@@ -76,7 +73,8 @@ typedef struct {
     uint8_t score;              // Puntaje acumulado del pato
     uint8_t color;              // Color asignado al pato   
     weapon_t equipped_weapon; // Arma equipada por el pato
-    armor_t equipped_armor;   // Armadura o casco equipado por el pato
+    armor_t helmet;   // Armadura o casco equipado por el pato
+    armor_t chestplate;
 } duck_t;
 
 // Representa un nivel completo con todos sus elementos
@@ -91,6 +89,10 @@ typedef struct {
     box_t boxes[MAX_BOXES];
     uint8_t num_projectiles;
     projectile_t projectiles[MAX_PROJECTILES];
+    uint8_t num_dropped_weapons;
+    weapon_t dropped_weapons[MAX_ITEMS];
+    uint8_t num_dropped_armors;
+    armor_t dropped_armors[MAX_ITEMS];
 } level_t;
 
 // Estado global del juego
