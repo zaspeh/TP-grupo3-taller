@@ -33,15 +33,12 @@ public:
         float minX = visibleWorldWidth / 2;
         float minY = visibleWorldHeight / 2;
         
-        // Clamp target position
         targetX = std::max(minX, std::min(maxX, newTargetX));
         targetY = std::max(minY, std::min(maxY, newTargetY));
         
-        // Smooth movement
         x += (targetX - x) * CAMERA_SMOOTHNESS;
         y += (targetY - y) * CAMERA_SMOOTHNESS;
         
-        // Clamp actual position
         x = std::max(minX, std::min(maxX, x));
         y = std::max(minY, std::min(maxY, y));
     }
