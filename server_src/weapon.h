@@ -36,7 +36,7 @@ public:
     
     virtual ~Weapon() = default;
     
-    virtual bool shoot() = 0;
+    virtual bool shoot(bool infinitAmmo) = 0;
     virtual bool canShoot() const { return weaponState.ammo > 0; }
     
     int getAmmo() const { return weaponState.ammo; }
@@ -59,9 +59,11 @@ private:
 public:
     Grenade() : Weapon(1, 5, GRENADE_WEAPON), pinPulled(false), timeToExplode(4.0f) {}
     
-    bool shoot() override {
-        if (!canShoot()) return false;
-        pinPulled = true;
+    bool shoot(bool infinitAmmo) override {
+        if (!infinitAmmo){
+            if (!canShoot()) return false;
+            pinPulled = true;
+        }
         return true;
     }
 
@@ -77,9 +79,11 @@ class Banana : public Weapon {
 public:
     Banana() : Weapon(1, 5, BANANA_WEAPON) {}
     
-    bool shoot() override {
-        if (!canShoot()) return false;
-        setAmmo(getAmmo() - 1);
+    bool shoot(bool infinitAmmo) override {
+        if (!infinitAmmo){
+            if (!canShoot()) return false;
+            setAmmo(getAmmo() - 1);
+        }
         return true;
     }
 };
@@ -88,9 +92,11 @@ class Dartgun : public Weapon {
 public:
     Dartgun() : Weapon(10, 15, DARTGUN_WEAPON) {}
     
-    bool shoot() override {
-        if (!canShoot()) return false;
-        setAmmo(getAmmo() - 1);
+    bool shoot(bool infinitAmmo) override {
+        if (!infinitAmmo) {
+            if (!canShoot()) return false;
+            setAmmo(getAmmo() - 1);
+        }
         return true;
     }
 };
@@ -99,9 +105,11 @@ class AK47 : public Weapon {
 public:
     AK47() : Weapon(20, 15, AK_47_WEAPON) {}
     
-    bool shoot() override {
-        if (!canShoot()) return false;
-        setAmmo(getAmmo() - 1);
+    bool shoot(bool infinitAmmo) override {
+        if (!infinitAmmo){
+            if (!canShoot()) return false;
+            setAmmo(getAmmo() - 1);
+        }
         return true;
     }
 };
@@ -113,9 +121,11 @@ private:
 public:
     PewPewLaser() : Weapon(12, 35, PEWPEWLASER_WEAPON) {}
     
-    bool shoot() override {
-        if (!canShoot()) return false;
-        setAmmo(getAmmo() - 1);
+    bool shoot(bool infinitAmmo) override {
+        if (!infinitAmmo){
+            if (!canShoot()) return false;
+            setAmmo(getAmmo() - 1);
+        }
         // Lógica para disparar 3 rayos con dispersión
         return true;
     }
@@ -125,9 +135,11 @@ class LaserRifle : public Weapon {
 public:
     LaserRifle() : Weapon(10, 30, LASERRIFLE_WEAPON) {}
     
-    bool shoot() override {
-        if (!canShoot()) return false;
-        setAmmo(getAmmo() - 1);
+    bool shoot(bool infinitAmmo) override {
+        if (!infinitAmmo){
+            if (!canShoot()) return false;
+            setAmmo(getAmmo() - 1);
+        }
         return true;
     }
 }; 
@@ -136,9 +148,11 @@ class CowBoyPistol : public Weapon {
 public:
     CowBoyPistol() : Weapon(10, 30, COWBOY_WEAPON) {}
 
-    bool shoot() override {
-        if (!canShoot()) return false;
-        setAmmo(getAmmo() - 1);
+    bool shoot(bool infinitAmmo) override {
+        if( !infinitAmmo ){
+            if (!canShoot()) return false;
+            setAmmo(getAmmo() - 1);
+        }
         return true;
     }
 };
@@ -147,9 +161,11 @@ class Magnum : public Weapon {
 public:
     Magnum() : Weapon(10, 30, MAGNUM_WEAPON) {}
 
-    bool shoot() override {
-        if (!canShoot()) return false;
-        setAmmo(getAmmo() - 1);
+    bool shoot(bool infinitAmmo) override {
+        if (!infinitAmmo){
+            if (!canShoot()) return false;
+            setAmmo(getAmmo() - 1);
+        }
         return true;
     }
 };
@@ -158,9 +174,11 @@ class Shotgun : public Weapon {
 public:
     Shotgun() : Weapon(10, 30, SHOTGUN_WEAPON) {}
 
-    bool shoot() override {
-        if (!canShoot()) return false;
-        setAmmo(getAmmo() - 1);
+    bool shoot(bool infinitAmmo) override {
+        if( !infinitAmmo ){
+            if (!canShoot()) return false;
+            setAmmo(getAmmo() - 1);
+        }
         return true;
     }
 };
@@ -169,9 +187,11 @@ class Sniper : public Weapon {
 public:
     Sniper() : Weapon(10, 30, SNIPER_WEAPON) {}
 
-    bool shoot() override {
-        if (!canShoot()) return false;
-        setAmmo(getAmmo() - 1);
+    bool shoot(bool infinitAmmo) override {
+        if (!infinitAmmo){
+            if (!canShoot()) return false;
+            setAmmo(getAmmo() - 1);
+        }
         return true;
     }
 };

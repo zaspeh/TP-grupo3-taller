@@ -157,6 +157,20 @@ bool Game::processEvents() {
                 case SDLK_RIGHT: rightPressed = true; break;
                 case SDLK_RSHIFT: sendCommand(TAKE_WEAPON); break;
                 case SDLK_LCTRL: shootPressed = true; break;
+                case SDLK_F1: sendCommand(INFINIT_AMMO); break;
+                case SDLK_F2: sendCommand(PICK_ANY_WEAPON); break;
+                case SDLK_F3: sendCommand(CHESTPLATE_ARMOR); break;
+                case SDLK_F4: sendCommand(HELMET_ARMOR); break;
+                case SDLK_1: sendCommand(GRENADE_WEAPON); break;
+                case SDLK_2: sendCommand(BANANA_WEAPON); break;
+                case SDLK_3: sendCommand(PEWPEWLASER_WEAPON); break;
+                case SDLK_4: sendCommand(LASERRIFLE_WEAPON); break;
+                case SDLK_5: sendCommand(AK_47_WEAPON); break;
+                case SDLK_6: sendCommand(DARTGUN_WEAPON); break;
+                case SDLK_7: sendCommand(COWBOY_WEAPON); break;
+                case SDLK_8: sendCommand(MAGNUM_WEAPON); break;
+                case SDLK_9: sendCommand(SHOTGUN_WEAPON); break;
+                case SDLK_0: sendCommand(SNIPER_WEAPON); break;
                 default: break;
             }
         } else if (e.type == SDL_KEYUP) {

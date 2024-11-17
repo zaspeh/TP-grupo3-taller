@@ -187,7 +187,7 @@ weapon_t PlayerState::dropWeapon() {
 
 bool PlayerState::shoot() {
     if (weapon != nullptr) {
-        return weapon->shoot(); // se hacen los cambios de balas y eso
+        return weapon->shoot(infinitAmmo); // se hacen los cambios de balas y eso
     }
     return false;
 }
