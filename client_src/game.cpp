@@ -220,7 +220,7 @@ void Game::render() {
     }
 
     for (const auto& spawn : spawns) {
-        if (spawn) spawn->render();
+        if (spawn) spawn->render(camera, zoom.getCurrentZoom());
     }
 
     for (const auto& weapon : droppedWeapons) {

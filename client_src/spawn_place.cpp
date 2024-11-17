@@ -63,7 +63,7 @@ bool SpawnPlace::loadTexture() {
     return success;
 }
 
-void SpawnPlace::render() {
+void SpawnPlace::render(const Camera& camera, float zoom) {
     if (spawnTexture) {
         int originalWidth = spawnTexture->getWidth();
         int originalHeight = spawnTexture->getHeight();
@@ -74,7 +74,17 @@ void SpawnPlace::render() {
         int scaledWidth = static_cast<int>(originalWidth * 2.5);
         int scaledHeight = static_cast<int>(originalHeight * 2.5);
         SDL_Rect destRect = {x, y, scaledWidth, scaledHeight};
-        spawnTexture->render(x, y, nullptr, &destRect);
+
+        /*SDL_Point screenPos = camera.getScreenPosition(x, y, zoom);
+        
+        SDL_Rect destRect = {
+            screenPos.x,
+            screenPos.y,
+            static_cast<int>(scaledWidth * zoom),
+            static_cast<int>(scaledHeight * zoom)
+        };*/
+
+        spawnTexture->render(x, y, nullptr, &destRect, SDL_FLIP_NONE);
     }
 
     // El arma se mantiene en su posición original

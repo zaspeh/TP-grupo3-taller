@@ -9,6 +9,7 @@
 #include <SDL2/SDL_image.h>
 #include <vector>
 #include "weapon.h"
+#include "camera.h"
 #include "armor.h"
 
 class SpawnPlace {
@@ -23,7 +24,7 @@ public:
     bool loadTexture();
 
     // Renderizar el SpawnPlace en el nivel
-    void render();
+    void render(const Camera& camera, float zoom);
 
     void updateState(const spawn_place_t& newState);
 

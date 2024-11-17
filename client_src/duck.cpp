@@ -82,8 +82,21 @@ bool Duck::loadTexture() {
 void Duck::render(const Camera& camera, float zoom) {
     bool faceLeft = (duckState.faceLeft == 1);
 
+    scaleRect.x = duckState.pos.x;
+    scaleRect.y = duckState.pos.y;
+
+    SDL_Rect destRect = scaleRect;
+
+    /*SDL_Point screenPos = camera.getScreenPosition(scaleRect.x, scaleRect.y, zoom);
+    SDL_Rect destRect = {
+        screenPos.x,
+        screenPos.y,
+        static_cast<int>(scaleRect.w * zoom),
+        static_cast<int>(scaleRect.h * zoom)
+    };*/
+
     if (animations[currentAnimation]) {
-        animations[currentAnimation]->renderAnimation(duckState.pos.x, duckState.pos.y, scaleRect, faceLeft, isMoving);
+        animations[currentAnimation]->renderAnimation(destRect.x, destRect.y, destRect, faceLeft, isMoving);
 
         if (duckState.isFlaping) {
             SDL_Rect scaleFlap;
