@@ -23,71 +23,6 @@ Game::~Game()
     printf("Game destroyed.\n");
 }
 
-/* bool Game::loadMedia()
-{
-    bool charged = true;
-    ducks.resize(gameState.level.num_ducks);  // Ajuste: asegurar el tamaño correcto del vector ducks
-    for (int i = 0; i < gameState.level.num_ducks && charged; i++) {
-        if (!ducks[i]) {
-            ducks[i] = std::make_unique<Duck>(gameState.level.ducks[i], SCREEN_WIDTH, SCREEN_HEIGHT, gRenderer.get());
-        }
-        if (!ducks[i]->loadTexture()) {
-            printf("Failed to load texture for duck %d.\n", i);
-            charged = false;
-        }
-    }
-    platforms.resize(gameState.level.num_platforms);  // Ajuste: asegurar el tamaño correcto del vector ducks
-    for (int i = 0; i < gameState.level.num_platforms && charged; i++) {
-        if (!platforms[i]) {
-            platforms[i] = std::make_unique<Platform>(gameState.level.platforms[i], gRenderer.get());
-        }
-        if (!platforms[i]->loadTexture()) {
-            printf("Failed to load texture for duck %d.\n", i);
-            charged = false;
-        }
-    }
-    spawns.resize(MAX_SPAWN_PLACES);
-    std::cout << "Tamaño de spawns: " << static_cast<int>(gameState.level.num_spawn_places) << std::endl; 
-    for (int i = 0; i < gameState.level.num_spawn_places && charged; i++) {
-        if (gameState.level.spawn_places[i].weapon.type == NULL_WEAPON && gameState.level.spawn_places[i].armor.type == NULL_ARMOR) continue;
-        if (!spawns[i]) {
-            std::cout << "Creando nuevo spawn: " << static_cast<int>(gameState.level.spawn_places[i].weapon.type)  << std::endl;
-            std::cout << "Creando nuevo spawn: " << static_cast<int>(gameState.level.spawn_places[i].armor.type)  << std::endl;
-            spawns[i] = std::make_unique<SpawnPlace>(gameState.level.spawn_places[i], gRenderer.get());
-        }
-        if (!spawns[i]->loadTexture()) {
-            printf("Failed to load texture for spawn %d.\n", i);
-            charged = false;
-        }
-    }
-
-    droppedWeapons.resize(MAX_ITEMS);
-    std::cout << "Cambiando el tamaño de las cajas\n";
-    droppedArmors.resize(MAX_ITEMS);
-    std::cout << "Cajas reziseadas.\n";
-    projectiles.resize(MAX_PROJECTILES);
-
-    boxes.resize(MAX_BOXES);
-    for (int i = 0; i < gameState.level.num_boxes && charged; i++) {
-        if (!boxes[i]) {
-            std::cout << "Cargando boxes\n";
-            boxes[i] = std::make_unique<Box>(gameState.level.boxes[i], gRenderer.get());
-        }
-        if (!boxes[i]->loadTexture()) {
-            printf("Failed to load texture for box %d.\n", i);
-            charged = false;
-        }
-    }
-
-    background = std::make_unique<LTexture>(gRenderer.get());
-
-    if(!background->loadFromFile("client_src/forest.png")){
-        charged = false;
-    }
-
-    return charged;
-} */
-
 bool Game::loadMedia() {
     bool success = true;
     
@@ -287,7 +222,7 @@ void Game::render() {
 
     for (const auto& projectile : projectiles) {
         if (projectile) { 
-            projectile->render();
+            projectile->render(camera, zoom.getCurrentZoom());
         }
     }
 

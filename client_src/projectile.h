@@ -7,6 +7,7 @@
 #include "ltexture.h"
 #include "../common_src/game_state.h"
 #include "../common_src/utils.h"
+#include "camera.h"
 
 class Projectile {
 public:
@@ -15,7 +16,7 @@ public:
 
     bool loadTexture();
     void updateState(const projectile_t& newState);
-    void render();
+    void render(const Camera& camera, float zoom);
     bool getState() const { return projectileState.is_active; }
 
 private:
