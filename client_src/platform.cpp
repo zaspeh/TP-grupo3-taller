@@ -27,10 +27,11 @@ void Platform::updateState(const platform_t& newPlatformState){
 }
 
 void Platform::render(){
-    SDL_Rect* scaleRect = new SDL_Rect{0, 0, 0, 0};
-    scaleRect->h = platformTexture->getHeight();
-    scaleRect->w = platformTexture->getWidth(); 
-    scaleRect->x = platformTexture->getHeight();
-    scaleRect->y = platformTexture->getWidth(); 
-    platformTexture->render(platform.pos.x+32, platform.pos.y+32, NULL, scaleRect, SDL_FLIP_NONE);
+    SDL_Rect scaleRect = {
+        platformTexture->getWidth(),
+        platformTexture->getHeight(),
+        platformTexture->getWidth(),
+        platformTexture->getHeight()
+    };
+    platformTexture->render(platform.pos.x+32, platform.pos.y+32, NULL, &scaleRect, SDL_FLIP_NONE);
 }

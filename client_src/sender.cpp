@@ -17,7 +17,7 @@ bool Sender::commandIsValid(uint8_t command) {
     || command == LOOK_UP || command == FLOOR || command == NEW_CLIENT || command == INFINIT_AMMO || command == PICK_ANY_WEAPON
     || command == GRENADE_WEAPON || command == BANANA_WEAPON || command == PEWPEWLASER_WEAPON || command == LASERRIFLE_WEAPON
     || command == AK_47_WEAPON || command == DARTGUN_WEAPON || command == COWBOY_WEAPON || command == MAGNUM_WEAPON
-    || command == SHOTGUN_WEAPON || command == SNIPER_WEAPON || command == CHESTPLATE_ARMOR || command == HELMET_ARMOR;
+    || command == SHOTGUN_WEAPON || command == SNIPER_WEAPON || command == CHESTPLATE_ARMOR || command == HELMET_ARMOR || command == RESTART_MATCH;
 
 }
 

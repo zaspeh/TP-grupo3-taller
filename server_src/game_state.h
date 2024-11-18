@@ -29,6 +29,7 @@ private:
 
     void checkIfSomeoneWin();
     void finishMatch(uint8_t id);
+    void changeLevel();
 public:
     // Constructor
     GameState();

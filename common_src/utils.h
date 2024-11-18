@@ -71,6 +71,7 @@
 #define CHESTPLATE_ARMOR 31
 #define RESTART_MATCH 14
 
+#define LEAVE_MATCH 13
 
 constexpr const uint8_t GRASS_PLATFORM = 1;
 constexpr const uint8_t DIRT_PLATFORM = 2;

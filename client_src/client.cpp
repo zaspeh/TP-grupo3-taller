@@ -2,91 +2,60 @@
 
 std::atomic<uint16_t> Client::next_id(0);
 
-
-void Client::checkIfClose() {
-    std::string input;
-    std::cout << "Ingrese 'q' para cerrar el juego: ";
-    std::getline(std::cin, input);
-    while (input != "q") {
-        std::getline(std::cin, input);
-        std::cout << input << std::endl;
-    }
-    stop();
-}
-
-
-
-/* void Client::() {
-    try {
-        std::string input;
-        while (_keep_running) {
-            std::getline(std::cin, input);
-            if (input == SALIR) {
-                stop();
-            }
-        }
-    } catch (const std::exception& e) {
-        std::cerr << EXCEPTION << e.what() << std::endl;
-        stop();
-    }
-} */
-
-
 Client::Client(const std::string& server_ip, const std::string& server_port)
-        : socket(server_ip.c_str(), server_port.c_str()), // Asumimos que ClientProtocol tiene un constructor que acepta socket y client_id
-          gameStateQueue(std::make_shared<Queue<game_state_t>>(100)), // Inicializa la cola de estados del juego
-          commandQueue(std::make_shared<Queue<uint8_t>>(100)) // Inicializa la cola de comandos
+        : socket(server_ip.c_str(), server_port.c_str()),
+          gameStateQueue(std::make_shared<Queue<game_state_t>>(100)), 
+          commandQueue(std::make_shared<Queue<uint8_t>>(100)), _keep_running(true)
     {
         requestId();
         clientprotocol = std::make_shared<ClientProtocol>(std::move(socket), client_id);
 
         recvThread = std::make_unique<Receiver>(clientprotocol, gameStateQueue);
-        std::cout << "REceiver: " << static_cast<int>(client_id) << std::endl;
         recvThread->start();
         
         sendThread = std::make_unique<Sender>(clientprotocol, commandQueue); 
-        std::cout << "Sender: " << static_cast<int>(client_id) << std::endl;
         sendThread->start();
 
 
         gameThread = std::make_unique<Game>(gameStateQueue, commandQueue);
         gameThread->start();
-
-        std::cout << "Client ID: " << static_cast<int>(client_id) << std::endl;
     }
+
+void Client::checkIfClose() {
+    std::string input;
+    std::cout << "Ingrese 'q' para cerrar el juego: ";
+    while (std::getline(std::cin, input) && input != "q") {
+        std::cout << "Entrada inválida. Intente nuevamente: ";
+    }
+    stop();
+}
 
 void Client::requestId() {
     unsigned int id_input;
     std::cout << "Ingrese el ID de cliente: ";
     std::cin >> id_input;
 
-    // Asegurarse de que el ID esté en el rango de uint8_t
     if (id_input > 255) {
         std::cerr << "ID inválido. Debe estar en el rango [0, 255]." << std::endl;
         throw std::invalid_argument("ID fuera de rango");
     }
 
     client_id = static_cast<uint8_t>(id_input);
-    std::cerr << "ID inválido. Debe estar en el rango [0, 255]." << std::endl;
-    commandQueue->push(NEW_CLIENT); // para el servidor significa, 
-    std::cerr << "ID inválido. Debe estar en el rango [0, 255]." << std::endl;
+    commandQueue->push(NEW_CLIENT); 
 }
 
 void Client::run() {
-    //recvThread->start();
-    //sendThread->start();
-    //gameThread->start();
     checkIfClose();
-
-    recvThread->join();
-    sendThread->join();
-    gameThread->join();
 }
 
-
 void Client::stop(){
-    //monitor->cerrar_clientes();
+    if (!_keep_running) return;
+    _keep_running.store(false); 
+    gameThread->stop();
     sendThread->stop();
     recvThread->stop();
-    gameThread->stop();
+    
+    gameThread->join();
+    sendThread->join();
+    recvThread->join();
 }

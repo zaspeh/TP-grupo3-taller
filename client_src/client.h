@@ -24,6 +24,7 @@ class Client {
         std::unique_ptr<Sender> sendThread;
         std::unique_ptr<Receiver> recvThread;
         std::unique_ptr<Game> gameThread;
+        std::atomic<bool> _keep_running;
         void checkIfClose();
 
     public:

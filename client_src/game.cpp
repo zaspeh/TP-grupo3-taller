@@ -7,97 +7,29 @@ Game::Game(std::shared_ptr<Queue<game_state_t>> gameStateQueue, std::shared_ptr<
       gRenderer(nullptr, SDL_DestroyRenderer)
 {
     gameState = gameStateQueue->pop();
-    ducks.reserve(MAX_DUCKS);
-    platforms.reserve(MAX_PLATFORMS);
-    spawns.reserve(MAX_SPAWN_PLACES);
-    droppedWeapons.reserve(MAX_ITEMS);
-    droppedArmors.reserve(MAX_ITEMS);
-    projectiles.reserve(MAX_PROJECTILES);
-    boxes.reserve(MAX_BOXES);
-}
-
-Game::~Game()
-{
-    stop();
-    printf("Game destroyed.\n");
-}
-
-/* bool Game::loadMedia()
-{
-    bool charged = true;
-    ducks.resize(gameState.level.num_ducks);  // Ajuste: asegurar el tamaño correcto del vector ducks
-    for (int i = 0; i < gameState.level.num_ducks && charged; i++) {
-        if (!ducks[i]) {
-            ducks[i] = std::make_unique<Duck>(gameState.level.ducks[i], SCREEN_WIDTH, SCREEN_HEIGHT, gRenderer.get());
-        }
-        if (!ducks[i]->loadTexture()) {
-            printf("Failed to load texture for duck %d.\n", i);
-            charged = false;
-        }
-    }
-    platforms.resize(gameState.level.num_platforms);  // Ajuste: asegurar el tamaño correcto del vector ducks
-    for (int i = 0; i < gameState.level.num_platforms && charged; i++) {
-        if (!platforms[i]) {
-            platforms[i] = std::make_unique<Platform>(gameState.level.platforms[i], gRenderer.get());
-        }
-        if (!platforms[i]->loadTexture()) {
-            printf("Failed to load texture for duck %d.\n", i);
-            charged = false;
-        }
-    }
+    ducks.resize(MAX_DUCKS);
+    platforms.resize(MAX_PLATFORMS);
     spawns.resize(MAX_SPAWN_PLACES);
-    std::cout << "Tamaño de spawns: " << static_cast<int>(gameState.level.num_spawn_places) << std::endl; 
-    for (int i = 0; i < gameState.level.num_spawn_places && charged; i++) {
-        if (gameState.level.spawn_places[i].weapon.type == NULL_WEAPON && gameState.level.spawn_places[i].armor.type == NULL_ARMOR) continue;
-        if (!spawns[i]) {
-            std::cout << "Creando nuevo spawn: " << static_cast<int>(gameState.level.spawn_places[i].weapon.type)  << std::endl;
-            std::cout << "Creando nuevo spawn: " << static_cast<int>(gameState.level.spawn_places[i].armor.type)  << std::endl;
-            spawns[i] = std::make_unique<SpawnPlace>(gameState.level.spawn_places[i], gRenderer.get());
-        }
-        if (!spawns[i]->loadTexture()) {
-            printf("Failed to load texture for spawn %d.\n", i);
-            charged = false;
-        }
-    }
-
     droppedWeapons.resize(MAX_ITEMS);
-    std::cout << "Cambiando el tamaño de las cajas\n";
     droppedArmors.resize(MAX_ITEMS);
-    std::cout << "Cajas reziseadas.\n";
     projectiles.resize(MAX_PROJECTILES);
-
     boxes.resize(MAX_BOXES);
-    for (int i = 0; i < gameState.level.num_boxes && charged; i++) {
-        if (!boxes[i]) {
-            std::cout << "Cargando boxes\n";
-            boxes[i] = std::make_unique<Box>(gameState.level.boxes[i], gRenderer.get());
-        }
-        if (!boxes[i]->loadTexture()) {
-            printf("Failed to load texture for box %d.\n", i);
-            charged = false;
-        }
-    }
-
-    background = std::make_unique<LTexture>(gRenderer.get());
-
-    if(!background->loadFromFile("client_src/forest.png")){
-        charged = false;
-    }
-
-    return charged;
-} */
+}
 
 bool Game::loadMedia() {
     bool success = true;
     
     try {
-        // Load background
         background = std::make_unique<LTexture>(gRenderer.get());
         if (!background || !background->loadFromFile("client_src/forest.png")) {
             throw std::runtime_error("Failed to load background texture");
         }
+        
+        gFont.reset(TTF_OpenFont("client_src/Namaku.ttf", 28));
+        if (!gFont) {
+            throw std::runtime_error("Failed to load font");
+        }
 
-        // Initialize game objects with proper error handling
         initializeGameObjects();
         
     } catch (const std::exception& e) {
@@ -109,7 +41,6 @@ bool Game::loadMedia() {
 }
 
 void Game::initializeGameObjects() {
-    // Initialize with proper error checking and exception handling
     if (gameState.level.num_ducks > MAX_DUCKS ||
         gameState.level.num_platforms > MAX_PLATFORMS ||
         gameState.level.num_spawn_places > MAX_SPAWN_PLACES ||
@@ -117,7 +48,6 @@ void Game::initializeGameObjects() {
         throw std::runtime_error("Game state exceeds maximum allowed objects");
     }
 
-    // Initialize vectors with proper sizes
     ducks.clear();
     platforms.clear();
     spawns.clear();
@@ -131,9 +61,8 @@ void Game::initializeGameObjects() {
 
 #include <chrono>
 
-// Variables para limitar la frecuencia de envío de comandos
-const std::chrono::milliseconds COMMAND_INTERVAL(50); // Para movimiento
-const std::chrono::milliseconds SHOOT_INTERVAL(200); // Para disparos, 200ms entre cada disparo
+const std::chrono::milliseconds COMMAND_INTERVAL(50); 
+const std::chrono::milliseconds SHOOT_INTERVAL(200); 
 std::chrono::steady_clock::time_point lastCommandTime = std::chrono::steady_clock::now();
 std::chrono::steady_clock::time_point lastShootTime = std::chrono::steady_clock::now();
 
@@ -172,6 +101,7 @@ bool Game::processEvents() {
                 case SDLK_9: sendCommand(SHOTGUN_WEAPON); break;
                 case SDLK_0: sendCommand(SNIPER_WEAPON); break;
                 case SDLK_g: sendCommand(RESTART_MATCH); break;
+                case SDLK_q: sendCommand(LEAVE_MATCH); return true;
                 default: break;
             }
         } else if (e.type == SDL_KEYUP) {
@@ -184,9 +114,6 @@ bool Game::processEvents() {
         }
     }
 
-    // Deberìa ser màs pausada la cantidad de veces que se envia el dispa
-
-    // Control de la frecuencia de envío de comandos
     auto currentTime = std::chrono::steady_clock::now();
     if (currentTime - lastCommandTime >= COMMAND_INTERVAL) {
         if (leftPressed) sendCommand(MOVE_LEFT);
@@ -208,6 +135,62 @@ bool Game::processEvents() {
 
 void Game::sendCommand(const uint8_t command){
     commandQueue->try_push(command);
+}
+
+bool Game::init() {
+    std::lock_guard<std::mutex> lock(sdl_mutex);
+    
+    if (SDL_Init(SDL_INIT_VIDEO) < 0) {
+        std::cerr << "SDL could not initialize! SDL Error: " << SDL_GetError() << std::endl;
+        return false;
+    }
+
+    // Creación de la ventana con smart pointer
+    SDL_Window* windowPtr = SDL_CreateWindow("Duck", 
+        SDL_WINDOWPOS_UNDEFINED, 
+        SDL_WINDOWPOS_UNDEFINED, 
+        SCREEN_WIDTH, 
+        SCREEN_HEIGHT, 
+        SDL_WINDOW_SHOWN);
+    
+    if (!windowPtr) {
+        std::cerr << "Window could not be created! SDL Error: " << SDL_GetError() << std::endl;
+        SDL_Quit();
+        return false;
+    }
+    gWindow.reset(windowPtr);
+
+    // Creación del renderer con smart pointer
+    SDL_Renderer* rendererPtr = SDL_CreateRenderer(gWindow.get(), -1, 
+        SDL_RENDERER_ACCELERATED);
+    
+    if (!rendererPtr) {
+        std::cerr << "Renderer could not be created! SDL Error: " << SDL_GetError() << std::endl;
+        gWindow.reset();
+        SDL_Quit();
+        return false;
+    }
+    gRenderer.reset(rendererPtr);
+
+    // Inicialización de SDL_image
+    int imgFlags = IMG_INIT_PNG;
+    if (!(IMG_Init(imgFlags) & imgFlags)) {
+        std::cerr << "SDL_image could not initialize! SDL_image Error: " << IMG_GetError() << std::endl;
+        gRenderer.reset();
+        gWindow.reset();
+        SDL_Quit();
+        return false;
+    }
+
+    if(TTF_Init() < 0) {
+        std::cerr << "SDL_ttf could not initialize! SDL_ttf Error: " << TTF_GetError() << std::endl;
+        gRenderer.reset();
+        gWindow.reset();
+        SDL_Quit();
+        return false;
+    }
+
+    return true;
 }
 
 void Game::run()
@@ -247,14 +230,11 @@ void Game::run()
             next_frame = frame_end;
         }
     }
-
-    stop();
-    printf("Game loop ended.\n");
 }
 
 void Game::render() {
     std::lock_guard<std::mutex> lock(sdl_mutex);
-    if (!gRenderer) {
+    if (!gRenderer || !gWindow) {
         std::cerr << "Renderer is null" << std::endl;
         return;
     }
@@ -297,11 +277,18 @@ void Game::render() {
             projectile->render();
         }
     }
+    for (int i = 0; i < gameState.level.num_ducks; i++) {
+        if (gameState.level.ducks[i].score >= gameState.winning_score) {
+            renderText("WINNER!!!!! now press 'G' to restart.",  gameState.level.ducks[i].pos.x - 250, gameState.level.ducks[i].pos.y-30);
+            renderText("Press 'Q' to quit.",  32*13-40, 400 - 32*5 );
+        }
+    }
 
     SDL_RenderPresent(gRenderer.get());
 }
 
 void Game::update(game_state_t gameState) {
+    std::lock_guard<std::mutex> lock(sdl_mutex);
     // Primero actualizamos los patos existentes y removemos los que ya no están
     for (size_t i = 0; i < ducks.size(); i++) {
         bool found = false;
@@ -423,47 +410,43 @@ void Game::update(game_state_t gameState) {
     }
 }
 
-bool Game::init()
-{
-    std::lock_guard<std::mutex> lock(sdl_mutex);
-    if (SDL_Init(SDL_INIT_VIDEO) < 0) {
-        printf("SDL could not initialize! SDL Error: %s\n", SDL_GetError());
-        return false;
+void Game::renderText(const std::string& message, int x, int y) {
+    if (!gFont) {
+        std::cerr << "Font not loaded, cannot render text." << std::endl;
+        return;
+    }
+    // naranja
+    SDL_Color textColor = { 255, 128, 0, 255 };
+    SDL_Surface* textSurface = TTF_RenderText_Solid(gFont.get(), message.c_str(), textColor);
+
+    if (!textSurface) {
+        std::cerr << "Unable to create text surface! SDL_ttf Error: " << TTF_GetError() << std::endl;
+        return;
     }
 
-    gWindow.reset(SDL_CreateWindow("Duck", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN));
-    if (!gWindow) {
-        printf("Window could not be created! SDL Error: %s\n", SDL_GetError());
-        return false;
+    SDL_Texture* textTexture = SDL_CreateTextureFromSurface(gRenderer.get(), textSurface);
+    if (!textTexture) {
+        std::cerr << "Unable to create text texture! SDL Error: " << SDL_GetError() << std::endl;
+        SDL_FreeSurface(textSurface);
+        return;
     }
 
-    gRenderer.reset(SDL_CreateRenderer(gWindow.get(), -1, SDL_RENDERER_ACCELERATED));
-    if (!gRenderer) {
-        printf("Renderer could not be created! SDL Error: %s\n", SDL_GetError());
-        return false;
+    SDL_Rect renderQuad = {x, y, textSurface->w, textSurface->h};
+
+    // Renderizamos la textura del texto
+    if (SDL_RenderCopy(gRenderer.get(), textTexture, nullptr, &renderQuad) != 0) {
+        std::cerr << "Error rendering text! SDL Error: " << SDL_GetError() << std::endl;
     }
 
-    SDL_SetRenderDrawColor(gRenderer.get(), 0xFF, 0xFF, 0xFF, 0xFF);
-
-    int imgFlags = IMG_INIT_PNG;
-    if (!(IMG_Init(imgFlags) & imgFlags)) {
-        printf("SDL_image could not initialize! SDL_image Error: %s\n", IMG_GetError());
-        return false;
-    }
-
-    ducks.resize(gameState.level.num_ducks); 
-    printf("Initialized ducks vector with %d ducks.\n", gameState.level.num_ducks);
-
-    platforms.resize(gameState.level.num_platforms); 
-    printf("Initialized ducks vector with %d platforms.\n", gameState.level.num_platforms);
-
-    return true;
+    SDL_FreeSurface(textSurface);
+    SDL_DestroyTexture(textTexture);
 }
 
 
 void Game::stop() {
+    std::lock_guard<std::mutex> lock(sdl_mutex);
+    if (!_keep_running) return;
     try {
-        std::lock_guard<std::mutex> lock(sdl_mutex);
         Thread::stop();
         // Clear game-specific resources
         ducks.clear();
@@ -477,26 +460,32 @@ void Game::stop() {
 
         // Clear SDL-specific resources
         if (gRenderer) {
-            gRenderer.reset();
-            std::cout << "Renderer destroyed successfully." << std::endl;
+            // Asegurarse de que no queden texturas pendientes
+            SDL_RenderClear(gRenderer.get());
+            SDL_RenderPresent(gRenderer.get());
+            gRenderer.reset();  // Liberar el renderer explícitamente
         }
         
         if (gWindow) {
-            gWindow.reset();
-            std::cout << "Window destroyed successfully." << std::endl;
+            gWindow.reset();  // Liberar la ventana explícitamente
         }
 
         // Quit SDL subsystems
         IMG_Quit();
-        std::cout << "SDL_image subsystem terminated." << std::endl;
-        
         SDL_Quit();
-        std::cout << "SDL subsystems terminated." << std::endl;
-
-        std::cout << "Game stopped successfully." << std::endl;
+        TTF_Quit();
     } catch (const std::exception& e) {
         std::cerr << "Error during game shutdown: " << e.what() << std::endl;
     } catch (...) {
         std::cerr << "Unknown error during game shutdown." << std::endl;
     }
+}
+
+Game::~Game() {
+    try {
+        stop();
+    } catch (const std::exception& e) {
+        std::cerr << "Error in Game destructor: " << e.what() << std::endl;
+    }
+    printf("Game destroyed.\n");
 }

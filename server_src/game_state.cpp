@@ -67,12 +67,15 @@ game_state_t GameState::doAction(uint8_t id, uint8_t action) {
         return state;
     }
     if (matchFinished && action == RESTART_MATCH) {
-        //level.createNewLevel(); -> hacer lo mismo que en checkIfSomeoneWin
-        //matchFinished = false;
-        //pickAnyWeapon = false;
-        //updateState(id, player);
-        //return state;
+        for (auto& [id, player] : players) {
+            state.level.ducks[id].score = 0;
+            player->resetPlayer(state.level.ducks[id], player->getPosition().x, player->getPosition().y);
+            state.level.ducks[id] = player->getState(); // Actualiza explícitamente el estado
+        }
+        matchFinished = false;
+        changeLevel();
     }
+
     weapon_t weaponST;
     armor_t armorST;
     Weapon* weapon = nullptr;
@@ -141,6 +144,9 @@ game_state_t GameState::doAction(uint8_t id, uint8_t action) {
             case HELMET_ARMOR:
                 armorST = { {0,0} , HELMET_ARMOR };
                 player->setHelmetEquipped(armorST);
+                break;
+            case LEAVE_MATCH:
+                removePlayer(id);
                 break;
             default:
                 std::cout << "Unknown action: " << action << std::endl;
@@ -321,11 +327,33 @@ void GameState::finishMatch(uint8_t id) {
     //modularizar
     std::map<uint8_t, duck_t> currentDucks;
     for (auto& [id, player] : players) {
-        state.level.ducks[id].score = 0;
         currentDucks[id] = state.level.ducks[id];
     }
 
     level.initWinningLevel();
+    state.level = level.getLevel();
+
+    // Restaura los patos en el nuevo nivel
+    for (auto& [id, player] : players) {
+        position_t pos = level.getSpawnPosition();
+        player->resetPlayer(currentDucks[id], pos.x, pos.y);
+        state.level.ducks[id] = player->getState(); // Actualiza explícitamente el estado
+    }
+        
+    // Actualiza el número de patos
+    state.level.num_ducks = players.size();
+}
+
+void GameState::changeLevel() {
+    // Guarda el estado actual de los patos antes de resetear
+    std::map<uint8_t, duck_t> currentDucks;
+    for (auto& [id, player] : players) {
+        if(state.level.ducks[id].isAlive && !matchFinished) state.level.ducks[id].score += 1;
+        currentDucks[id] = state.level.ducks[id];
+    }
+
+    // Crea nuevo nivel
+    level.createNewLevel();
     state.level = level.getLevel();
 
     // Restaura los patos en el nuevo nivel
@@ -345,33 +373,14 @@ void GameState::checkIfSomeoneWin() {
         if (player->isAlive()) 
             aliveDucks++;
         
-        if (state.level.ducks[id].score >= state.winning_score) {
+        if (state.level.ducks[id].score >= state.winning_score && !matchFinished) {
             finishMatch(id);
             return;
         }
     }   
 
     if (aliveDucks == 1 && players.size() > 1) {
-        // Guarda el estado actual de los patos antes de resetear
-        std::map<uint8_t, duck_t> currentDucks;
-        for (auto& [id, player] : players) {
-            if(state.level.ducks[id].isAlive) state.level.ducks[id].score += 1;
-            currentDucks[id] = state.level.ducks[id];
-        }
-
-        // Crea nuevo nivel
-        level.createNewLevel();
-        state.level = level.getLevel();
-
-        // Restaura los patos en el nuevo nivel
-        for (auto& [id, player] : players) {
-            position_t pos = level.getSpawnPosition();
-            player->resetPlayer(currentDucks[id], pos.x, pos.y);
-            state.level.ducks[id] = player->getState(); // Actualiza explícitamente el estado
-        }
-        
-        // Actualiza el número de patos
-        state.level.num_ducks = players.size();
+       changeLevel();
     }
 }
 
