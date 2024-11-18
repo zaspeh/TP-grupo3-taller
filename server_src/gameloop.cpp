@@ -10,7 +10,7 @@
 GameLoop::GameLoop(Server& server, Monitor& monitor): server(server), cola_comandos(100), iteraciones(0), gameState(nullptr), monitor(monitor) {}
                     
 void GameLoop::initGame() {
-    gameState = std::make_unique<GameState>();
+    gameState = std::make_unique<GameState>(server);
 }
 
 void GameLoop::agregar_comando(std::function<void()> command) {

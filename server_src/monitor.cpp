@@ -7,19 +7,14 @@
 Monitor::Monitor(Server& server): server(server) {}
 
 void Monitor::procesar_mensaje(const game_state_t gameState) {
-    //std::cout << "Intentando tomar el lock en procesar_mensaje" << std::endl;
     std::lock_guard<std::mutex> lock(mutex_senders);
-    //std::cout << "Lock tomado" << std::endl;
     auto senders = server.obtener_emisores();
     if (!senders.empty()) {
         for (auto& sender : senders) {
-            //std::cout << "Enviando mensaje" << std::endl;
-            if (sender && !sender->isQueueClosed()) {  // Verifica si la cola está abierta
+            if (sender && !sender->isQueueClosed()) {  
                 try {
                     sender->broadcast_message_with_info(gameState);
-                    //std::cout << "Mensaje enviado" << std::endl;
                 } catch (const std::exception& e) {
-                    //std::cerr << "Error: fallo al enviar mensaje - " << e.what() << std::endl;
                 }
             }
         }
@@ -43,14 +38,20 @@ void Monitor::agregar_cliente(std::shared_ptr<ServerProtocol> client) {
 }
 
 void Monitor::eliminar_cliente(std::shared_ptr<ServerProtocol> client) {
+    std::cout << "Eliminar cliente" << std::endl;
     std::lock_guard<std::mutex> lock(mutex_clientes);
-    client->closeSocket();
- 
-    auto it = std::remove(clientes.begin(), clientes.end(), client);
-    if (it != clientes.end()) {
-        clientes.erase(it, clientes.end());  
+    try {
+        client->closeSocket();
+    
+        auto it = std::remove(clientes.begin(), clientes.end(), client);
+        if (it != clientes.end()) {
+            clientes.erase(it, clientes.end());  
+        }
+        client = nullptr;
+    } catch (const std::exception& e) {
+        std::cerr << e.what() << std::endl;
     }
-    client = nullptr;
+    std::cout << "cliente eliminado" << std::endl;
 }
 
 std::vector<std::shared_ptr<ServerProtocol>> Monitor::obtener_clientes() {
@@ -60,6 +61,5 @@ std::vector<std::shared_ptr<ServerProtocol>> Monitor::obtener_clientes() {
 
 void Monitor::cerrar_clientes() {
     std::lock_guard<std::mutex> lock(mutex_clientes);
-
     clientes.clear();
 }

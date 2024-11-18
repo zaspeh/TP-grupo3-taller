@@ -289,9 +289,9 @@ void Game::render() {
         }
     }
     for (int i = 0; i < gameState.level.num_ducks; i++) {
-        if (gameState.level.ducks[i].score >= 0) {
+        if (gameState.level.ducks[i].score >= gameState.winning_score) {
             renderText("WINNER!!!!! now press 'G' to restart.",  gameState.level.ducks[i].pos.x - 250, gameState.level.ducks[i].pos.y-30);
-            renderText("Press 'Q' to quit.",  (32*13-40)*zoom.getCurrentZoom(), (400 - 32*5)+zoom.getCurrentZoom()); 
+            renderText("Close the window to quit.",  (32*13-40)*zoom.getCurrentZoom(), (400 - 32*5)+zoom.getCurrentZoom()); 
         }
     }
 
@@ -459,6 +459,7 @@ void Game::stop() {
     if (!_keep_running) return;
     try {
         Thread::stop();
+        
         // Clear game-specific resources
         ducks.clear();
         platforms.clear();
@@ -469,27 +470,38 @@ void Game::stop() {
         boxes.clear();
         background.reset();
 
+        // Primero liberar la fuente antes de TTF_Quit
+        if (gFont) {
+            TTF_CloseFont(gFont.get());
+            gFont.reset();  // Liberamos la fuente TTF primero
+        }
+        
+        
         // Clear SDL-specific resources
         if (gRenderer) {
-            // Asegurarse de que no queden texturas pendientes
             SDL_RenderClear(gRenderer.get());
             SDL_RenderPresent(gRenderer.get());
-            gRenderer.reset();  // Liberar el renderer explícitamente
+            gRenderer.reset();
         }
         
         if (gWindow) {
-            gWindow.reset();  // Liberar la ventana explícitamente
+            SDL_DestroyWindow(gWindow.get());
+            gWindow.reset();
         }
+        
+        
 
-        // Quit SDL subsystems
+        // Quit SDL subsystems en orden inverso a su inicialización
+        TTF_Quit();
         IMG_Quit();
         SDL_Quit();
-        TTF_Quit();
+
     } catch (const std::exception& e) {
         std::cerr << "Error during game shutdown: " << e.what() << std::endl;
     } catch (...) {
         std::cerr << "Unknown error during game shutdown." << std::endl;
     }
+    std::cout << "Game joinneado." << std::endl;
 }
 
 Game::~Game() {

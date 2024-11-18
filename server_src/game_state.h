@@ -12,6 +12,8 @@
 #include "projectile_physics.h"
 #include "../common_src/utils.h"
 
+class Server;
+
 class GameState {
 private:
     game_state_t state;
@@ -26,13 +28,14 @@ private:
     std::vector<ArmorPhysics> fallingArmors; 
     std::vector<armor_t> armorsInAir;  
     std::vector<ProjectilePhysics> projectilePhysics;
+    Server& server;
 
     void checkIfSomeoneWin();
     void finishMatch(uint8_t id);
     void changeLevel();
 public:
     // Constructor
-    GameState();
+    GameState(Server& server);
 
     std::shared_ptr<PlayerState> getPlayer(uint8_t id);
     void removePlayer(uint8_t id);

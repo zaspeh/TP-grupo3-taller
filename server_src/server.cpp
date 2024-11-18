@@ -26,15 +26,12 @@ void Server::handleInput() {
     }
 }
 
-
 void Server::run() {
     try {
         accepter.start();
         gameloop.start();
         handleInput();
 
-        accepter.join();
-        gameloop.join();
     } catch (const std::exception& e) {
         std::cerr << EXCEPTION << " server run - " << e.what() << std::endl;
         stop();
@@ -49,32 +46,25 @@ void Server::removeClient(std::shared_ptr<ServerProtocol> client) {
     monitor.eliminar_cliente(client);
 }
 
-/* void Server::removeSender(uint8_t idClient) {
-    monitor.removeSender(idClient);
-} */
-
 std::vector<std::shared_ptr<ServerProtocol>> Server::getClients() {
     return monitor.obtener_clientes();
 } 
 
 void Server::stop() {
+    if (!_keep_running) return;
     Thread::stop();
     monitor.cerrar_clientes();
     accepter.stop();
     gameloop.stop();
+    std::cout << "Deteniendo todos los hilos..." << std::endl;
+    accepter.join();
+    gameloop.join();
+    std::cout << "Hilos detenidos." << std::endl;
 }
 
 Server::~Server() {
-    if (!_keep_running) {
-        return;
-    }
-
-    Thread::stop();
-
     try {
-        monitor.cerrar_clientes();
-        accepter.stop();
-        gameloop.stop();
+        stop();
     } catch (const std::exception& e) {
         std::cerr << "Error: " << e.what() << std::endl;
     }

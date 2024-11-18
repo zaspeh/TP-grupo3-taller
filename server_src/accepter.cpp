@@ -14,9 +14,7 @@ void Accepter::run() {
     gameLoop.initGame();
     while (_keep_running) {
         try {
-            //std::cout << "Esperando conexiones" << std::endl;
             Socket socket_cliente = socket_servidor.accept();
-            //std::cout << "Cliente conectado\n";
             if (!_keep_running)
                 break;
             auto protocol = std::make_shared<ServerProtocol>(std::move(socket_cliente));
@@ -39,6 +37,8 @@ void Accepter::run() {
 
 
 void Accepter::stop() {
+    if (!_keep_running) return;
+
     Thread::stop();
 
     socket_servidor.shutdown(SHUT_RDWR);
@@ -57,25 +57,8 @@ void Accepter::stop() {
 }
 
 Accepter::~Accepter() {
-    if (!_keep_running)
-        return;
-
     try {
-        Thread::stop();
-
-        socket_servidor.shutdown(SHUT_RDWR);
-        socket_servidor.close();
-
-        for (auto& sender: emisores) {
-            sender->stop();
-            sender->join();
-        }
-        for (auto& receiver: receptores) {
-            receiver->stop();
-            receiver->join();
-        }
-        emisores.clear();
-        receptores.clear();
+        stop();
     } catch (const std::exception& e) {
         std::cerr << EXCEPTION << e.what() << std::endl;
     }

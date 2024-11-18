@@ -1,7 +1,8 @@
 #include "game_state.h"
+#include "server.h"
 #include <cmath>
 // Constructor
-GameState::GameState() : level() {
+GameState::GameState(Server& server) : level(), server(server) {
     std::cout << "Instancio el nivel" << std::endl;
     players = std::map<uint8_t, std::shared_ptr<PlayerState>>();
     projectilePhysics.resize(MAX_PROJECTILES);
@@ -20,9 +21,6 @@ std::shared_ptr<PlayerState> GameState::getPlayer(uint8_t id) {
 }
 
 void GameState::removePlayer(uint8_t id) {
-    std::lock_guard<std::mutex> lock(mtx);
-    std::cout << "Pato eliminado: " << static_cast<int>(id) << "\n";
-    
     if (players.count(id)) {
         players.erase(id);
         if (state.level.num_ducks > 0) {
@@ -32,8 +30,8 @@ void GameState::removePlayer(uint8_t id) {
     }
     
     if (players.empty()) { // cierro el servidor
-        std::cin.putback('q');
         std::cout << "Último jugador eliminado. Cerrando servidor...\n";
+        server.stop();
     }
 }
 
