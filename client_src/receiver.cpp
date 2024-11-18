@@ -20,6 +20,7 @@ void Receiver::run(){
 
 void Receiver::stop() {
     _keep_running = false;
+    protocol->closeSocket();
 }
 
 Receiver::Receiver(std::shared_ptr<ClientProtocol> protocol, std::shared_ptr<Queue<game_state_t>> queue) : protocol(protocol), gameStateQueue(queue) {}

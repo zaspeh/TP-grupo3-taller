@@ -5,18 +5,24 @@
 #include "../common_src/game_state.h"
 #include "../common_src/utils.h"
 #include "box.h"
+#include "weapon.h"
 #include <vector>
 #include <random>
 #include <chrono>
 #include <iostream>
 #include <memory>
 
+
 class Level {
 private:
+    weapon_t nullWeapon = {{0, 0}, NULL_WEAPON, 0};
+    armor_t nullArmor = {{0, 0}, NULL_ARMOR};
+
     // Método estático que inicializa el nivel según su ID
     
     void createLevelById(int id);
     // Método que crea el nivel 0 con plataformas, cajas, etc.
+    void clearLevelState();
     void initLevel0();
     void initLevel1();
     void initLevel2();

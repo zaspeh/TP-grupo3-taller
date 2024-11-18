@@ -13,6 +13,9 @@
 
 class Armor {
 protected:
+
+    armor_t nullArmor = {{0, 0}, NULL_ARMOR};
+
     std::unordered_map<uint8_t, std::unique_ptr<LTexture>> armors;  // Mapa para las texturas de armaduras
     armor_t helmetState;  // Estado del casco
     armor_t chestplateState;  // Estado de la coraza

@@ -26,6 +26,10 @@ void Sender::run() {
 
 void Sender::stop() {
     _keep_running = false;
+    uint8_t command;
+    while (commandQueue->try_pop(command)) {
+    }
+    commandQueue->close();
 }
 
 Sender::Sender(std::shared_ptr<ClientProtocol> protocol, std::shared_ptr<Queue<uint8_t>> queue) : protocol(protocol), commandQueue(queue) {}

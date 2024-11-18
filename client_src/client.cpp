@@ -3,12 +3,34 @@
 std::atomic<uint16_t> Client::next_id(0);
 
 
-void checkIfClose() {
-    /* -> con la variable de game y 1 candado
-    si se cierra...
+void Client::checkIfClose() {
+    std::string input;
+    std::cout << "Ingrese 'q' para cerrar el juego: ";
+    std::getline(std::cin, input);
+    while (input != "q") {
+        std::getline(std::cin, input);
+        std::cout << input << std::endl;
+    }
     stop();
-    */
 }
+
+
+
+/* void Client::() {
+    try {
+        std::string input;
+        while (_keep_running) {
+            std::getline(std::cin, input);
+            if (input == SALIR) {
+                stop();
+            }
+        }
+    } catch (const std::exception& e) {
+        std::cerr << EXCEPTION << e.what() << std::endl;
+        stop();
+    }
+} */
+
 
 Client::Client(const std::string& server_ip, const std::string& server_port)
         : socket(server_ip.c_str(), server_port.c_str()), // Asumimos que ClientProtocol tiene un constructor que acepta socket y client_id
@@ -54,12 +76,11 @@ void Client::run() {
     //recvThread->start();
     //sendThread->start();
     //gameThread->start();
+    checkIfClose();
 
     recvThread->join();
     sendThread->join();
     gameThread->join();
-    
-    checkIfClose();
 }
 
 
