@@ -47,6 +47,7 @@ void Sender::stop() {
     while (commandQueue->try_pop(command)) {
     }
     commandQueue->close();
+    std::cout << "sender joinneado." << std::endl;
 }
 
 Sender::Sender(std::shared_ptr<ClientProtocol> protocol, std::shared_ptr<Queue<uint8_t>> queue) : protocol(protocol), commandQueue(queue) {}

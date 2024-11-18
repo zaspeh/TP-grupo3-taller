@@ -480,16 +480,18 @@ void Game::stop() {
         if (gWindow) {
             gWindow.reset();  // Liberar la ventana explícitamente
         }
+        TTF_Quit();
 
         // Quit SDL subsystems
         IMG_Quit();
         SDL_Quit();
-        TTF_Quit();
+
     } catch (const std::exception& e) {
         std::cerr << "Error during game shutdown: " << e.what() << std::endl;
     } catch (...) {
         std::cerr << "Unknown error during game shutdown." << std::endl;
     }
+    std::cout << "Game joinneado." << std::endl;
 }
 
 Game::~Game() {
