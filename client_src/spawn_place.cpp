@@ -92,7 +92,7 @@ void SpawnPlace::render(const Camera& camera, float zoom) {
         weapon->render(spawnData.weapon.pos.x, spawnData.weapon.pos.y, false, camera, zoom);
     
     if (spawnData.armor.type != NULL_ARMOR)
-        armor->render(spawnData.armor.pos.x, spawnData.armor.pos.y, false, spawnData.armor.type, camera, zoom);
+        armor->render(spawnData.armor.pos.x+(zoom), spawnData.armor.pos.y+(zoom), false, spawnData.armor.type, camera, zoom);
 }
 
 void SpawnPlace::updateState(const spawn_place_t& newState) {

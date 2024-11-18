@@ -100,14 +100,23 @@ void Duck::render(const Camera& camera, float zoom) {
 
         if (duckState.isFlaping) {
             SDL_Rect scaleFlap;
-            scaleFlap.h = SPRITE_FLAP_HEIGHT * 2;
-            scaleFlap.w = SPRITE_FLAP_WIDTH * 2;
-            float posY = duckState.pos.y + 25;
-            float posX = duckState.pos.x + 10;
+            scaleFlap.h = SPRITE_FLAP_HEIGHT * 2.5;
+            scaleFlap.w = SPRITE_FLAP_WIDTH * 2.5;
+            scaleFlap.y = duckState.pos.y + 25;
+            scaleFlap.x = duckState.pos.x + 10;
             if (faceLeft) {
-                posX = posX + 10;
+                scaleFlap.x = scaleFlap.x + 10;
             }
-            wings->renderAnimation(posX, posY, scaleFlap, faceLeft, true);
+
+            SDL_Point screenPosFlap = camera.getScreenPosition(scaleFlap.x, scaleFlap.y, zoom);
+            SDL_Rect destRectFlap = {
+                screenPosFlap.x,
+                screenPosFlap.y,
+                static_cast<int>(scaleFlap.w * zoom),
+                static_cast<int>(scaleFlap.h * zoom)
+            };
+
+            wings->renderAnimation(destRectFlap.x, destRectFlap.y, destRectFlap, faceLeft, true);
         }
 
         // Renderiza las armaduras si están equipadas
@@ -123,9 +132,9 @@ void Duck::render(const Camera& camera, float zoom) {
             if (!armor->loadTexture())
                 std::cout << "Failed to load texture weapon\n"; 
             if (faceLeft)
-                armor->render(duckState.pos.x + 37, duckState.pos.y, faceLeft, CHESTPLATE_ARMOR, camera, zoom);
+                armor->render(duckState.pos.x + (37), duckState.pos.y, faceLeft, CHESTPLATE_ARMOR, camera, zoom);
             else 
-                armor->render(duckState.pos.x - 6, duckState.pos.y, faceLeft, CHESTPLATE_ARMOR, camera, zoom);
+                armor->render(duckState.pos.x - (6), duckState.pos.y, faceLeft, CHESTPLATE_ARMOR, camera, zoom);
         }
 
         if (weapon->getType() != NULL_WEAPON) {
