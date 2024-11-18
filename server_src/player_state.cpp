@@ -2,7 +2,6 @@
 
 bool PlayerState::doNotCollideX(platform_t* plat, uint8_t numPlats, int new_x) {
     for (int i = 0; i < numPlats; i++) {
-        // Intersección en Y (para evitar plataformas "fantasma")
         if (duck.pos.y + HEIGHT_DUCK > plat[i].pos.y && 
             duck.pos.y < plat[i].pos.y + HEIGHT_PLATFORM) {
 

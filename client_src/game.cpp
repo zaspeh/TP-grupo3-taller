@@ -1,5 +1,6 @@
 #include "game.h"
 #include <algorithm>  // Añadir este include al principio del archivo
+
 Game::Game(std::shared_ptr<Queue<game_state_t>> gameStateQueue, std::shared_ptr<Queue<uint8_t>> commandQueue)
     : gameStateQueue(gameStateQueue),
       commandQueue(commandQueue),
@@ -218,6 +219,12 @@ void Game::run()
 
         update(gameState);
 
+        SDL_FPoint center = CalculatorManager::calculateCenter(ducks);
+        float maxDistance = CalculatorManager::calculateMaxDistance(ducks);
+        
+        zoom.update(maxDistance);
+        camera.update(center.x, center.y, zoom);
+
         render();
 
         SDL_RenderPresent(gRenderer.get());
@@ -238,38 +245,39 @@ void Game::render() {
         std::cerr << "Renderer is null" << std::endl;
         return;
     }
-    
-    SDL_SetRenderDrawColor(gRenderer.get(), 0xFF, 0xFF, 0xFF, 0xFF);
-    SDL_RenderClear(gRenderer.get());
 
-    // Render background
-    if (background) {
-        SDL_Rect scaleRect = {0, 0, SCREEN_WIDTH, SCREEN_HEIGHT};
-        background->render(0, 0, nullptr, &scaleRect, SDL_FLIP_NONE);
-    }
+    SDL_Rect scaleRect = {0, 0, SCREEN_WIDTH, SCREEN_HEIGHT};
+    background->render(0, 0, nullptr, &scaleRect, SDL_FLIP_NONE);
+    /*SDL_Rect bgRect = camera.getBackgroundRect(
+            background->getWidth(), 
+            background->getHeight(), 
+            zoom.getCurrentZoom()
+        );
+    background->render(bgRect.x, bgRect.y, NULL, &bgRect, SDL_FLIP_NONE);*/
+
 
     for (const auto& platform : platforms) {
-        if (platform) platform->render();
+        if (platform) platform->render(camera, zoom.getCurrentZoom());
     }
 
     for (const auto& box : boxes) {
-        if (box && box->getState().health > 0) box->render();
+        if (box && box->getState().health > 0) box->render(camera, zoom.getCurrentZoom());
     }
 
     for (const auto& duck : ducks) {
-        if (duck && duck->isAlive()) duck->render();
+        if (duck && duck->isAlive()) duck->render(camera, zoom.getCurrentZoom());
     }
 
     for (const auto& spawn : spawns) {
-        if (spawn) spawn->render();
+        if (spawn) spawn->render(camera, zoom.getCurrentZoom());
     }
 
     for (const auto& weapon : droppedWeapons) {
-        if (weapon && weapon->getState().type != NULL_WEAPON) weapon->render(weapon->getState().pos.x, weapon->getState().pos.y, false);
+        if (weapon && weapon->getState().type != NULL_WEAPON) weapon->render(weapon->getState().pos.x, weapon->getState().pos.y, false, camera, zoom.getCurrentZoom());
     }
 
     for (const auto& armor : droppedArmors) {
-        if (armor && armor->getState().type != NULL_ARMOR) armor->render(armor->getState().pos.x, armor->getState().pos.y, false, armor->getState().type);
+        if (armor && armor->getState().type != NULL_ARMOR) armor->render(armor->getState().pos.x, armor->getState().pos.y, false, armor->getState().type, camera, zoom.getCurrentZoom());
     }
 
     for (const auto& projectile : projectiles) {
@@ -278,9 +286,9 @@ void Game::render() {
         }
     }
     for (int i = 0; i < gameState.level.num_ducks; i++) {
-        if (gameState.level.ducks[i].score >= gameState.winning_score) {
+        if (gameState.level.ducks[i].score >= 0) {
             renderText("WINNER!!!!! now press 'G' to restart.",  gameState.level.ducks[i].pos.x - 250, gameState.level.ducks[i].pos.y-30);
-            renderText("Press 'Q' to quit.",  32*13-40, 400 - 32*5 );
+            renderText("Press 'Q' to quit.",  (32*13-40)*zoom.getCurrentZoom(), (400 - 32*5)+zoom.getCurrentZoom()); 
         }
     }
 

@@ -49,11 +49,22 @@ bool Box::loadTexture() {
 }
 
 
-void Box::render() {
+void Box::render(const Camera& camera, float zoom) {
     scaleRect.x = boxState.pos.x;
     scaleRect.y = boxState.pos.y;
-    
-    texture->render(boxState.pos.x, boxState.pos.y, nullptr, &scaleRect, SDL_FLIP_NONE);
+
+    //SDL_Rect destRect = scaleRect;
+
+    SDL_Point screenPos = camera.getScreenPosition(scaleRect.x, scaleRect.y, zoom);
+        
+    SDL_Rect destRect = {
+        screenPos.x,
+        screenPos.y,
+        static_cast<int>(scaleRect.w * zoom),
+        static_cast<int>(scaleRect.h * zoom)
+    };
+
+    texture->render(destRect.x, destRect.y, nullptr, &destRect, SDL_FLIP_NONE);
 }
 
 void Box::updateState(const box_t& newState) {

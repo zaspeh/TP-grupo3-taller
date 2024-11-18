@@ -3,6 +3,7 @@
 
 #include "../common_src/game_state.h"
 #include "ltexture.h"
+#include "camera.h"
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <memory>
@@ -13,7 +14,7 @@ private:
     platform_t platform;
 public:
     Platform(platform_t platform_t, SDL_Renderer* renderer);
-    void render();
+    void render(const Camera& camera, float zoom);
     bool loadTexture();
     void updateState(const platform_t& newPlatformState);
 };

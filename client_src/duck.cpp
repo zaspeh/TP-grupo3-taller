@@ -79,22 +79,44 @@ bool Duck::loadTexture() {
     return allLoaded;
 }
 
-void Duck::render() {
+void Duck::render(const Camera& camera, float zoom) {
     bool faceLeft = (duckState.faceLeft == 1);
 
+    scaleRect.x = duckState.pos.x;
+    scaleRect.y = duckState.pos.y;
+
+    //SDL_Rect destRect = scaleRect;
+
+    SDL_Point screenPos = camera.getScreenPosition(scaleRect.x, scaleRect.y, zoom);
+    SDL_Rect destRect = {
+        screenPos.x,
+        screenPos.y,
+        static_cast<int>(scaleRect.w * zoom),
+        static_cast<int>(scaleRect.h * zoom)
+    };
+
     if (animations[currentAnimation]) {
-        animations[currentAnimation]->renderAnimation(duckState.pos.x, duckState.pos.y, scaleRect, faceLeft, isMoving);
+        animations[currentAnimation]->renderAnimation(destRect.x, destRect.y, destRect, faceLeft, isMoving);
 
         if (duckState.isFlaping) {
             SDL_Rect scaleFlap;
-            scaleFlap.h = SPRITE_FLAP_HEIGHT * 2;
-            scaleFlap.w = SPRITE_FLAP_WIDTH * 2;
-            float posY = duckState.pos.y + 25;
-            float posX = duckState.pos.x + 10;
+            scaleFlap.h = SPRITE_FLAP_HEIGHT * 2.5;
+            scaleFlap.w = SPRITE_FLAP_WIDTH * 2.5;
+            scaleFlap.y = duckState.pos.y + 25;
+            scaleFlap.x = duckState.pos.x + 10;
             if (faceLeft) {
-                posX = posX + 10;
+                scaleFlap.x = scaleFlap.x + 10;
             }
-            wings->renderAnimation(posX, posY, scaleFlap, faceLeft, true);
+
+            SDL_Point screenPosFlap = camera.getScreenPosition(scaleFlap.x, scaleFlap.y, zoom);
+            SDL_Rect destRectFlap = {
+                screenPosFlap.x,
+                screenPosFlap.y,
+                static_cast<int>(scaleFlap.w * zoom),
+                static_cast<int>(scaleFlap.h * zoom)
+            };
+
+            wings->renderAnimation(destRectFlap.x, destRectFlap.y, destRectFlap, faceLeft, true);
         }
 
         // Renderiza las armaduras si están equipadas
@@ -102,23 +124,23 @@ void Duck::render() {
             if (!armor->loadTexture())
                 std::cout << "Failed to load texture weapon\n"; 
             if (faceLeft)
-                armor->render(duckState.pos.x + 5, duckState.pos.y - 15, faceLeft, HELMET_ARMOR);
+                armor->render(duckState.pos.x + 5, duckState.pos.y - 15, faceLeft, HELMET_ARMOR, camera, zoom);
             else
-                armor->render(duckState.pos.x - 11, duckState.pos.y - 15, faceLeft, HELMET_ARMOR);
+                armor->render(duckState.pos.x - 11, duckState.pos.y - 15, faceLeft, HELMET_ARMOR, camera, zoom);
         } 
         if (duckState.chestplate.type == CHESTPLATE_ARMOR) {
             if (!armor->loadTexture())
                 std::cout << "Failed to load texture weapon\n"; 
             if (faceLeft)
-                armor->render(duckState.pos.x + 37, duckState.pos.y, faceLeft, CHESTPLATE_ARMOR);
+                armor->render(duckState.pos.x + (37), duckState.pos.y, faceLeft, CHESTPLATE_ARMOR, camera, zoom);
             else 
-                armor->render(duckState.pos.x - 6, duckState.pos.y, faceLeft, CHESTPLATE_ARMOR);
+                armor->render(duckState.pos.x - (6), duckState.pos.y, faceLeft, CHESTPLATE_ARMOR, camera, zoom);
         }
 
         if (weapon->getType() != NULL_WEAPON) {
             if (!weapon->loadTexture())
                 std::cout << "Failed to load texture weapon\n"; 
-            weapon->render(duckState.pos.x, duckState.pos.y, faceLeft);
+            weapon->render(duckState.pos.x, duckState.pos.y, faceLeft, camera, zoom);
         }
 
     } else {

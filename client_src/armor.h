@@ -8,6 +8,7 @@
 #include <unordered_map> 
 #include "../common_src/utils.h"
 #include "../common_src/game_state.h"
+#include "camera.h"
 #include <memory>
 
 class Armor {
@@ -19,11 +20,11 @@ protected:
     armor_t helmetState;  // Estado del casco
     armor_t chestplateState;  // Estado de la coraza
 
-    void renderArmorPiece(uint8_t armorType, armor_t& armorState, float x, float y, bool faceLeft);  // Renderiza una pieza específica de armadura
+    void renderArmorPiece(uint8_t armorType, armor_t& armorState, int x, int y, bool faceLeft, const Camera& camera, float zoom);  // Renderiza una pieza específica de armadura
 
 public:
     Armor(armor_t armorState, SDL_Renderer* renderer);  // Constructor
-    void render(float x, float y, bool faceLeft, uint8_t type);  // Renderiza todas las piezas de armadura
+    void render(int x, int y, bool faceLeft, uint8_t type, const Camera& camera, float zoom);  // Renderiza todas las piezas de armadura
     bool loadTexture();  // Carga las texturas necesarias
     void updateState(armor_t arm);  // Asigna el tipo de armadura
     int getType();

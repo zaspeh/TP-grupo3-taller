@@ -15,6 +15,9 @@
 #include "spawn_place.h"
 #include "projectile.h"
 #include "box.h"
+#include "zoom.h"
+#include "camera.h"
+#include "calculatorManager.h"
 #include "../common_src/thread.h"
 #include "../common_src/game_state.h"
 #include "../common_src/queue.h"
@@ -40,6 +43,8 @@ class Game : public Thread
         std::unique_ptr<LTexture> background;
         game_state_t gameState;
         std::unique_ptr<TTF_Font, decltype(&TTF_CloseFont)> gFont{nullptr, TTF_CloseFont};
+        Camera camera;
+        Zoom zoom;
         void render();
         bool processEvents();
         void sendCommand(const uint8_t command);

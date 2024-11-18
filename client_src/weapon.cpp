@@ -67,8 +67,8 @@ void Weapon::updateState(const weapon_t& newWeaponState){
     weaponState = newWeaponState;
 }
 
-void Weapon::render(float x, float y, bool faceLeft) {
-    SDL_Rect scaleRect = {0, 0, 0, 0};
+void Weapon::render(int x, int y, bool faceLeft, const Camera& camera, float zoom) {
+    SDL_Rect scaleRect = {x, y, 0, 0};
     auto it = guns.find(weaponState.type);
     if (it != guns.end()) {
         LTexture* texture = it->second.get();
@@ -77,13 +77,24 @@ void Weapon::render(float x, float y, bool faceLeft) {
         
         // Obtener el offset Y específico para esta arma
         int yOffset = weaponYOffsets[weaponState.type];
+
+        //SDL_Rect destRect = scaleRect;
+
+        SDL_Point screenPos = camera.getScreenPosition(scaleRect.x, scaleRect.y, zoom);
+        
+        SDL_Rect destRect = {
+            screenPos.x,
+            screenPos.y,
+            static_cast<int>(scaleRect.w * zoom),
+            static_cast<int>(scaleRect.h * zoom)
+        };
         
         SDL_RendererFlip flip = faceLeft ? SDL_FLIP_HORIZONTAL : SDL_FLIP_NONE;
         texture->render(
-            x + (faceLeft ? -10 : 10), 
-            y + yOffset,  // Usar el offset específico del arma
+            destRect.x + (faceLeft ? -10 : 10), 
+            destRect.y + yOffset,  // Usar el offset específico del arma
             nullptr, 
-            &scaleRect, 
+            &destRect, 
             flip
         );
     } else {

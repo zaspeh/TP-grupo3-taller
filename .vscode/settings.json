@@ -1,6 +1,6 @@
 {
-    "C_Cpp.errorSquiggles": "enabled",
     "files.associations": {
+        "C_Cpp.errorSquiggles": "enabled",
         "array": "cpp",
         "atomic": "cpp",
         "bit": "cpp",
