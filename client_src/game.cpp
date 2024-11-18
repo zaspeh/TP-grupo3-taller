@@ -1,11 +1,12 @@
 #include "game.h"
 #include <algorithm>  // Añadir este include al principio del archivo
 
-Game::Game(std::shared_ptr<Queue<game_state_t>> gameStateQueue, std::shared_ptr<Queue<uint8_t>> commandQueue)
+Game::Game(std::shared_ptr<Queue<game_state_t>> gameStateQueue, std::shared_ptr<Queue<uint8_t>> commandQueue, Client& client)
     : gameStateQueue(gameStateQueue),
       commandQueue(commandQueue),
       gWindow(nullptr, SDL_DestroyWindow),
-      gRenderer(nullptr, SDL_DestroyRenderer)
+      gRenderer(nullptr, SDL_DestroyRenderer),
+      client(client)
 {
     gameState = gameStateQueue->pop();
     ducks.resize(MAX_DUCKS);
@@ -78,6 +79,7 @@ bool Game::processEvents() {
     while (SDL_PollEvent(&e) != 0) {
         eventDetected = true;
         if (e.type == SDL_QUIT) {
+            sendCommand(LEAVE_MATCH);
             return true;
         } else if (e.type == SDL_KEYDOWN) {
             switch (e.key.keysym.sym) {
@@ -102,7 +104,6 @@ bool Game::processEvents() {
                 case SDLK_9: sendCommand(SHOTGUN_WEAPON); break;
                 case SDLK_0: sendCommand(SNIPER_WEAPON); break;
                 case SDLK_g: sendCommand(RESTART_MATCH); break;
-                case SDLK_q: sendCommand(LEAVE_MATCH); return true;
                 default: break;
             }
         } else if (e.type == SDL_KEYUP) {
@@ -208,7 +209,7 @@ void Game::run()
 
     while (!quit && _keep_running) {
         quit = processEvents();
-
+        std::cout << quit << std::endl;
         SDL_SetRenderDrawColor(gRenderer.get(), 0xFF, 0xFF, 0xFF, 0xFF);
         SDL_RenderClear(gRenderer.get());
 
@@ -237,6 +238,8 @@ void Game::run()
             next_frame = frame_end;
         }
     }
+    std::cout << "Saliendo de Game, llamando a stop" << std::endl;
+    client.stop();
 }
 
 void Game::render() {

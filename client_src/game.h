@@ -12,6 +12,7 @@
 #include "ltexture.h"
 #include "duck.h"
 #include "platform.h"
+#include "client.h"
 #include "spawn_place.h"
 #include "projectile.h"
 #include "box.h"
@@ -24,6 +25,8 @@
 #include "../common_src/utils.h"
 
 constexpr float FRAME_DURATION_MS = 16.67f;
+
+class Client;
 
 class Game : public Thread
 {
@@ -51,9 +54,10 @@ class Game : public Thread
         void update(game_state_t game_state);
         void renderText(const std::string& message, int x, int y);
         std::mutex sdl_mutex;
+        Client& client;
 
     public:
-        Game(std::shared_ptr<Queue<game_state_t>> gameStateQueue, std::shared_ptr<Queue<uint8_t>> commandQueue);
+        Game(std::shared_ptr<Queue<game_state_t>> gameStateQueue, std::shared_ptr<Queue<uint8_t>> commandQueue, Client& client);
         ~Game();
 
         bool init();

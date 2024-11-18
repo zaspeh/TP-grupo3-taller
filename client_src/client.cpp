@@ -17,16 +17,17 @@ Client::Client(const std::string& server_ip, const std::string& server_port)
         sendThread->start();
 
 
-        gameThread = std::make_unique<Game>(gameStateQueue, commandQueue);
+        gameThread = std::make_unique<Game>(gameStateQueue, commandQueue, *this);
         gameThread->start();
     }
 
 void Client::checkIfClose() {
     std::string input;
     std::cout << "Ingrese 'q' para cerrar el juego: ";
-    while (std::getline(std::cin, input) && input != "q") {
+    while (std::getline(std::cin, input) && input != "q" && _keep_running) {
         std::cout << "Entrada inválida. Intente nuevamente: ";
     }
+    std::cout << "Saliendo de checkIfClose" << std::endl;
     stop();
 }
 
@@ -50,6 +51,7 @@ void Client::run() {
 
 void Client::stop(){
     if (!_keep_running) return;
+    std::cout << "Client stopped" << std::endl;
     _keep_running.store(false); 
     gameThread->stop();
     sendThread->stop();
@@ -58,4 +60,12 @@ void Client::stop(){
     gameThread->join();
     sendThread->join();
     recvThread->join();
+}
+
+Client::~Client() {
+    try {
+        stop();
+    } catch (const std::exception& e) {
+        std::cerr << "Error al cerrar el juego: " << e.what() << std::endl;
+    }
 }

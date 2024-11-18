@@ -22,14 +22,18 @@ std::shared_ptr<PlayerState> GameState::getPlayer(uint8_t id) {
 void GameState::removePlayer(uint8_t id) {
     std::lock_guard<std::mutex> lock(mtx);
     std::cout << "Pato eliminado: " << static_cast<int>(id) << "\n";
+    
     if (players.count(id)) {
         players.erase(id);
-
         if (state.level.num_ducks > 0) {
             state.level.num_ducks--;
         }
-
         state.level.ducks[id].isAlive = false;
+    }
+    
+    if (players.empty()) { // cierro el servidor
+        std::cin.putback('q');
+        std::cout << "Último jugador eliminado. Cerrando servidor...\n";
     }
 }
 
