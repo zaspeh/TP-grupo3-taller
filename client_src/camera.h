@@ -26,8 +26,7 @@ public:
     void update(float newTargetX, float newTargetY, const Zoom& zoom) {
         float visibleWorldWidth = zoom.getVisibleWidth();
         float visibleWorldHeight = zoom.getVisibleHeight();
-        
-        // Calculate bounds
+
         float maxX = WORLD_WIDTH - (visibleWorldWidth / 2);
         float maxY = WORLD_HEIGHT - (visibleWorldHeight / 2);
         float minX = visibleWorldWidth / 2;

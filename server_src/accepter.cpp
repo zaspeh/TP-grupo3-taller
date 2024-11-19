@@ -60,6 +60,6 @@ Accepter::~Accepter() {
     try {
         stop();
     } catch (const std::exception& e) {
-        std::cerr << EXCEPTION << e.what() << std::endl;
+        std::cerr  << e.what() << std::endl;
     }
 }

@@ -5,13 +5,14 @@
 #include "equipment.h"
 #include "../common_src/game_state.h"
 #include <iostream>
+#include <memory>
 
 class PlayerState {
 private:
     weapon_t nullWeapon = {{0, 0}, NULL_WEAPON, 0};
     armor_t nullArmor = {{0, 0}, NULL_ARMOR};
     duck_t duck;
-    Weapon* weapon;
+    std::shared_ptr<Weapon> weapon;
     Armor armor;
     Helmet helmet;
     bool infinitAmmo = false;
@@ -32,11 +33,11 @@ public:
 
     void setPosition(const position_t& newPosition)  { duck.pos = newPosition; }
 
-    Weapon* getWeapon() const { return weapon; }
+    std::shared_ptr<Weapon> getWeapon() { return weapon; }
 
     uint8_t getWeaponType() const { return weapon->getId(); } 
 
-    weapon_t pickWeapon(Weapon* newWeapon);
+    weapon_t pickWeapon(std::shared_ptr<Weapon> newWeapon);
 
     void updateWeapon(float deltaTime, level_t& level);
 

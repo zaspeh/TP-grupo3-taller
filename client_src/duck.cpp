@@ -167,12 +167,10 @@ void Duck::updateState(const duck_t& newDuckState) {
     }
 
     if (armor) {
-        // Si el tipo de armadura es CHESTPLATE_ARMOR, actualiza el estado
         if (duckState.chestplate.type == CHESTPLATE_ARMOR) {
             armor->updateState(duckState.chestplate);
         }
 
-        // Si el tipo de armadura es HELMET_ARMOR, actualiza el estado
         if (duckState.helmet.type == HELMET_ARMOR) {
             armor->updateState(duckState.helmet);
         }

@@ -12,12 +12,10 @@ class Monitor {
 private:
     Server& server;
     std::mutex mutex_clientes;
-    std::mutex mutex_senders;
     std::vector<std::shared_ptr<ServerProtocol>> clientes;
 
 public:
     explicit Monitor(Server& server);
-
     Monitor(const Monitor&) = delete;
     Monitor& operator=(const Monitor&) = delete;
 
@@ -25,8 +23,6 @@ public:
     void agregar_cliente(std::shared_ptr<ServerProtocol> client);
     void eliminar_cliente(std::shared_ptr<ServerProtocol> client);
     std::vector<std::shared_ptr<ServerProtocol>> obtener_clientes();
-
-
     void cerrar_clientes();
 };
 

@@ -78,27 +78,6 @@ void Protocol::closeSocket() {
     this->socket.shutdown(SHUT_RDWR);
     this->socket.close();
 }
-/*
-float Protocol::recvFloat(bool& wasClosed) {
-    uint32_t network_num;
-    int receivedBytes = this->socket.recvall(&network_num, sizeof(network_num), &wasClosed);
-    checkReceivedStatus(receivedBytes, wasClosed, ERROR_READING_FLOAT);
-    network_num = ntohl(network_num); // Convierte de formato de red a formato de host
-    
-    float num;
-    std::memcpy(&num, &network_num, sizeof(float)); // Copia los bytes al float
-    return num;
-}
-
-void Protocol::sendFloat(float num, bool& wasClosed) {
-    uint32_t network_num;
-    std::memcpy(&network_num, &num, sizeof(float)); // Copia los bytes del float a un uint32_t
-    network_num = htonl(network_num); // Convierte a formato de red
-    this->socket.sendall(reinterpret_cast<char*>(&network_num), sizeof(network_num), &wasClosed);
-}
-*/
-
-
 
 void Protocol::sendFloat(float num, bool& wasClosed) {
     uint32_t network_num;
@@ -117,29 +96,3 @@ float Protocol::recvFloat(bool& wasClosed) {
     std::memcpy(&num, &network_num, sizeof(float)); 
     return num;
 }
-
-/* float Protocol::recvFloat(bool &wasClosed) {
-    // Recibir bytes
-    uint8_t bytes[sizeof(float)];
-    for (size_t i = 0; i < sizeof(float); i++) {
-        bytes[i] = recvUint8(wasClosed);
-        if (wasClosed) return 0.0f;
-    }
-    
-    // Convertir bytes a float
-    float value;
-    memcpy(&value, bytes, sizeof(float));
-    return value;
-}
-
-void Protocol::sendFloat(float value, bool &wasClosed) {
-    // Convertir float a bytes
-    uint8_t bytes[sizeof(float)];
-    memcpy(bytes, &value, sizeof(float));
-    
-    // Enviar cada byte
-    for (size_t i = 0; i < sizeof(float); i++) {
-        sendUint8(bytes[i], wasClosed);
-        if (wasClosed) return;
-    }
-} */

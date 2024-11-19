@@ -16,17 +16,17 @@ protected:
 
     armor_t nullArmor = {{0, 0}, NULL_ARMOR};
 
-    std::unordered_map<uint8_t, std::unique_ptr<LTexture>> armors;  // Mapa para las texturas de armaduras
-    armor_t helmetState;  // Estado del casco
-    armor_t chestplateState;  // Estado de la coraza
+    std::unordered_map<uint8_t, std::unique_ptr<LTexture>> armors;  
+    armor_t helmetState;  
+    armor_t chestplateState;  
 
-    void renderArmorPiece(uint8_t armorType, armor_t& armorState, int x, int y, bool faceLeft, const Camera& camera, float zoom);  // Renderiza una pieza específica de armadura
+    void renderArmorPiece(uint8_t armorType, armor_t& armorState, int x, int y, bool faceLeft, const Camera& camera, float zoom);  
 
 public:
-    Armor(armor_t armorState, SDL_Renderer* renderer);  // Constructor
-    void render(int x, int y, bool faceLeft, uint8_t type, const Camera& camera, float zoom);  // Renderiza todas las piezas de armadura
-    bool loadTexture();  // Carga las texturas necesarias
-    void updateState(armor_t arm);  // Asigna el tipo de armadura
+    Armor(armor_t armorState, SDL_Renderer* renderer);  
+    void render(int x, int y, bool faceLeft, uint8_t type, const Camera& camera, float zoom); 
+    bool loadTexture();  
+    void updateState(armor_t arm); 
     int getType();
     armor_t getState();
 };

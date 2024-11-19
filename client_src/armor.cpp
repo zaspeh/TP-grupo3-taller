@@ -49,11 +49,11 @@ void Armor::renderArmorPiece(uint8_t armorType, armor_t& armorState, int x, int 
         float yOffset = 0;
 
         if (armorType == CHESTPLATE_ARMOR) {
-            xOffset = 25;  // Ajuste horizontal para el chestplate
-            yOffset = 28;  // Ajuste vertical para el chestplate
+            xOffset = 25;  
+            yOffset = 28;  
         } else if (armorType == HELMET_ARMOR) {
-            xOffset = 7;   // Ajuste horizontal para el helmet
-            yOffset = 0; // Ajuste vertical para el helmet
+            xOffset = 7;  
+            yOffset = 0; 
         }
 
         //SDL_Rect destRect = scaleRect;
@@ -67,7 +67,6 @@ void Armor::renderArmorPiece(uint8_t armorType, armor_t& armorState, int x, int 
             static_cast<int>(scaleRect.h * zoom)
         };
 
-        // Aplica los desplazamientos
         texture->render(destRect.x + xOffset * (faceLeft ? -1 : 1), destRect.y + yOffset, nullptr, &destRect, flip);
     } else {
         std::cerr << "Texture not found or invalid for armor type: " << static_cast<int>(armorType) << std::endl;

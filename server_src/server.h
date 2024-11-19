@@ -22,21 +22,16 @@ private:
     GameLoop gameloop;
     Monitor monitor;
     Accepter accepter;
-
-
     void closeClients();
     void handleInput();
     std::vector<std::shared_ptr<ServerProtocol>> getClients();
-public:
 
+public:
     explicit Server(int port);
     void run() override;
     void stop() override;
     void addClient(std::shared_ptr<ServerProtocol> client);
     void removeClient(std::shared_ptr<ServerProtocol> client);
-    GameLoop& obtener_gameloop() { return gameloop; }
-    Monitor& obtener_monitor() { return monitor; }
-    bool esta_corriendo() const { return _keep_running; }
     std::vector<std::shared_ptr<Sender>>& obtener_emisores();
     ~Server();
 };

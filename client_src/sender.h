@@ -4,7 +4,7 @@
 #include <string>
 #include <iostream>
 #include <memory>
-#include <cstdint> // Añadir esta línea para incluir uint8_t
+#include <cstdint> 
 // Own libraries
 #include "../common_src/thread.h"
 #include "../common_src/queue.h"

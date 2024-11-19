@@ -18,7 +18,13 @@ void verificar_argumentos(int argc, const char** argv) {
 int main(int argc, const char** argv) {
     verificar_argumentos(argc, argv);
 
-    Server server(std::stoi(argv[SEGUNDO_ARGUMENTO]));
-    server.run();
+    try {
+        Server server(std::stoi(argv[SEGUNDO_ARGUMENTO]));
+        server.run();
+    } catch (const std::exception& e) {
+        std::cerr << "Error: " << e.what() << std::endl;
+        return ERROR;
+    }
+
     return SUCCESS;
 }

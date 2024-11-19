@@ -3,9 +3,6 @@
 #include "../common_src/game_state.h"
 #include "../common_src/utils.h"
 
-
-
-
 class Box {
     private:
     box_t boxState;

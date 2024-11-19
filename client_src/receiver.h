@@ -6,6 +6,7 @@
 // Own libraries
 #include "../common_src/thread.h"
 #include "../common_src/queue.h"
+#include "../common_src/utils.h"
 #include "../common_src/game_state.h"
 #include "client_protocol.h"
 
@@ -20,7 +21,7 @@ public:
     
     void run() override;
     void stop() override;
-    //~Receiver();
+    ~Receiver();
 };
 
 #endif

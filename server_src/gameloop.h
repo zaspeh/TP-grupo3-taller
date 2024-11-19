@@ -24,13 +24,12 @@ private:
     void ejecutar_comandos();
 
 public:
-    bool matchStarted = false;
     explicit GameLoop(Server& server, Monitor& monitor);
     void initGame();
     void doActionGameState(uint8_t player, uint8_t action);
     void run() override;
     void stop() override;
-    void agregar_comando(std::function<void()> command);
+    void addCommand(std::function<void()> command);
     void removePlayer(uint8_t idPlayer);
     ~GameLoop();
 

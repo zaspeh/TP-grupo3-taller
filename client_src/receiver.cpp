@@ -1,5 +1,7 @@
 #include "receiver.h"
 
+Receiver::Receiver(std::shared_ptr<ClientProtocol> protocol, std::shared_ptr<Queue<game_state_t>> queue) : protocol(protocol), gameStateQueue(queue) {}
+
 void Receiver::run(){
     bool wasClosed = false;
     while (!wasClosed && _keep_running) {
@@ -11,17 +13,19 @@ void Receiver::run(){
             gameStateQueue->push(state);
 
         } catch (const std::exception& e) {
-            std::cerr << EXCEPTION << e.what() << std::endl;
+            std::cerr << e.what() << std::endl;
             break;
         }
     }
-    //monitor.remove_client(protocol);
 }
 
 void Receiver::stop() {
+    if (!_keep_running) return;
     _keep_running = false;
     protocol->closeSocket();
     std::cout << "Receiver stopped" << std::endl;
 }
 
-Receiver::Receiver(std::shared_ptr<ClientProtocol> protocol, std::shared_ptr<Queue<game_state_t>> queue) : protocol(protocol), gameStateQueue(queue) {}
+Receiver::~Receiver() {
+    stop();
+}

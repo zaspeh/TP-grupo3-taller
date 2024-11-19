@@ -5,33 +5,47 @@ Projectile::Projectile(projectile_t projectileState, SDL_Renderer* renderer)
     : projectileState(projectileState),
       gRenderer(renderer),
       texture(std::make_unique<LTexture>(renderer)) {
-    scaleRect.w = SPRITE_PROJECTILE_WIDTH * 2; // Ajustar escala si es necesario
+    scaleRect.w = SPRITE_PROJECTILE_WIDTH * 2; 
     scaleRect.h = SPRITE_PROJECTILE_HEIGHT * 2;
 }
 
 bool Projectile::loadTexture() {
-    std::string path = "client_src/guns/granade.png"; // Ruta de la textura
+    std::string path = "client_src/projectiles/"; 
 
-    if (projectileState.type == GRENADE_WEAPON){
-        path = "client_src/guns/granade.png";
-    }else if(projectileState.type == BANANA_WEAPON){
-        path = "client_src/projectiles/bananaprojectile.png";
-    }else if(projectileState.type == PEWPEWLASER_WEAPON){
-        path = "client_src/projectiles/pewpewlaserprojectile.png";
-    }else if(projectileState.type == LASERRIFLE_WEAPON){
-        path = "client_src/projectiles/laserrifleprojectile.png";
-    }else if(projectileState.type == AK_47_WEAPON){
-        path = "client_src/projectiles/ak47projectile.png";
-    }else if(projectileState.type == DARTGUN_WEAPON){
-        path = "client_src/projectiles/dartgunprojectile.png";
-    }else if(projectileState.type == COWBOY_WEAPON){
-        path = "client_src/projectiles/cowboyprojectile.png";
-    }else if(projectileState.type == MAGNUM_WEAPON){
-        path = "client_src/projectiles/magnumprojectile.png";
-    }else if(projectileState.type == SHOTGUN_WEAPON){
-        path = "client_src/projectiles/shotgunprojectile.png";
-    }else{
-        path = "client_src/projectiles/sniperprojectile.png";
+    switch (projectileState.type)
+    {
+    case GRENADE_WEAPON:
+        path =  "client_src/guns/granade.png";
+        break;
+    case BANANA_WEAPON:
+        path += "bananaprojectile.png";
+        break;
+    case PEWPEWLASER_WEAPON:
+        path += "pewpewlaserprojectile.png";
+        break;
+    case LASERRIFLE_WEAPON:
+        path += "laserrifleprojectile.png";
+        break;
+    case AK_47_WEAPON:
+        path += "ak47projectile.png";
+        break;
+    case DARTGUN_WEAPON:
+        path += "dartgunprojectile.png";
+        break;
+    case COWBOY_WEAPON:
+        path += "cowboyprojectile.png";
+        break;
+    case MAGNUM_WEAPON:
+        path += "magnumprojectile.png";
+        break;
+    case SHOTGUN_WEAPON:
+        path += "shotgunprojectile.png";
+        break;
+    case SNIPER_WEAPON:
+        path += "sniperprojectile.png";
+        break;
+    default:
+        break;
     }
 
     if (!texture->loadFromFile(path)) {
@@ -53,8 +67,6 @@ void Projectile::render(const Camera& camera, float zoom) {
     scaleRect.x = projectileState.pos.x;
     scaleRect.y = projectileState.pos.y; 
     
-    //SDL_Rect destRect = scaleRect;
-
     SDL_Point screenPos = camera.getScreenPosition(scaleRect.x, scaleRect.y, zoom);
         
     SDL_Rect destRect = {

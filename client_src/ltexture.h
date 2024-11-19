@@ -11,16 +11,12 @@ public:
     LTexture(SDL_Renderer* renderer);
     ~LTexture();
 
-    // Carga la textura desde un archivo de imagen
+
     bool loadFromFile(std::string path);
 
-    // Libera los recursos de la textura
     void free();
-
-    // Renderiza la textura en las coordenadas especificadas
     void render(int x, int y, SDL_Rect* clip = NULL, SDL_Rect* scaleRect = NULL, SDL_RendererFlip flip = SDL_FLIP_NONE);
 
-    // Devuelve el ancho y alto de la textura
     int getWidth();
     int getHeight();
 

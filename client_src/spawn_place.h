@@ -14,30 +14,23 @@
 
 class SpawnPlace {
 public:
-    // Constructor
+
     SpawnPlace(const spawn_place_t& spawnData, SDL_Renderer* renderer);
 
-    // Destructor
     ~SpawnPlace();
 
-    // Cargar las texturas del SpawnPlace
     bool loadTexture();
-
-    // Renderizar el SpawnPlace en el nivel
     void render(const Camera& camera, float zoom);
-
     void updateState(const spawn_place_t& newState);
-
-    // Obtener la posición del spawn
     position_t getPosition() const;
 
-    // Obtener el estado de activación
+
     bool isActive() const;
 
 private:
-    spawn_place_t spawnData;  // Datos de la estructura de spawn
-    std::unique_ptr<LTexture> spawnTexture;  // Textura del spawn
-    SDL_Renderer* renderer;  // Renderizador de SDL
+    spawn_place_t spawnData;  
+    std::unique_ptr<LTexture> spawnTexture;  
+    SDL_Renderer* renderer;  
     std::unique_ptr<Weapon> weapon;
     std::unique_ptr<Armor> armor;
     std::unique_ptr<LTexture> chestplateTexture;

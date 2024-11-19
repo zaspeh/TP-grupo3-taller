@@ -1,32 +1,24 @@
 #include "sender.h"
+#include <unordered_set>
 
-/*
-#define GRENADE_WEAPON 0x1
-#define BANANA_WEAPON 0x2
-#define PEWPEWLASER_WEAPON 0x3
-#define LASERRIFLE_WEAPON 0x4
-#define AK_47_WEAPON 0x5
-#define DARTGUN_WEAPON 0x6
-#define COWBOY_WEAPON 0x7
-#define MAGNUM_WEAPON 0x8
-#define SHOTGUN_WEAPON 0x9
-#define SNIPER_WEAPON 0xa
-*/
 bool Sender::commandIsValid(uint8_t command) {
-    return command == MOVE_LEFT || command == MOVE_RIGHT || command == JUMP || command == TAKE_WEAPON || command == SHOOT 
-    || command == LOOK_UP || command == FLOOR || command == NEW_CLIENT || command == INFINIT_AMMO || command == PICK_ANY_WEAPON
-    || command == GRENADE_WEAPON || command == BANANA_WEAPON || command == PEWPEWLASER_WEAPON || command == LASERRIFLE_WEAPON
-    || command == AK_47_WEAPON || command == DARTGUN_WEAPON || command == COWBOY_WEAPON || command == MAGNUM_WEAPON
-    || command == SHOTGUN_WEAPON || command == SNIPER_WEAPON || command == CHESTPLATE_ARMOR || command == HELMET_ARMOR 
-    || command == RESTART_MATCH || command == LEAVE_MATCH;
+    static const std::unordered_set<uint8_t> validCommands = {
+        MOVE_LEFT, MOVE_RIGHT, JUMP, TAKE_WEAPON, SHOOT,
+        LOOK_UP, FLOOR, NEW_CLIENT, INFINIT_AMMO, PICK_ANY_WEAPON,
+        GRENADE_WEAPON, BANANA_WEAPON, PEWPEWLASER_WEAPON, LASERRIFLE_WEAPON,
+        AK_47_WEAPON, DARTGUN_WEAPON, COWBOY_WEAPON, MAGNUM_WEAPON,
+        SHOTGUN_WEAPON, SNIPER_WEAPON, CHESTPLATE_ARMOR, HELMET_ARMOR,
+        RESTART_MATCH, LEAVE_MATCH
+    };
 
+    return validCommands.find(command) != validCommands.end();
 }
+
 
 void Sender::run() {
     bool wasClosed = false;
     while (!wasClosed && _keep_running) {
         try {
-            //std::cout << "Popeando el mensaje" << std::endl;
             uint8_t command = commandQueue->pop();
 
             if (wasClosed)
@@ -47,7 +39,6 @@ void Sender::stop() {
     while (commandQueue->try_pop(command)) {
     }
     commandQueue->close();
-    std::cout << "sender joinneado." << std::endl;
 }
 
 Sender::Sender(std::shared_ptr<ClientProtocol> protocol, std::shared_ptr<Queue<uint8_t>> queue) : protocol(protocol), commandQueue(queue) {}

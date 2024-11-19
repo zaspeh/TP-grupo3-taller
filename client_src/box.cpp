@@ -33,7 +33,6 @@ bool Box::loadTexture() {
             break;
         case 0:
             std::cout << "Caja sin vida: " << path << std::endl;
-            //path += "box0.png";
             break;
         default:
             std::cerr << "Caja no cargada" << std::endl;
@@ -42,7 +41,7 @@ bool Box::loadTexture() {
 
     if (!texture->loadFromFile(path)) {
         std::cerr << "Failed to load box texture from " << path << std::endl;
-        std::cerr << "SDL_image Error: " << IMG_GetError() << std::endl;  // Imprime el error detallado
+        std::cerr << "SDL_image Error: " << IMG_GetError() << std::endl;  
         return false;
     }
     return true;
@@ -53,7 +52,6 @@ void Box::render(const Camera& camera, float zoom) {
     scaleRect.x = boxState.pos.x;
     scaleRect.y = boxState.pos.y;
 
-    //SDL_Rect destRect = scaleRect;
 
     SDL_Point screenPos = camera.getScreenPosition(scaleRect.x, scaleRect.y, zoom);
         

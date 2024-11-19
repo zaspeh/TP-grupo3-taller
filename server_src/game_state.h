@@ -48,14 +48,13 @@ private:
     void createProjectile(uint8_t weaponType, position_t origin, bool facingLeft);
     armor_t getArmorPosition(position_t position, bool helmetEquipped, bool armorEquipped);
     weapon_t getWeaponPosition(position_t position);
-    Weapon* createWeapon(weapon_t weapon);
+    std::shared_ptr<Weapon> createWeapon(weapon_t weapon);
     std::map<uint8_t, std::shared_ptr<PlayerState>> getPlayers();
     std::shared_ptr<PlayerState> getPlayer(uint8_t id);
     void updateState(uint8_t id, std::shared_ptr<PlayerState> player);
     std::shared_ptr<PlayerState> connectPlayer(uint8_t id);
 
 public:
-    // Constructor
     GameState(Server& server);
 
     void removePlayer(uint8_t id);

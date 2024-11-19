@@ -1,5 +1,5 @@
 #include "game.h"
-#include <algorithm>  // Añadir este include al principio del archivo
+#include <algorithm>  
 
 Game::Game(std::shared_ptr<Queue<game_state_t>> gameStateQueue, std::shared_ptr<Queue<uint8_t>> commandQueue, Client& client)
     : gameStateQueue(gameStateQueue),
@@ -9,82 +9,7 @@ Game::Game(std::shared_ptr<Queue<game_state_t>> gameStateQueue, std::shared_ptr<
       client(client)
 {
     gameState = gameStateQueue->pop();
-<<<<<<< HEAD
-    ducks.reserve(MAX_DUCKS);
-    platforms.reserve(MAX_PLATFORMS);
-    spawns.reserve(MAX_SPAWN_PLACES);
-    droppedWeapons.reserve(MAX_ITEMS);
-    droppedArmors.reserve(MAX_ITEMS);
-    projectiles.reserve(MAX_PROJECTILES);
-    boxes.reserve(MAX_BOXES);
-}
 
-
-/* bool Game::loadMedia()
-{
-    bool charged = true;
-    ducks.resize(gameState.level.num_ducks);  // Ajuste: asegurar el tamaño correcto del vector ducks
-    for (int i = 0; i < gameState.level.num_ducks && charged; i++) {
-        if (!ducks[i]) {
-            ducks[i] = std::make_unique<Duck>(gameState.level.ducks[i], SCREEN_WIDTH, SCREEN_HEIGHT, gRenderer.get());
-        }
-        if (!ducks[i]->loadTexture()) {
-            printf("Failed to load texture for duck %d.\n", i);
-            charged = false;
-        }
-    }
-    platforms.resize(gameState.level.num_platforms);  // Ajuste: asegurar el tamaño correcto del vector ducks
-    for (int i = 0; i < gameState.level.num_platforms && charged; i++) {
-        if (!platforms[i]) {
-            platforms[i] = std::make_unique<Platform>(gameState.level.platforms[i], gRenderer.get());
-        }
-        if (!platforms[i]->loadTexture()) {
-            printf("Failed to load texture for duck %d.\n", i);
-            charged = false;
-        }
-    }
-    spawns.resize(MAX_SPAWN_PLACES);
-    std::cout << "Tamaño de spawns: " << static_cast<int>(gameState.level.num_spawn_places) << std::endl; 
-    for (int i = 0; i < gameState.level.num_spawn_places && charged; i++) {
-        if (gameState.level.spawn_places[i].weapon.type == NULL_WEAPON && gameState.level.spawn_places[i].armor.type == NULL_ARMOR) continue;
-        if (!spawns[i]) {
-            std::cout << "Creando nuevo spawn: " << static_cast<int>(gameState.level.spawn_places[i].weapon.type)  << std::endl;
-            std::cout << "Creando nuevo spawn: " << static_cast<int>(gameState.level.spawn_places[i].armor.type)  << std::endl;
-            spawns[i] = std::make_unique<SpawnPlace>(gameState.level.spawn_places[i], gRenderer.get());
-        }
-        if (!spawns[i]->loadTexture()) {
-            printf("Failed to load texture for spawn %d.\n", i);
-            charged = false;
-        }
-    }
-
-    droppedWeapons.resize(MAX_ITEMS);
-    std::cout << "Cambiando el tamaño de las cajas\n";
-    droppedArmors.resize(MAX_ITEMS);
-    std::cout << "Cajas reziseadas.\n";
-    projectiles.resize(MAX_PROJECTILES);
-
-    boxes.resize(MAX_BOXES);
-    for (int i = 0; i < gameState.level.num_boxes && charged; i++) {
-        if (!boxes[i]) {
-            std::cout << "Cargando boxes\n";
-            boxes[i] = std::make_unique<Box>(gameState.level.boxes[i], gRenderer.get());
-        }
-        if (!boxes[i]->loadTexture()) {
-            printf("Failed to load texture for box %d.\n", i);
-            charged = false;
-        }
-    }
-
-    background = std::make_unique<LTexture>(gRenderer.get());
-
-    if(!background->loadFromFile("client_src/forest.png")){
-        charged = false;
-    }
-
-    return charged;
-} */
-=======
     ducks.resize(MAX_DUCKS);
     platforms.resize(MAX_PLATFORMS);
     spawns.resize(MAX_SPAWN_PLACES);
@@ -93,7 +18,6 @@ Game::Game(std::shared_ptr<Queue<game_state_t>> gameStateQueue, std::shared_ptr<
     projectiles.resize(MAX_PROJECTILES);
     boxes.resize(MAX_BOXES);
 }
->>>>>>> origin/Editor
 
 bool Game::loadMedia() {
     bool success = true;
@@ -224,7 +148,6 @@ bool Game::init() {
         return false;
     }
 
-    // Creación de la ventana con smart pointer
     SDL_Window* windowPtr = SDL_CreateWindow("Duck", 
         SDL_WINDOWPOS_UNDEFINED, 
         SDL_WINDOWPOS_UNDEFINED, 
@@ -239,7 +162,6 @@ bool Game::init() {
     }
     gWindow.reset(windowPtr);
 
-    // Creación del renderer con smart pointer
     SDL_Renderer* rendererPtr = SDL_CreateRenderer(gWindow.get(), -1, 
         SDL_RENDERER_ACCELERATED);
     
@@ -251,7 +173,6 @@ bool Game::init() {
     }
     gRenderer.reset(rendererPtr);
 
-    // Inicialización de SDL_image
     int imgFlags = IMG_INIT_PNG;
     if (!(IMG_Init(imgFlags) & imgFlags)) {
         std::cerr << "SDL_image could not initialize! SDL_image Error: " << IMG_GetError() << std::endl;
@@ -278,8 +199,6 @@ void Game::run()
         printf("Failed to initialize game or load media.\n");
         return;
     }
-
-    //printf("Game initialized and media loaded successfully.\n");
 
     bool quit = false;
     auto next_frame = std::chrono::steady_clock::now();
@@ -315,18 +234,13 @@ void Game::run()
             next_frame = frame_end;
         }
     }
-    std::cout << "Saliendo de Game, llamando a stop" << std::endl;
     client.stop();
 }
 
 void Game::render() {
-<<<<<<< HEAD
 
-    if (!gRenderer) {
-=======
     std::lock_guard<std::mutex> lock(sdl_mutex);
     if (!gRenderer || !gWindow) {
->>>>>>> origin/Editor
         std::cerr << "Renderer is null" << std::endl;
         return;
     }
@@ -334,22 +248,11 @@ void Game::render() {
     SDL_SetRenderDrawColor(gRenderer.get(), 0xFF, 0xFF, 0xFF, 0xFF);
     SDL_RenderClear(gRenderer.get());
 
-<<<<<<< HEAD
-    // Render background
     if (background) {
         SDL_Rect scaleRect = {0, 0, SCREEN_WIDTH, SCREEN_HEIGHT};
         background->render(0, 0, nullptr, &scaleRect, SDL_FLIP_NONE);
     }
-=======
-    SDL_Rect scaleRect = {0, 0, SCREEN_WIDTH, SCREEN_HEIGHT};
-    background->render(0, 0, nullptr, &scaleRect, SDL_FLIP_NONE);
-    /*SDL_Rect bgRect = camera.getBackgroundRect(
-            background->getWidth(), 
-            background->getHeight(), 
-            zoom.getCurrentZoom()
-        );
-    background->render(bgRect.x, bgRect.y, NULL, &bgRect, SDL_FLIP_NONE);*/
->>>>>>> origin/Editor
+
 
 
     for (const auto& platform : platforms) {
@@ -385,7 +288,7 @@ void Game::render() {
     for (int i = 0; i < gameState.level.num_explosions; i++) {
         if (explotions[i]) {
             SDL_Rect explosionRect;
-            explosionRect.w = 16 * 4; // Ajusta estos valores según el tamaño deseado
+            explosionRect.w = 16 * 4;
             explosionRect.h = 16 * 3;
             explosionRect.x = gameState.level.explosions[i].x;
             explosionRect.y = gameState.level.explosions[i].y + 16;
@@ -414,7 +317,6 @@ void Game::render() {
 
 void Game::update(game_state_t gameState) {
     std::lock_guard<std::mutex> lock(sdl_mutex);
-    // Primero actualizamos los patos existentes y removemos los que ya no están
     for (size_t i = 0; i < ducks.size(); i++) {
         bool found = false;
         for (int j = 0; j < gameState.level.num_ducks; j++) {
@@ -429,9 +331,7 @@ void Game::update(game_state_t gameState) {
         }
     }
 
-    // Luego ajustamos el tamaño y agregamos los nuevos patos
     ducks.resize(gameState.level.num_ducks);
-    // Finalmente, agregamos los patos que faltan
     for (int i = 0; i < gameState.level.num_ducks; i++) {
         bool exists = false;
         for (const auto& duck : ducks) {
@@ -551,7 +451,7 @@ void Game::renderText(const std::string& message, int x, int y) {
         std::cerr << "Font not loaded, cannot render text." << std::endl;
         return;
     }
-    // naranja
+
     SDL_Color textColor = { 255, 128, 0, 255 };
     SDL_Surface* textSurface = TTF_RenderText_Solid(gFont.get(), message.c_str(), textColor);
 
@@ -569,7 +469,6 @@ void Game::renderText(const std::string& message, int x, int y) {
 
     SDL_Rect renderQuad = {x, y, textSurface->w, textSurface->h};
 
-    // Renderizamos la textura del texto
     if (SDL_RenderCopy(gRenderer.get(), textTexture, nullptr, &renderQuad) != 0) {
         std::cerr << "Error rendering text! SDL Error: " << SDL_GetError() << std::endl;
     }
@@ -585,7 +484,6 @@ void Game::stop() {
     try {
         Thread::stop();
         
-        // Clear game-specific resources
         ducks.clear();
         platforms.clear();
         spawns.clear();
@@ -595,14 +493,12 @@ void Game::stop() {
         boxes.clear();
         background.reset();
 
-        // Primero liberar la fuente antes de TTF_Quit
         if (gFont) {
             TTF_CloseFont(gFont.get());
-            gFont.reset();  // Liberamos la fuente TTF primero
+            gFont.reset();  
         }
         
         
-        // Clear SDL-specific resources
         if (gRenderer) {
             SDL_RenderClear(gRenderer.get());
             SDL_RenderPresent(gRenderer.get());
@@ -613,14 +509,8 @@ void Game::stop() {
             SDL_DestroyWindow(gWindow.get());
             gWindow.reset();
         }
-<<<<<<< HEAD
-        
-        
-=======
-        TTF_Quit();
->>>>>>> origin/Editor
 
-        // Quit SDL subsystems en orden inverso a su inicialización
+
         TTF_Quit();
         IMG_Quit();
         SDL_Quit();

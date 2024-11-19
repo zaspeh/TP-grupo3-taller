@@ -62,7 +62,7 @@ void PlayerState::updateWeapon(float deltaTime, level_t& level) {
     }
 
     if (weapon != nullptr && weapon->getType() == GRENADE_WEAPON) {
-        Grenade* grenade = dynamic_cast<Grenade*>(weapon); // Downcasting
+        std::shared_ptr<Grenade> grenade = std::dynamic_pointer_cast<Grenade>(weapon); // Downcasting
         if (grenade->getTimeToExplode() <= 0){
             level.explosions[level.num_explosions++] = getPosition();
             duck.equipped_weapon.type = NULL_WEAPON;
@@ -184,7 +184,7 @@ void PlayerState::setHelmetEquipped(armor_t hmt) {
         helmet.equip(); 
 }
 
-weapon_t PlayerState::pickWeapon(Weapon* newWeapon) {
+weapon_t PlayerState::pickWeapon(std::shared_ptr<Weapon> newWeapon) {
     weapon_t weaponST = {{0, 0},
 NULL_WEAPON
     };
@@ -217,7 +217,7 @@ bool PlayerState::shoot() {
 
     if (weapon != nullptr) {
         if (weapon->getType() == GRENADE_WEAPON) {
-            Grenade* grenade = dynamic_cast<Grenade*>(weapon); 
+            std::shared_ptr<Grenade> grenade = std::dynamic_pointer_cast<Grenade>(weapon); 
             if (grenade != nullptr && grenade->getPinPulled()) {
                 grenade->throw_grenade();
                 return true;

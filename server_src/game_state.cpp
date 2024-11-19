@@ -56,7 +56,7 @@ bool GameState::chosedAWeapon(uint8_t id,uint8_t action){
     if(!pickAnyWeapon) return false;
     pickAnyWeapon = false;
     weapon_t weaponState = {{0, 0}, action, ammoForWeapons[action]};
-    Weapon *weapon = createWeapon(weaponState);
+    std::shared_ptr<Weapon> weapon = createWeapon(weaponState);
     if(weapon == nullptr) return false;
     checkIfDropWeapon(players[id]->pickWeapon(weapon));
     return true;
@@ -80,7 +80,7 @@ game_state_t GameState::doAction(uint8_t id, uint8_t action) {
 
     weapon_t weaponST;
     armor_t armorST;
-    Weapon* weapon = nullptr;
+    std::shared_ptr<Weapon> weapon = nullptr;
 
     if(!chosedAWeapon(id, action)){
         std::cout << "Accion a realizarse: " << static_cast<int>(action) << std::endl;
@@ -117,11 +117,14 @@ game_state_t GameState::doAction(uint8_t id, uint8_t action) {
                 break;
 
             case SHOOT:
+                std::cout << "Disparando" << std::endl;
                 try {
                     if(player->getWeapon() == nullptr || player->getWeaponType() == NULL_WEAPON) 
                         break;
+                    std::cout << "Disparando proyectil\n" << std::endl;
                     if(player->shoot())
                         createProjectile(player->getWeaponType(), player->getPosition(), player->getFacingDirection());
+                    std::cout << "Proyectil creado\n" << std::endl;
                     break;
                 } catch (const std::exception& e) {
                     std::cerr << "Error al disparar: " << e.what() << std::endl;
@@ -161,7 +164,6 @@ game_state_t GameState::doAction(uint8_t id, uint8_t action) {
     }
 
     updateState(id, player);
-    std::cout << "Acomodo el estado de los jugadores" << std::endl;
     return state;
 }
 
@@ -556,47 +558,46 @@ armor_t GameState::getArmorPosition(position_t position, bool helmetEquipped, bo
     return armor;
 }
 
-Weapon* GameState::createWeapon(weapon_t weaponState) {
-    Weapon* newWeapon;
-    try { 
+std::shared_ptr<Weapon> GameState::createWeapon(weapon_t weaponState) {
+    std::shared_ptr<Weapon> newWeapon;
+    try {
         switch (weaponState.type) {
             case GRENADE_WEAPON:
-                newWeapon = new Grenade(weaponState);
+                newWeapon = std::make_shared<Grenade>(weaponState);
                 break;
             case BANANA_WEAPON:
-                newWeapon = new Banana(weaponState);
+                newWeapon = std::make_shared<Banana>(weaponState);
                 break;
             case PEWPEWLASER_WEAPON:
-                newWeapon = new PewPewLaser(weaponState);
+                newWeapon = std::make_shared<PewPewLaser>(weaponState);
                 break;
             case LASERRIFLE_WEAPON:
-                newWeapon = new LaserRifle(weaponState);
+                newWeapon = std::make_shared<LaserRifle>(weaponState);
                 break;
             case DARTGUN_WEAPON:
-                newWeapon = new Dartgun(weaponState);
+                newWeapon = std::make_shared<Dartgun>(weaponState);
                 break;
             case AK_47_WEAPON:
-                newWeapon = new AK47(weaponState);
+                newWeapon = std::make_shared<AK47>(weaponState);
                 break;
             case COWBOY_WEAPON:
-                newWeapon = new CowBoyPistol(weaponState);
+                newWeapon = std::make_shared<CowBoyPistol>(weaponState);
                 break;
             case MAGNUM_WEAPON:
-                newWeapon = new Magnum(weaponState);
+                newWeapon = std::make_shared<Magnum>(weaponState);
                 break;
             case SHOTGUN_WEAPON:
-                newWeapon = new Shotgun(weaponState);
+                newWeapon = std::make_shared<Shotgun>(weaponState);
                 break;
             case SNIPER_WEAPON:
-                newWeapon = new Sniper(weaponState);
+                newWeapon = std::make_shared<Sniper>(weaponState);
                 break;
             default:
                 newWeapon = nullptr;
                 break;
         }
-
     } catch (const std::exception& e) {
-        std::cerr << "Error: " << e.what() << std::endl;
+        std::cerr << "Exception caught: " << e.what() << std::endl;
     }
     return newWeapon;
 }

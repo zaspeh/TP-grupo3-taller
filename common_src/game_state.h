@@ -21,63 +21,62 @@ typedef struct {
 
 // Representa plataformas en el escenario
 typedef struct {
-    position_t pos; // Posición de la plataforma
-    uint8_t type;   // Tipo de plataforma (ej.: suelo, muro, etc.)
+    position_t pos; 
+    uint8_t type;   
 } platform_t;
 
 // Representa un arma en el juego
 typedef struct {
     position_t pos;
-    uint8_t type;    // Tipo de arma (ej.: pistola, escopeta, etc.)
+    uint8_t type;   
     uint8_t ammo;    
 } weapon_t;
 
 // Representa una armadura o casco en el juego
 typedef struct {
     position_t pos;
-    uint8_t type;     // Tipo de armadura/casco
+    uint8_t type;    
 } armor_t;
 
 
 
 // Representa puntos de aparición donde aparecen armas y armaduras
 typedef struct {
-    position_t pos;    // Posición del spawn place en el nivel
-    bool is_active;    // Si se puede spawnear
-    weapon_t weapon;   // Arma que puede aparecer en este spawn place
-    armor_t armor;     // Armadura o casco que puede aparecer en este spawn place
+    position_t pos;    
+    bool is_active;    
+    weapon_t weapon;   
+    armor_t armor;     
 } spawn_place_t;
 
 // Representa cajas en el escenario que pueden contener items o ser explosivas
 typedef struct {
-    position_t pos;      // Posición de la caja en el nivel
-    uint8_t health;       // Salud de la caja
-    bool is_explosive;   // Si la caja es explosiva
-    // bool is_broken;
+    position_t pos;      
+    uint8_t health;       
+    bool is_explosive;   
 } box_t;
 
 // Representa proyectiles lanzados por armas en el juego
 typedef struct {
-    position_t pos;  // Posición actual del proyectil
-    uint8_t type;    // Tipo de proyectil (determina el sprite y efectos)
-    bool is_active;  // Estado del proyectil (activo o inactivo)
+    position_t pos;  
+    uint8_t type;    
+    bool is_active;  
 } projectile_t;
 
 // Representa el estado de un pato
 typedef struct {
-    position_t pos; // Posición actual del pato en el nivel
-    uint8_t id;                 // ID único del pato para identificar al jugador
-    bool faceLeft;          // Dirección hacia la que mira el pato
-    bool isJumping;         // Estado de salto del pato
-    bool isDucking;         // Estado de estar tirado al piso
-    bool isFalling;         // Si el jugador está en caída libre
-    bool isFlaping;         // Si el jugador está en salto
-    uint8_t health;             // Salud actual del pato
-    bool isAlive;             // Estado de vida del pato (vivo o muerto)
-    uint8_t score;              // Puntaje acumulado del pato
-    uint8_t color;              // Color asignado al pato   
-    weapon_t equipped_weapon;    // Arma equipada por el pato
-    armor_t helmet;   // Armadura o casco equipado por el pato
+    position_t pos; 
+    uint8_t id;                 
+    bool faceLeft;         
+    bool isJumping;         
+    bool isDucking;         
+    bool isFalling;         
+    bool isFlaping;         
+    uint8_t health;             
+    bool isAlive;            
+    uint8_t score;              
+    uint8_t color;              
+    weapon_t equipped_weapon;    
+    armor_t helmet;   
     armor_t chestplate;
 } duck_t;
 
@@ -105,8 +104,8 @@ typedef struct {
 typedef struct {
     level_t level;
     uint8_t current_level;
-    uint8_t round;         // Ronda actual en progreso
-    uint8_t winning_score; // Puntaje necesario para ganar la partida
+    uint8_t round;        
+    uint8_t winning_score; 
 } game_state_t;
 
 #endif /* __GAME_STATE_H__ */

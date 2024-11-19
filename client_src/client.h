@@ -32,7 +32,7 @@ class Client {
     public:
         void requestId();
     	Client(const std::string& server_ip, const std::string& server_port); 
-        Client(const Client&) = default; // Prevent copy-constructionoperator=
+        Client(const Client&) = default; 
         ~Client();
         void run();
         void stop();

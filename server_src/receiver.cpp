@@ -1,8 +1,7 @@
 #include "receiver.h"
-
 #include <iostream>
-
 #include "server.h"
+#include "../common_src/utils.h"
 
 Receiver::Receiver(Server& server, std::shared_ptr<ServerProtocol> protocol, GameLoop& gameLoop, Monitor& monitor):
         server(server), protocol(protocol), gameLoop(gameLoop), monitor(monitor) {}
@@ -10,7 +9,7 @@ Receiver::Receiver(Server& server, std::shared_ptr<ServerProtocol> protocol, Gam
 void Receiver::run() {
     bool wasClosed = false; 
     uint8_t idPlayer = 255;
-    while (_keep_running && !wasClosed && server.esta_corriendo()) {
+    while (_keep_running && !wasClosed) {
         try {
             std::vector<uint8_t> mensaje = protocol->recvCommand(wasClosed);
             if (wasClosed) 
@@ -18,12 +17,12 @@ void Receiver::run() {
             
             idPlayer = mensaje[0];
             
-            gameLoop.agregar_comando([this, mensaje]() {
+            gameLoop.addCommand([this, mensaje]() {
                 gameLoop.doActionGameState(mensaje[0], mensaje[1]);
             });
             
         } catch (const std::exception& e) {
-            std::cerr << EXCEPTION << " receiver - " << e.what() << std::endl;
+            std::cerr << "Error: " << e.what() << std::endl;
             break;
         }
     }
@@ -32,6 +31,6 @@ void Receiver::run() {
         server.removeClient(protocol);
         gameLoop.removePlayer(idPlayer); 
     } catch (const std::exception& e) {
-        std::cerr << "Error al remover jugador: " << e.what() << std::endl;
+        std::cerr << "Error: " << e.what() << std::endl;
     }
 }

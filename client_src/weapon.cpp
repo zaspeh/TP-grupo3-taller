@@ -75,10 +75,8 @@ void Weapon::render(int x, int y, bool faceLeft, const Camera& camera, float zoo
         scaleRect.w = texture->getWidth() * 2;
         scaleRect.h = texture->getHeight() * 2;
         
-        // Obtener el offset Y específico para esta arma
-        int yOffset = weaponYOffsets[weaponState.type];
 
-        //SDL_Rect destRect = scaleRect;
+        int yOffset = weaponYOffsets[weaponState.type];
 
         SDL_Point screenPos = camera.getScreenPosition(scaleRect.x, scaleRect.y, zoom);
         
@@ -92,7 +90,7 @@ void Weapon::render(int x, int y, bool faceLeft, const Camera& camera, float zoo
         SDL_RendererFlip flip = faceLeft ? SDL_FLIP_HORIZONTAL : SDL_FLIP_NONE;
         texture->render(
             destRect.x + ((faceLeft ? -10 : 10)*zoom), 
-            destRect.y + (yOffset*zoom),  // Usar el offset específico del arma
+            destRect.y + (yOffset*zoom),  
             nullptr, 
             &destRect, 
             flip

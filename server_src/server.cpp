@@ -21,7 +21,7 @@ void Server::handleInput() {
             }
         }
     } catch (const std::exception& e) {
-        std::cerr << EXCEPTION << e.what() << std::endl;
+        std::cerr << "Error: " << e.what() << std::endl;
         stop();
     }
 }
@@ -33,7 +33,7 @@ void Server::run() {
         handleInput();
 
     } catch (const std::exception& e) {
-        std::cerr << EXCEPTION << " server run - " << e.what() << std::endl;
+        std::cerr << "Error: " << e.what() << std::endl;
         stop();
     }
 }
@@ -51,13 +51,17 @@ std::vector<std::shared_ptr<ServerProtocol>> Server::getClients() {
 } 
 
 void Server::stop() {
-    if (!_keep_running) return;
-    Thread::stop();
-    monitor.cerrar_clientes();
-    accepter.stop();
-    gameloop.stop();
-    accepter.join();
-    gameloop.join();
+    try {
+        if (!_keep_running) return;
+        Thread::stop();
+        monitor.cerrar_clientes();
+        accepter.stop();
+        gameloop.stop();
+        accepter.join();
+        gameloop.join();
+    } catch (const std::exception& e) {
+        std::cerr << "Error: " << e.what() << std::endl;
+    }
 }
 
 Server::~Server() {

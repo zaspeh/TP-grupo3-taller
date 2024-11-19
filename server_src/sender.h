@@ -4,8 +4,6 @@
 #include <memory>
 #include <string>
 #include <unordered_map>
-
-//#include "../common_src/informacion.h"
 #include "../common_src/serverprotocol.h"
 #include "../common_src/queue.h"
 #include "../common_src/thread.h"

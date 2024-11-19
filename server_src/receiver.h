@@ -4,6 +4,7 @@
 #include <memory>
 
 #include "../common_src/serverprotocol.h"
+#include "../common_src/utils.h"
 #include "../common_src/thread.h"
 #include "gameloop.h"
 
@@ -18,7 +19,6 @@ private:
 
 public:
     explicit Receiver(Server& server, std::shared_ptr<ServerProtocol> protocol, GameLoop& gameLoop, Monitor& monitor);
-
     void run() override;
 };
 

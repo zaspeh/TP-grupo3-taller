@@ -13,7 +13,7 @@ void GameLoop::initGame() {
     gameState = std::make_unique<GameState>(server);
 }
 
-void GameLoop::agregar_comando(std::function<void()> command) {
+void GameLoop::addCommand(std::function<void()> command) {
     cola_comandos.push(std::move(command));
 }
 
@@ -62,18 +62,18 @@ void GameLoop::removePlayer(uint8_t player) {
 }
 
 void GameLoop::stop() {
+    if (!_keep_running) return;
+
     Thread::stop();
+    std::function<void()> command;
+    while (cola_comandos.try_pop(command)) {}
     cola_comandos.close();
 }
 
 GameLoop::~GameLoop() {
-    if (!_keep_running)
-        return;
-
     try {
-        Thread::stop();
-        cola_comandos.close();
+        stop();
     } catch (const std::exception& e) {
-        std::cerr << EXCEPTION << e.what() << std::endl;
+        std::cerr  << e.what() << std::endl;
     }
 }
