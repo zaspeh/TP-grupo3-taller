@@ -46,7 +46,7 @@ public:
     game_state_t updatePlayers(float deltaTime);
     armor_t getArmorPosition(position_t position, bool helmetEquipped, bool armorEquipped);
     weapon_t getWeaponPosition(position_t position);
-    Weapon* createWeapon(uint8_t weaponType);
+    Weapon* createWeapon(weapon_t weaponState);
     bool chosedAWeapon(uint8_t id, uint8_t action);
     void checkIfDropWeapon(weapon_t droppedWeapon);
     void updateWeaponsPhysics(float deltaTime);
