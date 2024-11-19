@@ -28,14 +28,12 @@ void Level::initWinningLevel() {
     winningLevel();
 }
 
-// Implementación de getLevelById
 void Level::createLevelById(int id) {
     switch (id) {
         case 0:
             std::cout << "Creando nivel 0\n";
             initLevel0();
             break;
-        // Agregar más casos aquí para otros niveles si es necesario
         case 1:
             std::cout << "Creando nivel 1\n";
             initLevel1();
@@ -49,7 +47,7 @@ void Level::createLevelById(int id) {
             winningLevel();
             break;
         default:
-            initLevel0();  // Nivel predeterminado si el ID no coincide
+            initLevel0();  
     }
 }
 
@@ -63,7 +61,6 @@ void Level::clearLevelState() {
     levelState.num_dropped_weapons = 0;
     levelState.num_dropped_armors = 0;
 
-    // Inicializamos las estructuras internas
     for (auto& duck : levelState.ducks)
         duck = {{0, 0}, 0, false, false, false, false, false, 0, false, 0, 0, nullWeapon, nullArmor, nullArmor};
 
@@ -93,29 +90,22 @@ void Level::clearLevelState() {
 void Level::initLevel0() {
     clearLevelState(); 
 
-    // Configuración de plataformas 
     levelState.num_platforms = 30;
     for (int i = 0; i < 30; ++i) {
-        levelState.platforms[i].pos = {i * WIDTH_PLATFORM, 650};
-        levelState.platforms[i].type = GRASS_PLATFORM;
+        levelState.platforms[i] = {{i * WIDTH_PLATFORM, 650}, GRASS_PLATFORM};
     }
 
     levelState.num_platforms += 14;
     for (int i = 30; i < 44; ++i) {
-        levelState.platforms[i].pos = {i * WIDTH_PLATFORM - 22*WIDTH_PLATFORM, 550};
-        levelState.platforms[i].type = GRASS_PLATFORM;
+        levelState.platforms[i] = {{i * WIDTH_PLATFORM - 22*WIDTH_PLATFORM, 550}, GRASS_PLATFORM};
     }
 
     levelState.num_platforms += 14;
     for (int i = 44; i < 58; ++i) {
-        // dibujo las plataformas en forma de
-        if (i < 51) {
-            levelState.platforms[i].pos = {i * WIDTH_PLATFORM - 44*WIDTH_PLATFORM, 450};
-
-        } else {
-            levelState.platforms[i].pos = {i * WIDTH_PLATFORM - 28*WIDTH_PLATFORM, 450};
-        }
-        levelState.platforms[i].type = GRASS_PLATFORM;
+        if (i < 51) 
+            levelState.platforms[i] = {{i * WIDTH_PLATFORM - 44*WIDTH_PLATFORM, 450}, GRASS_PLATFORM};
+        else 
+            levelState.platforms[i] = {{i * WIDTH_PLATFORM - 28*WIDTH_PLATFORM, 450}, GRASS_PLATFORM};
     }
 
 
@@ -145,35 +135,12 @@ void Level::initLevel0() {
 
 
 
-    //  -----------                 -------------
-    //              ---------------                
-    //  -----------------------------------------
-    // Configuración de lugares de aparición (spawn)
     levelState.num_spawn_places = 8;
     
-    levelState.spawn_places[0].pos = {50, 500};
-    levelState.spawn_places[0].is_active = true;
-    levelState.spawn_places[0].weapon = nullWeapon;
-    levelState.spawn_places[0].armor = nullArmor;
-    
-    levelState.spawn_places[1].pos = {100, 500};
-    levelState.spawn_places[1].is_active = true;
-    levelState.spawn_places[1].weapon = nullWeapon;
-    levelState.spawn_places[1].armor = nullArmor;
-
-    levelState.spawn_places[2].pos = {874, 500};
-    levelState.spawn_places[2].is_active = true;
-    levelState.spawn_places[2].weapon = nullWeapon;
-    levelState.spawn_places[2].armor = nullArmor;
-
-    levelState.spawn_places[3].pos = {924, 500}; // no mas de cuatro jugadores.
-    levelState.spawn_places[3].is_active = true;
-    levelState.spawn_places[3].weapon = nullWeapon;
-    levelState.spawn_places[3].armor = nullArmor;
-
-
-
-    std::cout << levelState.spawn_places[0].pos.x << " " << levelState.spawn_places[0].pos.y << std::endl;
+    levelState.spawn_places[0] = { {50, 500}, true, nullWeapon, nullArmor };
+    levelState.spawn_places[1] = { {100, 500}, true, nullWeapon, nullArmor };
+    levelState.spawn_places[2] = { {874, 500}, true, nullWeapon, nullArmor };
+    levelState.spawn_places[3] = { {924, 500}, true, nullWeapon, nullArmor };
     levelState.spawn_places[4] = getRandomSpawnPlace(75, 418);
     levelState.spawn_places[5] = getRandomSpawnPlace(425, 518);
     levelState.spawn_places[6] = getRandomSpawnPlace(510, 518);
@@ -208,34 +175,27 @@ void Level::initLevel0() {
 
 }
 
-
-// Implementación de getLevel0
 void Level::initLevel1() {
     clearLevelState();
 
-    // Configuración de plataformas 
     levelState.num_platforms = 20;
     for (int i = 0; i < 20; ++i) {
-        levelState.platforms[i].pos = {32*5 + i * WIDTH_PLATFORM, 200};
-        levelState.platforms[i].type = GRASS_PLATFORM;
+        levelState.platforms[i] = {{32*5 + i * WIDTH_PLATFORM, 200}, GRASS_PLATFORM};
     }
 
     levelState.num_platforms += 10;
     for (int i = 20; i < 30; ++i) {
-        levelState.platforms[i].pos = {i * WIDTH_PLATFORM - 20*WIDTH_PLATFORM, 300};
-        levelState.platforms[i].type = GRASS_PLATFORM;
+        levelState.platforms[i] = {{i * WIDTH_PLATFORM - 20*WIDTH_PLATFORM, 300}, GRASS_PLATFORM};
     }
 
     levelState.num_platforms += 7;
     for (int i = 30; i < 37; ++i) {
-        levelState.platforms[i].pos = {i * WIDTH_PLATFORM - 18*WIDTH_PLATFORM, 300};
-        levelState.platforms[i].type = GRASS_PLATFORM;
+        levelState.platforms[i] = {{i * WIDTH_PLATFORM - 18*WIDTH_PLATFORM, 300}, GRASS_PLATFORM};
     }
 
     levelState.num_platforms += 10;
     for (int i = 37; i < 47; ++i) {
-        levelState.platforms[i].pos = {i * WIDTH_PLATFORM - 16*WIDTH_PLATFORM, 300};
-        levelState.platforms[i].type = GRASS_PLATFORM;
+        levelState.platforms[i] = {{i * WIDTH_PLATFORM - 16*WIDTH_PLATFORM, 300}, GRASS_PLATFORM};
     }
 
 
@@ -244,13 +204,11 @@ void Level::initLevel1() {
     for (int i = 47; i < 62; ++i) {
         int offset = i * WIDTH_PLATFORM - 44*WIDTH_PLATFORM + 2*WIDTH_PLATFORM*(i-47) - WIDTH_PLATFORM;
         if (offset < 20*WIDTH_PLATFORM){
-            levelState.platforms[i].pos = {offset, 500};
-            levelState.platforms[i].type = GRASS_PLATFORM;
+            levelState.platforms[i] = {{offset, 500}, GRASS_PLATFORM};
         } else if ( offset == 20*WIDTH_PLATFORM) {
             continue;
         } else {
-            levelState.platforms[i].pos = {offset - WIDTH_PLATFORM, 500};
-            levelState.platforms[i].type = GRASS_PLATFORM;
+            levelState.platforms[i] = {{offset - WIDTH_PLATFORM, 500}, GRASS_PLATFORM};
         }
  
     }
@@ -258,11 +216,9 @@ void Level::initLevel1() {
     levelState.num_platforms += 7;
     for (int i = 62; i < 69; ++i) {
         if (i < 66) {
-            levelState.platforms[i].pos = {i * WIDTH_PLATFORM - 60*WIDTH_PLATFORM , 500};
-            levelState.platforms[i].type = GRASS_PLATFORM;
+            levelState.platforms[i] = {{i * WIDTH_PLATFORM - 60*WIDTH_PLATFORM, 500}, GRASS_PLATFORM};
         } else {
-            levelState.platforms[i].pos = {i * WIDTH_PLATFORM - 40*WIDTH_PLATFORM , 500};
-            levelState.platforms[i].type = GRASS_PLATFORM;
+            levelState.platforms[i] = {{i * WIDTH_PLATFORM - 40*WIDTH_PLATFORM, 500}, GRASS_PLATFORM};
         }
 
     }
@@ -272,20 +228,16 @@ void Level::initLevel1() {
     for (int i = 69; i < 73; ++i) {
         // pongo bloques en x = 11, 12, 19,20
         if (i < 71) {
-            levelState.platforms[i].pos = {i * WIDTH_PLATFORM - 59*WIDTH_PLATFORM, 400};
-            levelState.platforms[i].type = GRASS_PLATFORM;
+            levelState.platforms[i] = {{i * WIDTH_PLATFORM - 59*WIDTH_PLATFORM, 400}, GRASS_PLATFORM};
         } else {
-            levelState.platforms[i].pos = {i * WIDTH_PLATFORM - 52*WIDTH_PLATFORM, 400};
-            levelState.platforms[i].type = GRASS_PLATFORM;
+            levelState.platforms[i] = {{i * WIDTH_PLATFORM - 52*WIDTH_PLATFORM, 400}, GRASS_PLATFORM};
         }
-
     }
 
 
     levelState.num_platforms += 8;
     for (int i = 73; i < 81; ++i) {
-        levelState.platforms[i].pos = {i * WIDTH_PLATFORM - 61*WIDTH_PLATFORM, 500};
-        levelState.platforms[i].type = GRASS_PLATFORM;
+        levelState.platforms[i] = {{i * WIDTH_PLATFORM - 61*WIDTH_PLATFORM, 500}, GRASS_PLATFORM};
     }
 
     //          --------------------------
@@ -294,27 +246,11 @@ void Level::initLevel1() {
     // Configuración de lugares de aparición (spawn)
     levelState.num_spawn_places = 10;
     
-    levelState.spawn_places[0].pos = {14*32, 140};
-    levelState.spawn_places[0].is_active = true;
-    levelState.spawn_places[0].weapon = nullWeapon;
-    levelState.spawn_places[0].armor = nullArmor;
-    
-    levelState.spawn_places[1].pos = {15*32, 140};
-    levelState.spawn_places[1].is_active = true;
-    levelState.spawn_places[1].weapon = nullWeapon;
-    levelState.spawn_places[1].armor = nullArmor;
+    levelState.spawn_places[0] = {{14*32, 140}, true, nullWeapon, nullArmor};
+    levelState.spawn_places[1] = {{15*32, 140}, true, nullWeapon, nullArmor};
+    levelState.spawn_places[2] = {{16*32, 140}, true, nullWeapon, nullArmor};
+    levelState.spawn_places[3] = {{17*32, 140}, true, nullWeapon, nullArmor};
 
-    levelState.spawn_places[2].pos = {16*32, 140};
-    levelState.spawn_places[2].is_active = true;
-    levelState.spawn_places[2].weapon = nullWeapon;
-    levelState.spawn_places[2].armor = nullArmor;
-
-    levelState.spawn_places[3].pos = {17*32, 140}; // no mas de cuatro jugadores.
-    levelState.spawn_places[3].is_active = true;
-    levelState.spawn_places[3].weapon = nullWeapon;
-    levelState.spawn_places[3].armor = nullArmor;
-
-    std::cout << levelState.spawn_places[0].pos.x << " " << levelState.spawn_places[0].pos.y << std::endl;
     levelState.spawn_places[4] = getRandomSpawnPlace(100, 467);
     levelState.spawn_places[5] = getRandomSpawnPlace(150, 467);
     levelState.spawn_places[6] = getRandomSpawnPlace(830, 467);
@@ -349,62 +285,42 @@ void Level::initLevel1() {
 
 }
 
-
-// Implementación de getLevel0
 void Level::initLevel2() {
     clearLevelState();
-
-    // Configuración de plataformas 
+ 
     levelState.num_platforms = 22;
     for (int i = 0; i < 20; ++i) {
         if ( 5 <= i && i < 15) {
-            levelState.platforms[i].pos = {32*5 + i * WIDTH_PLATFORM, 400 + HEIGHT_PLATFORM};
-            levelState.platforms[i].type = GRASS_PLATFORM;
+            levelState.platforms[i] = {{32*5 + i * WIDTH_PLATFORM, 400 + HEIGHT_PLATFORM}, GRASS_PLATFORM};
         } else {
-            levelState.platforms[i].pos = {32*5 + i * WIDTH_PLATFORM, 400};
-            levelState.platforms[i].type = GRASS_PLATFORM;
+            levelState.platforms[i] = {{32*5 + i * WIDTH_PLATFORM, 400}, GRASS_PLATFORM};
         }
     }
-    levelState.platforms[20].pos = { 9 * WIDTH_PLATFORM, 400 + HEIGHT_PLATFORM};
-    levelState.platforms[20].type = DIRT_PLATFORM;
 
-    levelState.platforms[21].pos = {20 * WIDTH_PLATFORM, 400 + HEIGHT_PLATFORM};
-    levelState.platforms[21].type = DIRT_PLATFORM;
+    levelState.platforms[20] = {{9 * WIDTH_PLATFORM, 400 + HEIGHT_PLATFORM}, DIRT_PLATFORM};
+    levelState.platforms[21] = {{20 * WIDTH_PLATFORM, 400 + HEIGHT_PLATFORM}, DIRT_PLATFORM};
 
     // empiezo desde el 9
     levelState.num_platforms += 16;
     for (int i = 22; i < 38; ++i) {
-        if ( 25 <= i && i < 35) {
-            levelState.platforms[i].pos = { i * WIDTH_PLATFORM - 15*WIDTH_PLATFORM, 275};
-            levelState.platforms[i].type = GRASS_PLATFORM;
-        } else {
-            levelState.platforms[i].pos = { i * WIDTH_PLATFORM - 15*WIDTH_PLATFORM, 275 + HEIGHT_PLATFORM};
-            levelState.platforms[i].type = GRASS_PLATFORM;
-        }
+        if ( 25 <= i && i < 35) 
+            levelState.platforms[i] = {{i * WIDTH_PLATFORM - 15*WIDTH_PLATFORM, 275 }, GRASS_PLATFORM};
+        else 
+            levelState.platforms[i] = {{i * WIDTH_PLATFORM - 15*WIDTH_PLATFORM, 275 + HEIGHT_PLATFORM}, GRASS_PLATFORM};
     }
 
     levelState.num_platforms += 4;
-    levelState.platforms[38].pos = { 10 * WIDTH_PLATFORM, 275 + HEIGHT_PLATFORM};
-    levelState.platforms[38].type = DIRT_PLATFORM;
-
-    levelState.platforms[39].pos = { 19 * WIDTH_PLATFORM, 275 + HEIGHT_PLATFORM};
-    levelState.platforms[39].type = DIRT_PLATFORM;
-
-    levelState.platforms[40].pos = { 4 * WIDTH_PLATFORM, 400};
-    levelState.platforms[40].type = GRASS_PLATFORM;
-
-    levelState.platforms[41].pos = { 25 * WIDTH_PLATFORM, 400};
-    levelState.platforms[41].type = GRASS_PLATFORM;
+    levelState.platforms[38] = {{10 * WIDTH_PLATFORM, 275 + HEIGHT_PLATFORM}, DIRT_PLATFORM};
+    levelState.platforms[39] = {{19 * WIDTH_PLATFORM, 275 + HEIGHT_PLATFORM}, DIRT_PLATFORM};
+    levelState.platforms[40] = {{4 * WIDTH_PLATFORM, 400}, GRASS_PLATFORM};
+    levelState.platforms[41] = {{25 * WIDTH_PLATFORM, 400}, GRASS_PLATFORM};
 
     levelState.num_platforms += 4;
     for (int i = 42; i < 46; ++i) {
-        if (i < 44){
-            levelState.platforms[i].pos = { i * WIDTH_PLATFORM - 35*WIDTH_PLATFORM, 150 + HEIGHT_PLATFORM};
-            levelState.platforms[i].type = GRASS_PLATFORM;
-        } else {
-            levelState.platforms[i].pos = { i * WIDTH_PLATFORM - 23*WIDTH_PLATFORM, 150 + HEIGHT_PLATFORM};
-            levelState.platforms[i].type = GRASS_PLATFORM;
-        }
+        if (i < 44)
+            levelState.platforms[i] = {{i * WIDTH_PLATFORM - 35*WIDTH_PLATFORM, 150 + HEIGHT_PLATFORM}, GRASS_PLATFORM};
+        else 
+            levelState.platforms[i] = {{i * WIDTH_PLATFORM - 23*WIDTH_PLATFORM, 150 + HEIGHT_PLATFORM}, GRASS_PLATFORM};      
     }
 
 
@@ -415,27 +331,12 @@ void Level::initLevel2() {
     // Configuración de lugares de aparición (spawn)
     levelState.num_spawn_places = 10;
     
-    levelState.spawn_places[0].pos = {5*32, 360};
-    levelState.spawn_places[0].is_active = true;
-    levelState.spawn_places[0].weapon = nullWeapon;
-    levelState.spawn_places[0].armor = nullArmor;
-    
-    levelState.spawn_places[1].pos = {25*32, 360};
-    levelState.spawn_places[1].is_active = true;
-    levelState.spawn_places[1].weapon = nullWeapon;
-    levelState.spawn_places[1].armor = nullArmor;
+    levelState.spawn_places[0] = {{5*32, 360}, true, nullWeapon, nullArmor};
+    levelState.spawn_places[1] = {{25*32, 360}, true, nullWeapon, nullArmor};
+    levelState.spawn_places[2] = {{6*32, 360}, true, nullWeapon, nullArmor};
+    levelState.spawn_places[3] = {{26*32, 360}, true, nullWeapon, nullArmor};
 
-    levelState.spawn_places[2].pos = {6*32, 360};
-    levelState.spawn_places[2].is_active = true;
-    levelState.spawn_places[2].weapon = nullWeapon;
-    levelState.spawn_places[2].armor = nullArmor;
 
-    levelState.spawn_places[3].pos = {26*32, 360}; // no mas de cuatro jugadores.
-    levelState.spawn_places[3].is_active = true;
-    levelState.spawn_places[3].weapon = nullWeapon;
-    levelState.spawn_places[3].armor = nullArmor;
-
-    std::cout << levelState.spawn_places[0].pos.x << " " << levelState.spawn_places[0].pos.y << std::endl;
     levelState.spawn_places[4] = getRandomSpawnPlace(430, 367 + HEIGHT_PLATFORM);
     levelState.spawn_places[5] = getRandomSpawnPlace(510, 367 + HEIGHT_PLATFORM);
     levelState.spawn_places[6] = getRandomSpawnPlace(430, 242);
@@ -478,54 +379,35 @@ void Level::winningLevel() {
     // Configuración de plataformas 
     levelState.num_platforms = 15;
     for (int i = 0; i < 15; ++i) {
-        levelState.platforms[i].pos = {32*7 + i * WIDTH_PLATFORM, 400};
-        levelState.platforms[i].type = GRASS_PLATFORM;
-        if(i == 0 || i == 14){
+        levelState.platforms[i] = {{32*7 + i * WIDTH_PLATFORM, 400}, GRASS_PLATFORM};
+        if(i == 0 || i == 14)
             levelState.platforms[i].type = DIRT_PLATFORM;
-        }
     }
     levelState.num_platforms += 5;
     for(int i = 15; i < 20; ++i){
-        levelState.platforms[i].pos = {32*7, 400 - 32*i + 32*14};
-        levelState.platforms[i].type = DIRT_PLATFORM;
-        if(i == 19){
+        levelState.platforms[i] = {{32*7, 400 - 32*i + 32*14}, DIRT_PLATFORM};
+        if(i == 19)
             levelState.platforms[i].type = GRASS_PLATFORM;
-        }
     }
 
     levelState.num_platforms += 5;
     for(int i = 20; i < 25; ++i){
-        levelState.platforms[i].pos = {32*21, 400 - 32*i + 32*19};
-        levelState.platforms[i].type = DIRT_PLATFORM;
-        if(i == 24){
+        levelState.platforms[i] = {{32*21, 400 - 32*i + 32*19}, DIRT_PLATFORM};
+        if(i == 24)
             levelState.platforms[i].type = GRASS_PLATFORM;
-        }
     }
 
     levelState.num_platforms += 13;
-    for (int i = 25; i < 38; ++i) {
-        levelState.platforms[i].pos = {32*7 + i * WIDTH_PLATFORM - 24*WIDTH_PLATFORM, 400 - 32*5};
-        levelState.platforms[i].type = GRASS_PLATFORM;
-    }
-    //          --------------------------
-    //  --------------  -----  -----------------                
-    //  -----------------------------  -  -  -----
-    // Configuración de lugares de aparición (spawn)
+    for (int i = 25; i < 38; ++i) 
+        levelState.platforms[i] = {{32*7 + i * WIDTH_PLATFORM - 24*WIDTH_PLATFORM, 400 - 32*5}, GRASS_PLATFORM};
+    
+
     levelState.num_spawn_places = 4;
     this->spawns.clear();
     for (int i = 0; i < 4; ++i) {
-        levelState.spawn_places[i].pos = {470, 360};
-        levelState.spawn_places[i].is_active = true;
-        levelState.spawn_places[i].weapon = nullWeapon;
-        levelState.spawn_places[i].armor = nullArmor;
+        levelState.spawn_places[i] = {{470, 360}, true, nullWeapon, nullArmor};
         this->spawns.push_back(std::make_unique<Spawn>(470, 360, false, true, 0.0f));
     }
-
-    
-
-
-    // Inicialización de cajas y proyectiles
-    this->boxes.clear();
 
 }
 
@@ -576,12 +458,7 @@ spawn_place_t Level::getRandomSpawnPlace(int x, int y) {
     std::uniform_int_distribution<int> spawnDist(1, levelState.num_spawn_places);
     int randomIndex = spawnDist(rng);
 
-    spawn_place_t spawn = {
-        {x, y},
-        false,
-        nullWeapon,
-        nullArmor
-    };
+    spawn_place_t spawn = { {x, y},false, nullWeapon, nullArmor};
 
     if (randomIndex < levelState.num_spawn_places / 2) {
         spawn.armor.pos = {x, y};

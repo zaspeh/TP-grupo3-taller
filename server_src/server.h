@@ -23,45 +23,21 @@ private:
     Monitor monitor;
     Accepter accepter;
 
-    // Cierra todas las conexiones de clientes activos.
+
     void closeClients();
-
-public:
-    explicit Server(int port);
-
-    // Ejecuta el servidor.
-    void run() override;
-
-    // Detiene el servidor y cierra todas las conexiones.
-    void stop() override;
-
-    // Agrega un cliente nuevo al servidor.
-    void addClient(std::shared_ptr<ServerProtocol> client);
-
-    // Elimina un cliente del servidor.
-    void removeClient(std::shared_ptr<ServerProtocol> client);
-
-    //void removeSender(uint8_t idPlayer);
-
-    // Maneja la entrada del usuario desde la consola.
     void handleInput();
-
-    // Devuelve el vector de clientes conectados.
     std::vector<std::shared_ptr<ServerProtocol>> getClients();
+public:
 
-    // Devuelve una referencia al gameloop.
+    explicit Server(int port);
+    void run() override;
+    void stop() override;
+    void addClient(std::shared_ptr<ServerProtocol> client);
+    void removeClient(std::shared_ptr<ServerProtocol> client);
     GameLoop& obtener_gameloop() { return gameloop; }
-
-    // Devuelve una referencia al monitor.
     Monitor& obtener_monitor() { return monitor; }
-
-    // Verifica si el servidor está en ejecución.
     bool esta_corriendo() const { return _keep_running; }
-
-    // Devuelve los Senders de los usuarios.
     std::vector<std::shared_ptr<Sender>>& obtener_emisores();
-
-    // Destruye el servidor, liberando todos los recursos reservados.
     ~Server();
 };
 

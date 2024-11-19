@@ -34,29 +34,27 @@ public:
                                    (weapon.pos.x < platforms[i].pos.x + WIDTH_PLATFORM);
             
             if (horizontalOverlap) {
-                // Colisión con el suelo
                 if (newY + WEAPON_HEIGHT > platforms[i].pos.y && 
                     weapon.pos.y + WEAPON_HEIGHT <= platforms[i].pos.y + 5) {
                     weapon.pos.y = platforms[i].pos.y - WEAPON_HEIGHT;
                     verticalVelocity = 0;
                     isOnGround = true;
-                    return true; // El arma ha llegado a una plataforma
+                    return true; 
                 }
             }
         }
 
-        // Si no hay colisiones, actualizar la posición
         if (!isOnGround) {
             weapon.pos.y = newY;
         }
 
-        // Limitar la velocidad máxima de caída
+
         float maxFallSpeed = 800.0f;
         if (verticalVelocity > maxFallSpeed) {
             verticalVelocity = maxFallSpeed;
         }
 
-        return false; // El arma sigue cayendo
+        return false; 
     }
 };
 

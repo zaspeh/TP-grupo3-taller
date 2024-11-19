@@ -18,28 +18,15 @@ private:
 public:
     explicit Monitor(Server& server);
 
-    // Eliminar el constructor de copia
     Monitor(const Monitor&) = delete;
     Monitor& operator=(const Monitor&) = delete;
 
-    // Procesa un mensaje recibido.
     void procesar_mensaje(game_state_t gameState);
-
-
-    // Métodos para manejar clientes
-
-    // Agrega un nuevo cliente al monitor.
     void agregar_cliente(std::shared_ptr<ServerProtocol> client);
-
-    // Elimina un cliente del monitor.
     void eliminar_cliente(std::shared_ptr<ServerProtocol> client);
-
-    //void removeSender(uint8_t idClient);
-
-    // Devuelve una lista de todos los clientes actuales.
     std::vector<std::shared_ptr<ServerProtocol>> obtener_clientes();
 
-    // Cierra todas las conexiones de los clientes.
+
     void cerrar_clientes();
 };
 

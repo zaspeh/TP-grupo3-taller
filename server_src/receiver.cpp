@@ -13,10 +13,9 @@ void Receiver::run() {
     while (_keep_running && !wasClosed && server.esta_corriendo()) {
         try {
             std::vector<uint8_t> mensaje = protocol->recvCommand(wasClosed);
-            if (wasClosed) {
-                std::cout << "Saliendo del receiver.\n";
+            if (wasClosed) 
                 break;
-            }
+            
             idPlayer = mensaje[0];
             
             gameLoop.agregar_comando([this, mensaje]() {
@@ -30,7 +29,6 @@ void Receiver::run() {
     }
 
     try {
-        std::cout << "Eliminando jugador " << idPlayer << std::endl;
         server.removeClient(protocol);
         gameLoop.removePlayer(idPlayer); 
     } catch (const std::exception& e) {

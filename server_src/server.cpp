@@ -56,10 +56,8 @@ void Server::stop() {
     monitor.cerrar_clientes();
     accepter.stop();
     gameloop.stop();
-    std::cout << "Deteniendo todos los hilos..." << std::endl;
     accepter.join();
     gameloop.join();
-    std::cout << "Hilos detenidos." << std::endl;
 }
 
 Server::~Server() {

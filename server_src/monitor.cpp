@@ -21,24 +21,12 @@ void Monitor::procesar_mensaje(const game_state_t gameState) {
     }
 }
 
-
-/* void Monitor::removeSender(uint8_t idClient) {
-    std::lock_guard<std::mutex> lock(mutex_senders);
-    auto& emisores = server.obtener_emisores();
-    
-    if (idClient < emisores.size() && emisores[idClient]) {  // Verifica que el índice es válido
-        emisores[idClient]->stop();  // Cierra la cola antes de eliminar
-        emisores.erase(emisores.begin() + idClient);  // Elimina el sender
-    }
-} */
-
 void Monitor::agregar_cliente(std::shared_ptr<ServerProtocol> client) {
     std::lock_guard<std::mutex> lock(mutex_clientes);
     clientes.push_back(client);
 }
 
 void Monitor::eliminar_cliente(std::shared_ptr<ServerProtocol> client) {
-    std::cout << "Eliminar cliente" << std::endl;
     std::lock_guard<std::mutex> lock(mutex_clientes);
     try {
         client->closeSocket();
@@ -51,7 +39,6 @@ void Monitor::eliminar_cliente(std::shared_ptr<ServerProtocol> client) {
     } catch (const std::exception& e) {
         std::cerr << e.what() << std::endl;
     }
-    std::cout << "cliente eliminado" << std::endl;
 }
 
 std::vector<std::shared_ptr<ServerProtocol>> Monitor::obtener_clientes() {

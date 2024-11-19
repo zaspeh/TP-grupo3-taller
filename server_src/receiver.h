@@ -19,7 +19,6 @@ private:
 public:
     explicit Receiver(Server& server, std::shared_ptr<ServerProtocol> protocol, GameLoop& gameLoop, Monitor& monitor);
 
-    // Ejecuta el hilo receiver.
     void run() override;
 };
 

@@ -24,18 +24,10 @@ public:
     explicit Sender(Server& server, Monitor& monitor, std::shared_ptr<ServerProtocol> protocol,
                     std::shared_ptr<Queue<game_state_t>> gameStateQueue);
 
-    // Ejecuta el hilo sender.
     void run() override;
-
-    // Envía un mensaje con información a todos los clientes conectados.
     void broadcast_message_with_info(game_state_t gameState);
-
     bool isQueueClosed() { return gameStateQueue->isClosed(); }
-    
-    // Detiene el sender.
-    void stop() override;
-
-    // Destruye el servidor, liberando todos los recursos reservados.
+    void stop() override;    
     ~Sender();
 };
 

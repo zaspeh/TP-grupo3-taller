@@ -1,9 +1,8 @@
 #include "game_state.h"
 #include "server.h"
 #include <cmath>
-// Constructor
+
 GameState::GameState(Server& server) : level(), server(server) {
-    std::cout << "Instancio el nivel" << std::endl;
     players = std::map<uint8_t, std::shared_ptr<PlayerState>>();
     projectilePhysics.resize(MAX_PROJECTILES);
     
@@ -29,8 +28,7 @@ void GameState::removePlayer(uint8_t id) {
         state.level.ducks[id].isAlive = false;
     }
     
-    if (players.empty()) { // cierro el servidor
-        std::cout << "Último jugador eliminado. Cerrando servidor...\n";
+    if (players.empty()) { 
         server.stop();
     }
 }
@@ -74,7 +72,7 @@ game_state_t GameState::doAction(uint8_t id, uint8_t action) {
         for (auto& [id, player] : players) {
             state.level.ducks[id].score = 0;
             player->resetPlayer(state.level.ducks[id], player->getPosition().x, player->getPosition().y);
-            state.level.ducks[id] = player->getState(); // Actualiza explícitamente el estado
+            state.level.ducks[id] = player->getState(); 
         }
         matchFinished = false;
         changeLevel();
@@ -101,12 +99,11 @@ game_state_t GameState::doAction(uint8_t id, uint8_t action) {
             case TAKE_WEAPON:
                 armorST = getArmorPosition(player->getPosition(), player->hasHelmetEquipped(), player->hasArmorEquipped());
 
-                if (armorST.type != NULL_ARMOR) { // si encontre una armadura
+                if (armorST.type != NULL_ARMOR) { 
                     if (armorST.type == HELMET_ARMOR)
                         player->setHelmetEquipped(armorST);
                     if (armorST.type == CHESTPLATE_ARMOR)
                         player->setArmorEquipped(armorST);
-            
                     break;
                 }
 
@@ -198,7 +195,6 @@ void GameState::createProjectile(uint8_t weaponType, position_t origin, bool fac
             newProjectile.pos.x += 40;
         }
         newProjectile.pos.y += 10;
-        //if (weaponType == BANANA_WEAPON || weaponType == GRENADE_WEAPON) newProjectile.pos.y -= 10;
         newProjectile.type = weaponType;
         newProjectile.is_active = true;
         state.level.projectiles[state.level.num_projectiles] = newProjectile;
@@ -209,9 +205,9 @@ void GameState::createProjectile(uint8_t weaponType, position_t origin, bool fac
     float initialAngle;
     float gravity = 980.0f;
     if (weaponType == GRENADE_WEAPON || weaponType == BANANA_WEAPON) {
-        initialVelocity = 1000.0f;  // Velocidad más baja para la granada
+        initialVelocity = 1000.0f;  
         gravity = 2500.0f;
-        initialAngle = facingLeft ? M_PI - 5.5f : 5.5f;  // Aproximadamente 28.6 grados hacia arriba
+        initialAngle = facingLeft ? M_PI - 5.5f : 5.5f; 
     } else {
         initialAngle = facingLeft ? M_PI : 0.0f;
     }
@@ -226,7 +222,6 @@ void GameState::createProjectile(uint8_t weaponType, position_t origin, bool fac
 bool GameState::explotionInPosition(position_t position) {
     for (size_t i = 0; i < state.level.num_explosions; i++) {
         if (state.level.explosions[i].x == position.x && state.level.explosions[i].y == position.y){
-            state.level.explosions[i] = { 0, 0 };
             return true;
         }
     }
@@ -236,9 +231,11 @@ bool GameState::explotionInPosition(position_t position) {
 void GameState::updateProjectilsPhysics(float deltaTime) {
     for (size_t i = 0; i < state.level.num_projectiles; i++) {
         uint8_t maxDistance = checkWeaponDistance(state.level.projectiles[i].type);
-        state.level.projectiles[i].is_active = projectilePhysics[i].updatePosition(state.level.projectiles[i] , state.level, deltaTime, maxDistance, players);
-        if (!state.level.projectiles[i].is_active && state.level.projectiles[i].type == GRENADE_WEAPON && !explotionInPosition(state.level.projectiles[i].pos))  // si la granada explota...
+        state.level.projectiles[i].is_active = projectilePhysics[i].updatePosition(state.level.projectiles[i], state.level, deltaTime, maxDistance, players);
+        
+        if (!state.level.projectiles[i].is_active && state.level.projectiles[i].type == GRENADE_WEAPON && !explotionInPosition(state.level.projectiles[i].pos)) {
             state.level.explosions[state.level.num_explosions++] = state.level.projectiles[i].pos;
+        }
     }
 }
 
@@ -307,11 +304,10 @@ game_state_t GameState::updatePlayers(float deltaTime) {
     try {
         for (auto& [id, player] : players) {
             player->updatePosition(deltaTime, state.level.platforms, state.level.num_platforms, state.level.explosions, state.level.num_explosions);
-            player->updateWeapon();
+            player->updateWeapon(deltaTime, state.level);
             updateState(id, player); 
         }
 
-        
         updateBoxes();
         updateWeaponsPhysics(deltaTime);
         updateArmorsPhysics(deltaTime);
@@ -328,14 +324,12 @@ void GameState::updateSpawns(float deltaTime) {
     std::vector<std::shared_ptr<Spawn>> spawns = level.getSpawns();
     for (size_t i = 0; i < state.level.num_spawn_places; i++) {
 
-        // Si no tiene un arma, decrementa el temporizador
         if (!spawns[i]->hasSomething && !spawns[i]->duckCanSpawn) {
             spawns[i]->respawnTimer -= deltaTime;
 
-            // Si el temporizador llega a 0, reaparece un arma
             if (spawns[i]->respawnTimer <= 0.0f) {
                 spawns[i]->hasSomething = true;
-                spawns[i]->respawnTimer = 0.0f; // Reset del temporizador
+                spawns[i]->respawnTimer = 0.0f;
                 position_t pos = state.level.spawn_places[i].pos;
                 state.level.spawn_places[i] = level.getRandomSpawnPlace(pos.x, pos.y);
             }
@@ -347,7 +341,6 @@ void GameState::finishMatch(uint8_t id) {
     std::cout << "EL JUGADOR : " << static_cast<int>(id) << " HA GANADO" << std::endl;
     matchFinished = true;
     
-    //modularizar
     std::map<uint8_t, duck_t> currentDucks;
     for (auto& [id, player] : players) {
         currentDucks[id] = state.level.ducks[id];
@@ -356,37 +349,31 @@ void GameState::finishMatch(uint8_t id) {
     level.initWinningLevel();
     state.level = level.getLevel();
 
-    // Restaura los patos en el nuevo nivel
     for (auto& [id, player] : players) {
         position_t pos = level.getSpawnPosition();
         player->resetPlayer(currentDucks[id], pos.x, pos.y);
-        state.level.ducks[id] = player->getState(); // Actualiza explícitamente el estado
+        state.level.ducks[id] = player->getState();
     }
         
-    // Actualiza el número de patos
     state.level.num_ducks = players.size();
 }
 
 void GameState::changeLevel() {
-    // Guarda el estado actual de los patos antes de resetear
     std::map<uint8_t, duck_t> currentDucks;
     for (auto& [id, player] : players) {
         if(state.level.ducks[id].isAlive && !matchFinished) state.level.ducks[id].score += 1;
         currentDucks[id] = state.level.ducks[id];
     }
 
-    // Crea nuevo nivel
     level.createNewLevel();
     state.level = level.getLevel();
 
-    // Restaura los patos en el nuevo nivel
     for (auto& [id, player] : players) {
         position_t pos = level.getSpawnPosition();
         player->resetPlayer(currentDucks[id], pos.x, pos.y);
-        state.level.ducks[id] = player->getState(); // Actualiza explícitamente el estado
+        state.level.ducks[id] = player->getState(); 
     }
         
-    // Actualiza el número de patos
     state.level.num_ducks = players.size();
 }
 
@@ -417,7 +404,6 @@ void GameState::updateBoxes() {
             weapon_t weaponState = box->getWeaponState();
 
             if (boxState.health == 0 && !box->isBroken()) {
-                std::cout << "Caja rota\n";
                 
                 if (weaponState.type != NULL_WEAPON) {
                     weaponState.pos = {boxState.pos.x - 10, boxState.pos.y - 20};
@@ -431,7 +417,7 @@ void GameState::updateBoxes() {
             }
             i++;
         }
-    } catch (...) {
+    } catch (...) { // ?
         std::cerr << "Error inesperado en updateBoxes" << std::endl;
     }
 }
@@ -471,7 +457,7 @@ weapon_t GameState::getWeaponPosition(position_t position) { // SE PUEDE MODULAR
         0
     };
     
-    const int pickupRadius = 20; // Radio de recogida del arma
+    const int pickupRadius = 20;
     std::vector<std::shared_ptr<Spawn>> spawns = level.getSpawns();
 
     for (int i = 4; i < state.level.num_spawn_places; i++) {
@@ -484,7 +470,7 @@ weapon_t GameState::getWeaponPosition(position_t position) { // SE PUEDE MODULAR
             state.level.spawn_places[i].weapon.type = NULL_WEAPON;
             spawns[i]->hasSomething = false;
             spawns[i]->respawnTimer = 5.0f;
-            break;
+            return weapon;
         }
     }
 
@@ -498,7 +484,7 @@ weapon_t GameState::getWeaponPosition(position_t position) { // SE PUEDE MODULAR
             state.level.dropped_weapons[i].type = NULL_WEAPON;
             spawns[i]->hasSomething = false;
             spawns[i]->respawnTimer = 5.0f;
-            break;
+            return weapon;
         }
     }
 
@@ -571,7 +557,6 @@ armor_t GameState::getArmorPosition(position_t position, bool helmetEquipped, bo
 }
 
 Weapon* GameState::createWeapon(weapon_t weaponState) {
-    std::cout << "Arma tomada\n";
     Weapon* newWeapon;
     try { 
         switch (weaponState.type) {
@@ -606,7 +591,6 @@ Weapon* GameState::createWeapon(weapon_t weaponState) {
                 newWeapon = new Sniper(weaponState);
                 break;
             default:
-                std::cerr << "Arma no creada\n";
                 newWeapon = nullptr;
                 break;
         }

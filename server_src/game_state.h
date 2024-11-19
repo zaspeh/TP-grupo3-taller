@@ -13,6 +13,7 @@
 #include "../common_src/utils.h"
 
 class Server;
+class ProjectilePhysics;
 
 class GameState {
 private:
@@ -33,32 +34,33 @@ private:
     void checkIfSomeoneWin();
     void finishMatch(uint8_t id);
     void changeLevel();
-public:
-    // Constructor
-    GameState(Server& server);
-
-    std::shared_ptr<PlayerState> getPlayer(uint8_t id);
-    void removePlayer(uint8_t id);
-    void updateState(uint8_t id, std::shared_ptr<PlayerState> player);
-    std::shared_ptr<PlayerState> connectPlayer(uint8_t id);
-    std::map<uint8_t, std::shared_ptr<PlayerState>> getPlayers();
-    game_state_t doAction(uint8_t id, uint8_t action);
-    game_state_t updatePlayers(float deltaTime);
-    armor_t getArmorPosition(position_t position, bool helmetEquipped, bool armorEquipped);
-    weapon_t getWeaponPosition(position_t position);
-    Weapon* createWeapon(weapon_t weaponState);
+    bool explotionInPosition(position_t position);
+    void checkIfDropArmor(armor_t droppedArmor);
+    void updateArmorsPhysics(float deltaTime);
+    void updateBoxes();
+    void updateSpawns(float deltaTime);
+    uint8_t checkWeaponDistance(uint8_t weaponType);
     bool chosedAWeapon(uint8_t id, uint8_t action);
     void checkIfDropWeapon(weapon_t droppedWeapon);
     void updateWeaponsPhysics(float deltaTime);
     void checkProjectils(std::shared_ptr<PlayerState> player);
     void updateProjectilsPhysics(float deltaTime);
     void createProjectile(uint8_t weaponType, position_t origin, bool facingLeft);
-    uint8_t checkWeaponDistance(uint8_t weaponType);
-    void checkIfDropArmor(armor_t droppedArmor);
-    void updateArmorsPhysics(float deltaTime);
-    void updateBoxes();
-    void updateSpawns(float deltaTime);
-    bool explotionInPosition(position_t position);
+    armor_t getArmorPosition(position_t position, bool helmetEquipped, bool armorEquipped);
+    weapon_t getWeaponPosition(position_t position);
+    Weapon* createWeapon(weapon_t weapon);
+    std::map<uint8_t, std::shared_ptr<PlayerState>> getPlayers();
+    std::shared_ptr<PlayerState> getPlayer(uint8_t id);
+    void updateState(uint8_t id, std::shared_ptr<PlayerState> player);
+    std::shared_ptr<PlayerState> connectPlayer(uint8_t id);
+
+public:
+    // Constructor
+    GameState(Server& server);
+
+    void removePlayer(uint8_t id);
+    game_state_t doAction(uint8_t id, uint8_t action);
+    game_state_t updatePlayers(float deltaTime);
 };
 
 #endif // GAME_STATE_H

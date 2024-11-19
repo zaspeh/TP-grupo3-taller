@@ -31,6 +31,17 @@
 #define HEIGHT_EXPLOTION 32
 #define WIDTH_EXPLOTION 32
 
+#define GRENADE_AMMO 1
+#define BANANA_AMMO 1
+#define DARTGUN_AMMO 1
+#define AK_47_AMMO 30
+#define PEWPEWLASER_AMMO 12
+#define LASERRIFLE_AMMO 10
+#define COWBOY_AMMO 6
+#define MAGNUM_AMMO 6
+#define SHOTGUN_AMMO 2
+#define SNIPER_AMMO 3
+
 #define BOX_HEALTH 4    
 #define WIDTH_BOX 32
 #define HEIGHT_BOX 32

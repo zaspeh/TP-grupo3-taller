@@ -8,18 +8,17 @@
 #include "../common_src/game_state.h"
 #include "../common_src/utils.h"
 
-
 static std::map<int, uint8_t> ammoForWeapons = {
-    {GRENADE_WEAPON, 1},
-    {BANANA_WEAPON, 1},
-    {DARTGUN_WEAPON, 20},
-    {AK_47_WEAPON, 25},
-    {PEWPEWLASER_WEAPON, 15},
-    {LASERRIFLE_WEAPON, 20},
-    {COWBOY_WEAPON, 10},
-    {MAGNUM_WEAPON, 12},
-    {SHOTGUN_WEAPON, 7},
-    {SNIPER_WEAPON, 5},
+    {GRENADE_WEAPON, GRENADE_AMMO},
+    {BANANA_WEAPON, BANANA_AMMO},
+    {DARTGUN_WEAPON, DARTGUN_AMMO},
+    {AK_47_WEAPON, AK_47_AMMO},
+    {PEWPEWLASER_WEAPON, PEWPEWLASER_AMMO},
+    {LASERRIFLE_WEAPON, LASERRIFLE_AMMO},
+    {COWBOY_WEAPON, COWBOY_AMMO},
+    {MAGNUM_WEAPON, MAGNUM_AMMO},
+    {SHOTGUN_WEAPON, SHOTGUN_AMMO},
+    {SNIPER_WEAPON, SNIPER_AMMO}
 };
 
 class Weapon {
@@ -36,13 +35,15 @@ public:
     virtual ~Weapon() = default;
     
     virtual bool shoot(bool infinitAmmo) = 0;
+
     virtual bool canShoot() const { return weaponState.ammo > 0; }
     
     int getAmmo() const { return weaponState.ammo; }
-    void setAmmo(uint8_t newAmmo) { 
-        std::cout << "Municiones: " << static_cast<int>(newAmmo) << std::endl;
-        weaponState.ammo = newAmmo; }
+
+    void setAmmo(uint8_t newAmmo) { weaponState.ammo = newAmmo; }
+
     int getId() const { return weaponState.type; }
+
     int getRange() const { return range; }
     
     uint8_t getType() const { return weaponState.type; }
@@ -130,7 +131,6 @@ public:
             if (!canShoot()) return false;
             setAmmo(getAmmo() - 1);
         }
-        // Lógica para disparar 3 rayos con dispersión
         return true;
     }
 };

@@ -31,17 +31,10 @@ private:
 
 public:
     Accepter(int port, Server& server, Monitor& monitor, GameLoop& gameLoop);
-
-    // Devuelve el vector de emisores de los clientes.
     std::vector<std::shared_ptr<Sender>>& obtener_emisores() { return emisores; }
-
-    // Ejecuta el hilo aceptador de conexiones.
     void run() override;
-
-    // Detiene el hilo aceptador de conexiones.
     void stop() override;
 
-    // Destruye el Accepter, liberanndo todos los recursos reservados.
     ~Accepter();
 };
 
