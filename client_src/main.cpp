@@ -7,8 +7,11 @@
 
 int main(int argc, char* args[])
 {
-    Client client(args[1], args[2]);
-    client.run();
-
+    try {
+        Client client(args[1], args[2]);
+        client.run();
+    } catch (const std::exception& e) {
+        std::cerr << "Error: " << e.what() << std::endl;
+    }
     return 0;
 }

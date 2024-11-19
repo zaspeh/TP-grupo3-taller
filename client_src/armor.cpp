@@ -37,10 +37,10 @@ void Armor::render(int x, int y, bool faceLeft, uint8_t type, const Camera& came
 void Armor::renderArmorPiece(uint8_t armorType, armor_t& armorState, int x, int y, bool faceLeft, const Camera& camera, float zoom) {
     auto it = armors.find(armorType);
     SDL_Rect scaleRect = {x, y, 0, 0};
-    if (it != armors.end() && armorState.type != NULL_ARMOR) {
+    if (it != armors.end() && armorType != NULL_ARMOR) {
         LTexture* texture = it->second.get();
-        scaleRect.w = texture->getWidth() * 2.15;
-        scaleRect.h = texture->getHeight() * 2.15;
+        scaleRect.w = texture->getWidth() * 2.1;
+        scaleRect.h = texture->getHeight() * 2.1;
 
         SDL_RendererFlip flip = faceLeft ? SDL_FLIP_HORIZONTAL : SDL_FLIP_NONE;
 
@@ -50,9 +50,9 @@ void Armor::renderArmorPiece(uint8_t armorType, armor_t& armorState, int x, int 
 
         if (armorType == CHESTPLATE_ARMOR) {
             xOffset = 25;  
-            yOffset = 28;  
+            yOffset = 50;  
         } else if (armorType == HELMET_ARMOR) {
-            xOffset = 7;  
+            xOffset = 8;  
             yOffset = 0; 
         }
 
@@ -67,7 +67,7 @@ void Armor::renderArmorPiece(uint8_t armorType, armor_t& armorState, int x, int 
             static_cast<int>(scaleRect.h * zoom)
         };
 
-        texture->render(destRect.x + xOffset * (faceLeft ? -1 : 1), destRect.y + yOffset, nullptr, &destRect, flip);
+        texture->render(destRect.x + xOffset * (faceLeft ? -10 : 5), destRect.y + yOffset, nullptr, &destRect, flip);
     } else {
         std::cerr << "Texture not found or invalid for armor type: " << static_cast<int>(armorType) << std::endl;
     }

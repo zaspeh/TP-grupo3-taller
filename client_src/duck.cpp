@@ -124,17 +124,17 @@ void Duck::render(const Camera& camera, float zoom) {
             if (!armor->loadTexture())
                 std::cout << "Failed to load texture weapon\n"; 
             if (faceLeft)
-                armor->render(duckState.pos.x + 5, duckState.pos.y - 15, faceLeft, HELMET_ARMOR, camera, zoom);
+                armor->render(duckState.pos.x + 37, duckState.pos.y - 18, faceLeft, HELMET_ARMOR, camera, zoom);
             else
-                armor->render(duckState.pos.x - 11, duckState.pos.y - 15, faceLeft, HELMET_ARMOR, camera, zoom);
+                armor->render(duckState.pos.x - 20, duckState.pos.y - 18, faceLeft, HELMET_ARMOR, camera, zoom);
         } 
         if (duckState.chestplate.type == CHESTPLATE_ARMOR) {
             if (!armor->loadTexture())
                 std::cout << "Failed to load texture weapon\n"; 
             if (faceLeft)
-                armor->render(duckState.pos.x + (37), duckState.pos.y, faceLeft, CHESTPLATE_ARMOR, camera, zoom);
+                armor->render(duckState.pos.x + 140, duckState.pos.y + 3, faceLeft, CHESTPLATE_ARMOR, camera, zoom);
             else 
-                armor->render(duckState.pos.x - (6), duckState.pos.y, faceLeft, CHESTPLATE_ARMOR, camera, zoom);
+                armor->render(duckState.pos.x - 45, duckState.pos.y + 3, faceLeft, CHESTPLATE_ARMOR, camera, zoom);
         }
 
         if (weapon->getType() != NULL_WEAPON) {

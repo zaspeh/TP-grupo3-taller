@@ -29,8 +29,11 @@ void PlayerState::resetPlayer(duck_t newDuck, int x , int y) {
     duck.isFalling = false;   
     duck.isFlaping = false;
     duck.equipped_weapon.type = NULL_WEAPON;
+    weapon = nullptr;
     duck.chestplate.type = NULL_ARMOR;
+    armor.unequip();
     duck.helmet.type = NULL_ARMOR;
+    helmet.unequip();
 }
 
 bool PlayerState::doNotCollideX(platform_t* plat, uint8_t numPlats, int new_x) {
