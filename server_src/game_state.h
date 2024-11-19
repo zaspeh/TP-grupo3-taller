@@ -58,6 +58,7 @@ public:
     void updateArmorsPhysics(float deltaTime);
     void updateBoxes();
     void updateSpawns(float deltaTime);
+    bool explotionInPosition(position_t position);
 };
 
 #endif // GAME_STATE_H

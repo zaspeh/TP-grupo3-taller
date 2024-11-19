@@ -213,12 +213,28 @@ void GameState::createProjectile(uint8_t weaponType, position_t origin, bool fac
         state.level.num_projectiles++;
 }
 
+bool GameState::explotionInPosition(position_t position) {
+    for (size_t i = 0; i < state.level.num_explosions; i++) {
+        if (state.level.explosions[i].x == position.x && state.level.explosions[i].y == position.y){
+            state.level.explosions[i] = { 0, 0 };
+            return true;
+        }
+    }
+    return false;
+}
+
 void GameState::updateProjectilsPhysics(float deltaTime) {
     for (size_t i = 0; i < state.level.num_projectiles; i++) {
         uint8_t maxDistance = checkWeaponDistance(state.level.projectiles[i].type);
         std::cout << "Max distance: " << maxDistance << std::endl;
-        state.level.projectiles[i].is_active = projectilePhysics[i].updatePosition(state.level.projectiles[i] , state.level, deltaTime, maxDistance, this);
+        state.level.projectiles[i].is_active = projectilePhysics[i].updatePosition(state.level.projectiles[i] , state.level, deltaTime, maxDistance, players);
         // if false -> lo elimino asì no aparece otra vez.
+        //if(explotionInPosition(state.level.projectiles[i].pos)){ // si ya habia una explosion la saco.
+        //    state.level.projectiles[i] = { {0, 0}, NULL_WEAPON, false };
+        //    continue;
+        //} 
+        if (!state.level.projectiles[i].is_active && state.level.projectiles[i].type == GRENADE_WEAPON)  // si la granada explota...
+            state.level.explosions[state.level.num_explosions++] = state.level.projectiles[i].pos;
     }
 }
 

@@ -95,6 +95,12 @@ void ClientProtocol::readDroppedArmors(armor_t droppedArmors[MAX_ITEMS], uint8_t
     }
 }
 
+void ClientProtocol::readPositions(position_t explosions[MAX_ITEMS], uint8_t numExplosions, bool& wasClosed) {
+    for (int i = 0; i < numExplosions; i++) {
+        explosions[i] = readPosition(wasClosed);
+    }
+}
+
 void ClientProtocol::readLevel(level_t& level, bool &wasClosed) {
     level.num_ducks = recvUint8(wasClosed);
     readDucks(level.ducks, level.num_ducks, wasClosed);
@@ -110,6 +116,8 @@ void ClientProtocol::readLevel(level_t& level, bool &wasClosed) {
     readDroppedWeapons(level.dropped_weapons, level.num_dropped_weapons, wasClosed);
     level.num_dropped_armors = recvUint8(wasClosed);
     readDroppedArmors(level.dropped_armors, level.num_dropped_armors, wasClosed);
+    level.num_explosions = recvUint8(wasClosed);
+    readPositions(level.explosions, level.num_explosions, wasClosed);
 }
 
 game_state_t ClientProtocol::readFromServer(bool &wasClosed) {

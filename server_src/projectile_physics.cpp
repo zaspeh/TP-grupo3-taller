@@ -1,5 +1,5 @@
-#include "projectile_physics.h"
-#include "game_state.h"
+//#include "projectile_physics.h"
+//#include "game_state.h"
 /*
 ProjectilePhysics::ProjectilePhysics() :
     velocity(0.0f),

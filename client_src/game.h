@@ -43,6 +43,7 @@ class Game : public Thread
         std::vector<std::unique_ptr<Armor>> droppedArmors;
         std::vector<std::unique_ptr<Projectile>> projectiles;
         std::vector<std::unique_ptr<Box>> boxes;
+        std::vector<std::unique_ptr<Animation>> explotions;
         std::unique_ptr<LTexture> background;
         game_state_t gameState;
         std::unique_ptr<TTF_Font, decltype(&TTF_CloseFont)> gFont{nullptr, TTF_CloseFont};

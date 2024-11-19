@@ -288,6 +288,13 @@ void Game::render() {
             projectile->render();
         }
     }
+
+    for (int i = 0; i < gameState.level.num_explosions; i++) {
+        if (explotions[i]) { 
+            explotions[i]->renderAnimation(gameState.level.explosions[i].x, gameState.level.explosions[i].y, scaleRect, false, true);
+        }
+    }
+
     for (int i = 0; i < gameState.level.num_ducks; i++) {
         if (gameState.level.ducks[i].score >= gameState.winning_score) {
             renderText("WINNER!!!!! now press 'G' to restart.",  gameState.level.ducks[i].pos.x - 250, gameState.level.ducks[i].pos.y-30);
@@ -341,6 +348,13 @@ void Game::update(game_state_t gameState) {
             }
             std::cout << "New duck initialized with ID " << gameState.level.ducks[i].id << std::endl;
         }
+    }
+
+    explotions.resize(gameState.level.num_explosions);
+    for (int i = 0; i < gameState.level.num_explosions; ++i) {
+        if (gameState.level.explosions[i].x == 0 && gameState.level.explosions[i].y == 0) continue;
+        explotions[i] = std::make_unique<Animation>(5, 16, 16, gRenderer.get(), FIRE);
+        explotions[i]->loadTexture("client_src/guns/fire1.png");
     }
 
     platforms.resize(gameState.level.num_platforms);

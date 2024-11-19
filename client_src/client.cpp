@@ -16,7 +16,6 @@ Client::Client(const std::string& server_ip, const std::string& server_port)
         sendThread = std::make_unique<Sender>(clientprotocol, commandQueue); 
         sendThread->start();
 
-
         gameThread = std::make_unique<Game>(gameStateQueue, commandQueue, *this);
         gameThread->start();
     }

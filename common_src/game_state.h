@@ -14,9 +14,6 @@
 #define MAX_BOXES 20
 
 
-
-
-
 typedef struct {
     int x;
     int y;
@@ -34,8 +31,6 @@ typedef struct {
     uint8_t type;    // Tipo de arma (ej.: pistola, escopeta, etc.)
     uint8_t ammo;    
 } weapon_t;
-
-
 
 // Representa una armadura o casco en el juego
 typedef struct {
@@ -102,6 +97,8 @@ typedef struct {
     weapon_t dropped_weapons[MAX_ITEMS];
     uint8_t num_dropped_armors;
     armor_t dropped_armors[MAX_ITEMS];
+    uint8_t num_explosions;
+    position_t explosions[MAX_ITEMS];
 } level_t;
 
 // Estado global del juego

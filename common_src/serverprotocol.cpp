@@ -21,23 +21,6 @@ void ServerProtocol::sendArmor(armor_t armor, bool &wasClosed) {
     sendUint8(armor.type, wasClosed);
 }
 
-/**
- * In file included from /usr/include/c++/11/vector:66,
-                 from common_src/protocol.h:6,
-                 from common_src/serverprotocol.h:4,
-                 from common_src/serverprotocol.cpp:1:
-/usr/include/c++/11/bits/stl_uninitialized.h: In instantiation of ‘_ForwardIterator std::uninitialized_copy(_InputIterator, _InputIterator, _ForwardIterator) [with _InputIterator = __gnu_cxx::__normal_iterator<const std::unique_ptr<Box>*, std::vector<std::unique_ptr<Box> > >; _ForwardIterator = std::unique_ptr<Box>*]’:
-/usr/include/c++/11/bits/stl_uninitialized.h:333:37:   required from ‘_ForwardIterator std::__uninitialized_copy_a(_InputIterator, _InputIterator, _ForwardIterator, std::allocator<_Tp>&) [with _InputIterator = __gnu_cxx::__normal_iterator<const std::unique_ptr<Box>*, std::vector<std::unique_ptr<Box> > >; _ForwardIterator = std::unique_ptr<Box>*; _Tp = std::unique_ptr<Box>]’
-/usr/include/c++/11/bits/stl_vector.h:558:31:   required from ‘std::vector<_Tp, _Alloc>::vector(const std::vector<_Tp, _Alloc>&) [with _Tp = std::unique_ptr<Box>; _Alloc = std::allocator<std::unique_ptr<Box> >]’
-common_src/../server_src/level.h:34:59:   required from here
-/usr/include/c++/11/bits/stl_uninitialized.h:138:72: error: static assertion failed: result type must be constructible from value type of input range
-  138 |       static_assert(is_constructible<_ValueType2, decltype(*__first)>::value,
-      |                                                                        ^~~~~
-/usr/include/c++/11/bits/stl_uninitialized.h:138:72: note: ‘std::integral_constant<bool, false>::value’ evaluates to false
-make: *** [<integrado>: common_src/serverprotocol.o] Error 1
- * 
- */
-
 void ServerProtocol::sendWeapon(weapon_t weapon, bool &wasClosed) {
     sendPosition(weapon.pos, wasClosed);
     sendUint8(weapon.type, wasClosed);
@@ -115,6 +98,12 @@ void ServerProtocol::sendDroppedArmors(armor_t droppedArmors[MAX_ITEMS], uint8_t
     }
 }
 
+void ServerProtocol::sendPositions(position_t explosions[MAX_ITEMS], uint8_t numExplosions, bool wasClosed) {
+    for (int i = 0; i < numExplosions; i++) {
+        sendPosition(explosions[i], wasClosed);
+    }
+}
+
 void ServerProtocol::sendLevel(level_t& level, bool &wasClosed) {
     sendUint8(level.num_ducks, wasClosed);
     sendDucks(level.ducks, level.num_ducks, wasClosed);
@@ -130,4 +119,6 @@ void ServerProtocol::sendLevel(level_t& level, bool &wasClosed) {
     sendDroppedWeapons(level.dropped_weapons, level.num_dropped_weapons, wasClosed);
     sendUint8(level.num_dropped_armors, wasClosed);
     sendDroppedArmors(level.dropped_armors, level.num_dropped_armors, wasClosed);
+    sendUint8(level.num_explosions, wasClosed);
+    sendPositions(level.explosions, level.num_explosions, wasClosed);
 }

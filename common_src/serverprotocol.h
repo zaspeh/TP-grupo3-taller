@@ -21,6 +21,7 @@ class ServerProtocol: public Protocol {
         void sendDroppedWeapons(weapon_t droppedWeapons[MAX_ITEMS], uint8_t numDroppedWeapons, bool wasClosed);
         void sendDroppedArmors(armor_t droppedArmors[MAX_ITEMS], uint8_t numDroppedArmors, bool wasClosed);
         void sendLevel(level_t& level, bool &wasClosed);
+        void sendPositions(position_t explosions[MAX_ITEMS], uint8_t numExplosions, bool wasClosed);
 
     public:
         ServerProtocol(Socket socket);

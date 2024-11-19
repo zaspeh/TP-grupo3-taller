@@ -31,6 +31,7 @@ public:
     void readDroppedWeapons(weapon_t droppedWeapons[MAX_ITEMS], uint8_t numDroppedWeapons, bool& wasClosed);
     void readDroppedArmors(armor_t droppedArmors[MAX_ITEMS], uint8_t numDroppedArmors, bool& wasClosed);
     void readLevel(level_t &level, bool &wasClosed);
+    void readPositions(position_t explosions[MAX_ITEMS], uint8_t numExlosions, bool& wasClosed);
 };
 
 #endif // CLIENTPROTOCOL_H

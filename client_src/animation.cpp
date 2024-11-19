@@ -44,6 +44,15 @@ Animation::Animation(int qAnimationFrames, int spriteWidth, int spriteHeight, SD
         }
     }
 
+    if (type == FIRE){
+        for (int i = 0; i < qAnimationFrames; ++i){
+            gSpriteClips[i].x = i * spriteWidth;
+            gSpriteClips[i].y = 0;
+            gSpriteClips[i].w = spriteWidth;
+            gSpriteClips[i].h = spriteHeight;
+        }
+    }
+
     frame = 0;
 }
 

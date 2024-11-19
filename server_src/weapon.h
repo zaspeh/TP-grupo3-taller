@@ -67,6 +67,11 @@ public:
         return true;
     }
 
+    bool getPinPulled() const { return pinPulled; }
+
+    float getTimeToExplode() const { return timeToExplode; }
+    void setTimeToExplode(float newTimeToExplode) { timeToExplode = newTimeToExplode; }
+
     void throw_grenade() {
         if (pinPulled && getAmmo() > 0) {
             setAmmo(getAmmo() - 1);
