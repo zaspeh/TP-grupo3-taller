@@ -9,6 +9,7 @@ Game::Game(std::shared_ptr<Queue<game_state_t>> gameStateQueue, std::shared_ptr<
       client(client)
 {
     gameState = gameStateQueue->pop();
+<<<<<<< HEAD
     ducks.reserve(MAX_DUCKS);
     platforms.reserve(MAX_PLATFORMS);
     spawns.reserve(MAX_SPAWN_PLACES);
@@ -83,6 +84,16 @@ Game::Game(std::shared_ptr<Queue<game_state_t>> gameStateQueue, std::shared_ptr<
 
     return charged;
 } */
+=======
+    ducks.resize(MAX_DUCKS);
+    platforms.resize(MAX_PLATFORMS);
+    spawns.resize(MAX_SPAWN_PLACES);
+    droppedWeapons.resize(MAX_ITEMS);
+    droppedArmors.resize(MAX_ITEMS);
+    projectiles.resize(MAX_PROJECTILES);
+    boxes.resize(MAX_BOXES);
+}
+>>>>>>> origin/Editor
 
 bool Game::loadMedia() {
     bool success = true;
@@ -309,8 +320,13 @@ void Game::run()
 }
 
 void Game::render() {
+<<<<<<< HEAD
 
     if (!gRenderer) {
+=======
+    std::lock_guard<std::mutex> lock(sdl_mutex);
+    if (!gRenderer || !gWindow) {
+>>>>>>> origin/Editor
         std::cerr << "Renderer is null" << std::endl;
         return;
     }
@@ -318,11 +334,22 @@ void Game::render() {
     SDL_SetRenderDrawColor(gRenderer.get(), 0xFF, 0xFF, 0xFF, 0xFF);
     SDL_RenderClear(gRenderer.get());
 
+<<<<<<< HEAD
     // Render background
     if (background) {
         SDL_Rect scaleRect = {0, 0, SCREEN_WIDTH, SCREEN_HEIGHT};
         background->render(0, 0, nullptr, &scaleRect, SDL_FLIP_NONE);
     }
+=======
+    SDL_Rect scaleRect = {0, 0, SCREEN_WIDTH, SCREEN_HEIGHT};
+    background->render(0, 0, nullptr, &scaleRect, SDL_FLIP_NONE);
+    /*SDL_Rect bgRect = camera.getBackgroundRect(
+            background->getWidth(), 
+            background->getHeight(), 
+            zoom.getCurrentZoom()
+        );
+    background->render(bgRect.x, bgRect.y, NULL, &bgRect, SDL_FLIP_NONE);*/
+>>>>>>> origin/Editor
 
 
     for (const auto& platform : platforms) {
@@ -586,8 +613,12 @@ void Game::stop() {
             SDL_DestroyWindow(gWindow.get());
             gWindow.reset();
         }
+<<<<<<< HEAD
         
         
+=======
+        TTF_Quit();
+>>>>>>> origin/Editor
 
         // Quit SDL subsystems en orden inverso a su inicialización
         TTF_Quit();
