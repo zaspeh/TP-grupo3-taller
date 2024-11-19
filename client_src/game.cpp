@@ -305,10 +305,28 @@ void Game::render() {
         }
     }
 
+    /*SDL_Rect msjRect;
+    msjRect.w = 16 * 4;
+    msjRect.h = 16 * 3;
+    msjRect.x = 32*13-40;
+    msjRect.y = 400 - 32*5;
+
+    SDL_Point screenPos = camera.getScreenPosition(msjRect.x, msjRect.y, zoom.getCurrentZoom());
+    SDL_Rect destRect = {
+        screenPos.x,
+        screenPos.y,
+        static_cast<int>(msjRect.w * zoom.getCurrentZoom()),
+        static_cast<int>(msjRect.h * zoom.getCurrentZoom())
+    };*/
+
+    SDL_Point screenMsjPos = camera.getScreenPosition(32*13-40, 400 - 32*5, zoom.getCurrentZoom());
+    
+
     for (int i = 0; i < gameState.level.num_ducks; i++) {
         if (gameState.level.ducks[i].score >= gameState.winning_score) {
-            renderText("WINNER!!!!! now press 'G' to restart.",  gameState.level.ducks[i].pos.x - 250, gameState.level.ducks[i].pos.y-30);
-            renderText("Close the window to quit.",  (32*13-40)*zoom.getCurrentZoom(), (400 - 32*5)+zoom.getCurrentZoom()); 
+            SDL_Point screenMsjWinPos = camera.getScreenPosition(gameState.level.ducks[i].pos.x - 100, gameState.level.ducks[i].pos.y-10, zoom.getCurrentZoom());
+            renderText("WINNER!!!!! now press 'G' to restart.",  screenMsjWinPos.x, screenMsjWinPos.y);
+            renderText("Close the window to quit.",  screenMsjPos.x, screenMsjPos.y); 
         }
     }
 
