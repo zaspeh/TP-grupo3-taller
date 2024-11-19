@@ -11,6 +11,29 @@ Projectile::Projectile(projectile_t projectileState, SDL_Renderer* renderer)
 
 bool Projectile::loadTexture() {
     std::string path = "client_src/guns/granade.png"; // Ruta de la textura
+
+    if (projectileState.type == GRENADE_WEAPON){
+        path = "client_src/guns/granade.png";
+    }else if(projectileState.type == BANANA_WEAPON){
+        path = "client_src/projectiles/bananaprojectile.png";
+    }else if(projectileState.type == PEWPEWLASER_WEAPON){
+        path = "client_src/projectiles/pewpewlaserprojectile.png";
+    }else if(projectileState.type == LASERRIFLE_WEAPON){
+        path = "client_src/projectiles/laserrifleprojectile.png";
+    }else if(projectileState.type == AK_47_WEAPON){
+        path = "client_src/projectiles/ak47projectile.png";
+    }else if(projectileState.type == DARTGUN_WEAPON){
+        path = "client_src/projectiles/dartgunprojectile.png";
+    }else if(projectileState.type == COWBOY_WEAPON){
+        path = "client_src/projectiles/cowboyprojectile.png";
+    }else if(projectileState.type == MAGNUM_WEAPON){
+        path = "client_src/projectiles/magnumprojectile.png";
+    }else if(projectileState.type == SHOTGUN_WEAPON){
+        path = "client_src/projectiles/shotgunprojectile.png";
+    }else{
+        path = "client_src/projectiles/sniperprojectile.png";
+    }
+
     if (!texture->loadFromFile(path)) {
         std::cerr << "Failed to load projectile texture." << std::endl;
         return false;
