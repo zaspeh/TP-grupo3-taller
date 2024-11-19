@@ -74,6 +74,8 @@ public:
     uint8_t getWeaponType() const { return weapon->getId(); } // ahora en weapon
     weapon_t pickWeapon(Weapon* newWeapon);
 
+    void updateWeapon();
+
     uint8_t getAmmo() const { return weapon->getAmmo(); } // ahora en weapon
     void setAmmo(uint8_t newAmmo) { weapon->setAmmo(newAmmo); }
     // player->setInfiniteAmmo(!player->isInfiniteAmmo());

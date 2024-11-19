@@ -39,6 +39,7 @@ void GameState::updateState(uint8_t id, std::shared_ptr<PlayerState> player) {
     state.level.ducks[id] = player->getState();
 }
 
+
 std::shared_ptr<PlayerState> GameState::connectPlayer(uint8_t id) {
     position_t pos = level.getSpawnPosition();
     players[id] = std::make_shared<PlayerState>(id, pos.x, pos.y);  
@@ -131,6 +132,7 @@ game_state_t GameState::doAction(uint8_t id, uint8_t action) {
             case NEW_CLIENT:
                 std::cout << "Agregando nuevo cliente\n";
                 player = connectPlayer(id);
+                std::cout << "Agregado\n";
                 break;
             case INFINIT_AMMO:
                 std::cout << "Infinite ammo: " << player->isInfiniteAmmo() << std::endl;
@@ -157,8 +159,10 @@ game_state_t GameState::doAction(uint8_t id, uint8_t action) {
     }
 
     updateState(id, player);
+    std::cout << "Acomodo el estado de los jugadores" << std::endl;
     return state;
 }
+
 
 void GameState::createProjectile(uint8_t weaponType, position_t origin, bool facingLeft) {
 
@@ -299,6 +303,7 @@ game_state_t GameState::updatePlayers(float deltaTime) {
     try {
         for (auto& [id, player] : players) {
             player->updatePosition(deltaTime, state.level.platforms, state.level.num_platforms, state.level.explosions, state.level.num_explosions);
+            player->updateWeapon();
             updateState(id, player); 
         }
 

@@ -69,6 +69,7 @@ void GameLoop::doActionGameState(uint8_t player, uint8_t action) {
     //std::cout << "Realizando acción en el gameloop\n";
     game_state_t gameStateStruct = gameState->doAction(player, action);
     monitor.procesar_mensaje(gameStateStruct);
+    std::cout << "Accion realizada en el gameloop\n";
 }
 
 void GameLoop::removePlayer(uint8_t player) {

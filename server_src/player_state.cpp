@@ -25,6 +25,12 @@ void PlayerState::move(int dx, int dy, platform_t* plat, uint8_t numPlats) {
     }
 }
 
+void PlayerState::updateWeapon() {
+    if (weapon != nullptr && weapon->getAmmo() == 0 && (weapon->getType() == GRENADE_WEAPON || weapon->getType() == BANANA_WEAPON)) {
+        duck.equipped_weapon.type = NULL_WEAPON;
+    }
+}
+
 void PlayerState::updatePosition(float deltaTime, platform_t* platforms, uint8_t numPlatforms, position_t* explotions, uint8_t numExplotions) {
     deltaTime = std::min(deltaTime, 0.016f);
     
@@ -198,13 +204,19 @@ weapon_t PlayerState::dropWeapon() {
 }
 
 bool PlayerState::shoot() {
-    bool retornValue = false;
+    bool returnValue = false;
+
     if (weapon != nullptr) {
-        retornValue = weapon->shoot(infinitAmmo); // se hacen los cambios de balas y eso
-        if ((weapon->getType() == GRENADE_WEAPON || weapon->getType() == BANANA_WEAPON) && weapon->getAmmo() == 0) {
-            weapon = nullptr;
-            duck.equipped_weapon.type = NULL_WEAPON;
+        // Verifica si el arma es una granada
+        if (weapon->getType() == GRENADE_WEAPON) {
+            Grenade* grenade = dynamic_cast<Grenade*>(weapon); // Downcasting
+            if (grenade != nullptr && grenade->getPinPulled()) {
+                grenade->throw_grenade();
+            }
         }
+        // Ejecuta el disparo independientemente del tipo de arma
+        returnValue = weapon->shoot(infinitAmmo); // Cambios de munición, etc.
     }
-    return retornValue;
+    
+    return returnValue;
 }
