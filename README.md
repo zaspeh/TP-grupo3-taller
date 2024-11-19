@@ -1,43 +1,119 @@
-# Ejemplo de CMAKE para el TP Final
+**Manual de Usuario - Duck Game**  
+**Grupo 3:** Matias Kaled Dib, Joseph Anthony Mamani Tipula, Martina Rey  
 
-**Importante:** el primer commit de este repositorio tiene el setup
-básico para el TP Final que incluye la instalación de la lib
-`libSDL2pp` (el wrapper de C++).
+---
 
-El resto de los commits son a modo de ejemplo de como se pueden
-agregar mas código fuente al proyecto.
+### **Introducción**  
+Este documento describe cómo compilar y ejecutar el trabajo práctico, incluyendo los requisitos del sistema, el proceso de instalación y una guía de uso.
 
-Este ejemplo **no** incluye instalarse la librería `SDL2` ni tampoco
-instala otras librerías que puedan ser necesarias ni tampoco un
-instalador (aunque **si** incluye Google Tests)
+---
 
-**Se deben agregar las librerias necesarias y el instalador.**
+### **Requisitos Previos**  
+Para compilar y ejecutar el programa, asegúrese de contar con:  
+- **Compilador de C++**  
+- **Make**  
+- **SDL2** y **SDL2_image**  
+- **pthread**  
 
-También el ejemplo usa una estructura de carpetas muy simple:
+---
 
+### **Instalación de Dependencias**  
+En sistemas basados en Debian/Ubuntu, ejecute el siguiente comando en la terminal:  
+```bash
+sudo apt-get install libsdl2-dev libsdl2-image-dev
 ```
-client/
-server/
-editor/
-common/
-```
 
-Bien se puede mejorar (cambiando el cmakefile) agregando mas
-sub-carpetas.
+---
 
-Asi tambien **deben** ser cambiados los *targets* del cmake (`taller_client`,
-`taller_server`, ...) por nombres mas acordes al TP que se este
-haciendo.
+### **Compilación**  
+1. Abra una terminal en el directorio del proyecto.  
+2. Ejecute el siguiente comando:  
+   ```bash
+   make all
+   ```  
 
-Tambien, por default solo se compila una version *debug* sin
-optimizar. Si se quiere compilar binarios optimizados
-(lo que cmake llama *release*) se puede, solo hay modificar
-cmake.
+Este proceso generará dos ejecutables:  
+- **client**  
+- **server**  
 
-Aprender del ejemplo para saber como extenderlo!
+---
 
-**Importante:** este repositorio **no** incluye pre-commits hooks,
-ni scripts adicionales (como correr valgrind).
+### **Ejecución**  
 
-**Eso esta a cargo de los estudiantes,** tal como fue mostrado
-en los tps individuales, recaps y hands-on.
+#### **Iniciar el Servidor**  
+Para iniciar el servidor, utilice:  
+```bash
+./server 8080
+```  
+Donde `8080` es el puerto en el que escuchará el servidor.  
+
+#### **Conectar Clientes**  
+Para conectar un cliente, utilice:  
+```bash
+./client localhost 8080
+```  
+Donde:  
+- `localhost` es la dirección del servidor.  
+- `8080` es el puerto del servidor.  
+
+---
+
+### **Configuración de Jugadores**  
+
+#### **Capacidad**  
+El juego admite hasta 4 jugadores simultáneos.  
+
+#### **Asignación de IDs**  
+Los IDs deben asignarse siguiendo este orden específico:  
+1. Jugador 1: **ID 0**  
+2. Jugador 2: **ID 1**  
+3. Jugador 3: **ID 2**  
+4. Jugador 4: **ID 3**  
+
+**IMPORTANTE:** Los IDs deben ingresarse exactamente en este orden para un correcto funcionamiento del juego.  
+
+---
+
+### **Códigos Especiales**  
+Durante el juego, puede utilizar los siguientes códigos especiales:  
+
+| **Código** | **Función**              |  
+|------------|--------------------------|  
+| **F1**     | Activa balas infinitas   |  
+| **F2** + [1-9] | Selecciona un arma específica |  
+| **F3**     | Otorga armadura          |  
+| **F4**     | Otorga casco             |  
+
+---
+
+### **Especificaciones Técnicas**  
+El programa utiliza:  
+- **Estándar C++17**  
+- Flags de depuración: `-ggdb -DDEBUG -fno-inline`  
+- Optimizaciones de compilación  
+- Tratamiento estricto de errores  
+
+---
+
+### **Solución de Problemas**  
+Si encuentra algún error durante la compilación o ejecución, verifique:  
+1. Que todas las dependencias estén instaladas correctamente.  
+2. Que el puerto especificado esté disponible.  
+3. Que los IDs de los jugadores se ingresen en el orden correcto.  
+
+---
+
+### **Apéndice**  
+
+#### **Estructura de Archivos**  
+El proyecto está organizado en:  
+- **Código del cliente**  
+- **Código del servidor**  
+- **Código común**  
+
+#### **Makefile**  
+El proyecto incluye un `Makefile` configurado con:  
+- Soporte para **C++17**  
+- Linkeo con **SDL2** y **SDL2_image**  
+- Opciones de depuración  
+- Optimizaciones de compilación
