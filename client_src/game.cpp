@@ -290,8 +290,22 @@ void Game::render() {
     }
 
     for (int i = 0; i < gameState.level.num_explosions; i++) {
-        if (explotions[i]) { 
-            explotions[i]->renderAnimation(gameState.level.explosions[i].x, gameState.level.explosions[i].y, scaleRect, false, true);
+        if (explotions[i]) {
+            SDL_Rect explosionRect;
+            explosionRect.w = 16 * 2; // Ajusta estos valores según el tamaño deseado
+            explosionRect.h = 16 * 2;
+            explosionRect.x = gameState.level.explosions[i].x;
+            explosionRect.y = gameState.level.explosions[i].y;
+
+            SDL_Point screenPos = camera.getScreenPosition(explosionRect.x, explosionRect.y, zoom.getCurrentZoom());
+            SDL_Rect destRect = {
+                screenPos.x,
+                screenPos.y,
+                static_cast<int>(explosionRect.w * zoom.getCurrentZoom()),
+                static_cast<int>(explosionRect.h * zoom.getCurrentZoom())
+            };
+
+            explotions[i]->renderAnimation(destRect.x, destRect.y, destRect, false, true);
         }
     }
 
@@ -324,7 +338,6 @@ void Game::update(game_state_t gameState) {
 
     // Luego ajustamos el tamaño y agregamos los nuevos patos
     ducks.resize(gameState.level.num_ducks);
-
     // Finalmente, agregamos los patos que faltan
     for (int i = 0; i < gameState.level.num_ducks; i++) {
         bool exists = false;

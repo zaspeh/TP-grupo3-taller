@@ -25,7 +25,7 @@ void PlayerState::move(int dx, int dy, platform_t* plat, uint8_t numPlats) {
     }
 }
 
-void PlayerState::updatePosition(float deltaTime, platform_t* platforms, uint8_t numPlatforms) {
+void PlayerState::updatePosition(float deltaTime, platform_t* platforms, uint8_t numPlatforms, position_t* explotions, uint8_t numExplotions) {
     deltaTime = std::min(deltaTime, 0.016f);
     
     // actualizo las posiciones
@@ -71,6 +71,21 @@ void PlayerState::updatePosition(float deltaTime, platform_t* platforms, uint8_t
         }
     }
 
+    for (int i = 0; i < numExplotions; i++) {
+        bool horizontalOverlap = (duck.pos.x + WIDTH_DUCK > explotions[i].x) &&
+                                 (duck.pos.x < explotions[i].x + WIDTH_EXPLOTION);
+        
+        if (horizontalOverlap) {
+            if (newY + HEIGHT_DUCK > explotions[i].y && 
+                duck.pos.y + HEIGHT_DUCK <= explotions[i].y + 5) {
+                duck.pos.y = explotions[i].y - HEIGHT_DUCK;
+                verticalVelocity = 0;
+                isOnGround = true;
+                break;
+            }
+        }
+    }
+
     // Si no hay colisiones, actualizar la posición
     if (!isOnGround && !hitCeiling) {
         duck.pos.y = newY;
@@ -87,6 +102,8 @@ void PlayerState::updatePosition(float deltaTime, platform_t* platforms, uint8_t
 
     if(duck.pos.y > 1024)   
         duck.isAlive = false;
+
+    
 }
 
 /*

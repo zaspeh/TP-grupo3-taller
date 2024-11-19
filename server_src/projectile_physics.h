@@ -135,7 +135,6 @@ public:
                 } else { // 3ro lo mato
                     levelState.ducks[i].isAlive = false;
                     players[i]->setAlive();
-                    std::cout << "jugador " << i << " muertoOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO" << std::endl;
                 }
 
                 return false;

@@ -28,7 +28,7 @@
 #define MAGNUM_DISTANCE 20
 #define SHOTGUN_DISTANCE 9
 #define SNIPER_DISTANCE 64
-
+#define WIDTH_EXPLOTION 16
 
 #define BOX_HEALTH 4    
 #define WIDTH_BOX 32

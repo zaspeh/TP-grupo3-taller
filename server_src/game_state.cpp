@@ -170,10 +170,13 @@ void GameState::createProjectile(uint8_t weaponType, position_t origin, bool fac
             state.level.projectiles[i].pos = origin;
             if (facingLeft) {
                 state.level.projectiles[i].pos.x -= 20;
+                if (weaponType == BANANA_WEAPON || weaponType == GRENADE_WEAPON) state.level.projectiles[i].pos.x -= 30;
             } else {
                 state.level.projectiles[i].pos.x += 40;
+                if(weaponType == BANANA_WEAPON || weaponType == GRENADE_WEAPON) state.level.projectiles[i].pos.x += 80;
             }
             state.level.projectiles[i].pos.y += 10;
+            if (weaponType == BANANA_WEAPON || weaponType == GRENADE_WEAPON) state.level.projectiles[i].pos.y -= 10;
             state.level.projectiles[i].is_active = true;
             projectileLoaded = true;
             index = i;
@@ -185,10 +188,13 @@ void GameState::createProjectile(uint8_t weaponType, position_t origin, bool fac
         newProjectile.pos = origin;
         if (facingLeft) {
             newProjectile.pos.x -= 20;
+            if (weaponType == BANANA_WEAPON || weaponType == GRENADE_WEAPON) newProjectile.pos.x -= 30;
         } else {
-            newProjectile.pos.x += 0;
+            newProjectile.pos.x += 40;
+            if(weaponType == BANANA_WEAPON || weaponType == GRENADE_WEAPON) newProjectile.pos.x += 80;
         }
         newProjectile.pos.y += 10;
+        if (weaponType == BANANA_WEAPON || weaponType == GRENADE_WEAPON) newProjectile.pos.y -= 10;
         newProjectile.type = weaponType;
         newProjectile.is_active = true;
         state.level.projectiles[state.level.num_projectiles] = newProjectile;
@@ -228,12 +234,7 @@ void GameState::updateProjectilsPhysics(float deltaTime) {
         uint8_t maxDistance = checkWeaponDistance(state.level.projectiles[i].type);
         std::cout << "Max distance: " << maxDistance << std::endl;
         state.level.projectiles[i].is_active = projectilePhysics[i].updatePosition(state.level.projectiles[i] , state.level, deltaTime, maxDistance, players);
-        // if false -> lo elimino asì no aparece otra vez.
-        //if(explotionInPosition(state.level.projectiles[i].pos)){ // si ya habia una explosion la saco.
-        //    state.level.projectiles[i] = { {0, 0}, NULL_WEAPON, false };
-        //    continue;
-        //} 
-        if (!state.level.projectiles[i].is_active && state.level.projectiles[i].type == GRENADE_WEAPON)  // si la granada explota...
+        if (!state.level.projectiles[i].is_active && state.level.projectiles[i].type == GRENADE_WEAPON && !explotionInPosition(state.level.projectiles[i].pos))  // si la granada explota...
             state.level.explosions[state.level.num_explosions++] = state.level.projectiles[i].pos;
     }
 }
@@ -302,7 +303,7 @@ game_state_t GameState::updatePlayers(float deltaTime) {
     deltaTime = std::min(deltaTime, 0.033f); 
     try {
         for (auto& [id, player] : players) {
-            player->updatePosition(deltaTime, state.level.platforms, state.level.num_platforms);
+            player->updatePosition(deltaTime, state.level.platforms, state.level.num_platforms, state.level.explosions, state.level.num_explosions);
             updateState(id, player); 
         }
 
