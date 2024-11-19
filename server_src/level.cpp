@@ -5,8 +5,8 @@ Level::Level()  {
     std::random_device rd;  // Obtiene una semilla del hardware
     rng = std::mt19937(rd());
     boxDist = std::uniform_int_distribution<int>(1, MAX_BOXES);
-    weaponDist = std::uniform_int_distribution<int>(1, WEAPON_COUNT);
-    armorDist = std::uniform_int_distribution<int>(1, ARMOR_COUNT);
+    weaponDist = std::uniform_int_distribution<int>(20, 29);
+    armorDist = std::uniform_int_distribution<int>(30, 31);
     // hago un random id:
     std::uniform_int_distribution<int> levelDist(0, 2);
     chosenLevel = levelDist(rng);
@@ -21,6 +21,11 @@ void Level::createNewLevel(){
     
     chosenLevel = id;
     createLevelById(id);
+}
+
+void Level::initWinningLevel() {
+    chosenLevel = 3;
+    winningLevel();
 }
 
 // Implementación de getLevelById
@@ -39,10 +44,15 @@ void Level::createLevelById(int id) {
             std::cout << "Creando nivel 2\n";
             initLevel2();
             break;
+        case 3:
+            std::cout << "Creando nivel ganador\n";
+            winningLevel();
+            break;
         default:
             initLevel0();  // Nivel predeterminado si el ID no coincide
     }
 }
+
 
 void Level::clearLevelState() {
     levelState.num_ducks = 0;
@@ -161,11 +171,25 @@ void Level::initLevel0() {
     levelState.spawn_places[3].weapon = nullWeapon;
     levelState.spawn_places[3].armor = nullArmor;
 
+
+
     std::cout << levelState.spawn_places[0].pos.x << " " << levelState.spawn_places[0].pos.y << std::endl;
     levelState.spawn_places[4] = getRandomSpawnPlace(75, 418);
     levelState.spawn_places[5] = getRandomSpawnPlace(425, 518);
     levelState.spawn_places[6] = getRandomSpawnPlace(510, 518);
     levelState.spawn_places[7] = getRandomSpawnPlace(875, 418);
+
+    this->spawns.clear();
+    this->spawns.push_back(std::make_unique<Spawn>(50, 500, false, true, 0.0f));
+    this->spawns.push_back(std::make_unique<Spawn>(100, 500, false, true, 0.0f));
+    this->spawns.push_back(std::make_unique<Spawn>(874, 500, false, true, 0.0f));
+    this->spawns.push_back(std::make_unique<Spawn>(924, 500, false, true, 0.0f));
+    this->spawns.push_back(std::make_unique<Spawn>(75, 418, true, false, 0.0f));
+    this->spawns.push_back(std::make_unique<Spawn>(425, 518, true, false, 0.0f));
+    this->spawns.push_back(std::make_unique<Spawn>(510, 518, true, false, 0.0f));
+    this->spawns.push_back(std::make_unique<Spawn>(875, 418, true, false, 0.0f));
+
+
 
     // Inicialización de cajas y proyectiles
     this->boxes.clear();
@@ -298,6 +322,18 @@ void Level::initLevel1() {
     levelState.spawn_places[8] = getRandomSpawnPlace(460, 267);
     levelState.spawn_places[9] = getRandomSpawnPlace(510, 267);
 
+    this->spawns.clear();
+    this->spawns.push_back(std::make_unique<Spawn>(14*32, 140, false, true, 0.0f));
+    this->spawns.push_back(std::make_unique<Spawn>(15*32, 140, false, true, 0.0f));
+    this->spawns.push_back(std::make_unique<Spawn>(16*32, 140, false, true, 0.0f));
+    this->spawns.push_back(std::make_unique<Spawn>(17*32, 140, false, true, 0.0f));
+    this->spawns.push_back(std::make_unique<Spawn>(100, 467, true, false, 0.0f));
+    this->spawns.push_back(std::make_unique<Spawn>(150, 467, true, false, 0.0f));
+    this->spawns.push_back(std::make_unique<Spawn>(830, 467, true, false, 0.0f));
+    this->spawns.push_back(std::make_unique<Spawn>(880, 467, true, false, 0.0f));
+    this->spawns.push_back(std::make_unique<Spawn>(460, 267, true, false, 0.0f));
+    this->spawns.push_back(std::make_unique<Spawn>(510, 267, true, false, 0.0f));
+
     // Inicialización de cajas y proyectiles
     this->boxes.clear();
     this->boxes.push_back(getRandomBox(100, 294));
@@ -407,6 +443,19 @@ void Level::initLevel2() {
     levelState.spawn_places[8] = getRandomSpawnPlace(247, 117 + HEIGHT_PLATFORM);
     levelState.spawn_places[9] = getRandomSpawnPlace(695, 117 + HEIGHT_PLATFORM);
 
+    this->spawns.clear();
+    this->spawns.push_back(std::make_unique<Spawn>(5*32, 360, false, true, 0.0f));
+    this->spawns.push_back(std::make_unique<Spawn>(25*32, 360, false, true, 0.0f));
+    this->spawns.push_back(std::make_unique<Spawn>(6*32, 360, false, true, 0.0f));
+    this->spawns.push_back(std::make_unique<Spawn>(26*32, 360, false, true, 0.0f));
+    this->spawns.push_back(std::make_unique<Spawn>(430, 367 + HEIGHT_PLATFORM, true, false, 0.0f));
+    this->spawns.push_back(std::make_unique<Spawn>(510, 367 + HEIGHT_PLATFORM, true, false, 0.0f));
+    this->spawns.push_back(std::make_unique<Spawn>(430, 242, true, false, 0.0f));
+    this->spawns.push_back(std::make_unique<Spawn>(510, 242, true, false, 0.0f));
+    this->spawns.push_back(std::make_unique<Spawn>(247, 117 + HEIGHT_PLATFORM, true, false, 0.0f));
+    this->spawns.push_back(std::make_unique<Spawn>(695, 117 + HEIGHT_PLATFORM, true, false, 0.0f));
+
+
     // Inicialización de cajas y proyectiles
     this->boxes.clear();
     this->boxes.push_back(getRandomBox(200, 394));
@@ -419,6 +468,64 @@ void Level::initLevel2() {
     levelState.num_boxes = 6;
     for (int i = 0; i < levelState.num_boxes; ++i)
         levelState.boxes[i] = boxes[i]->getBoxState();
+
+}
+
+// Implementación de getLevel0
+void Level::winningLevel() {
+    clearLevelState();
+
+    // Configuración de plataformas 
+    levelState.num_platforms = 15;
+    for (int i = 0; i < 15; ++i) {
+        levelState.platforms[i].pos = {32*7 + i * WIDTH_PLATFORM, 400};
+        levelState.platforms[i].type = GRASS_PLATFORM;
+        if(i == 0 || i == 14){
+            levelState.platforms[i].type = DIRT_PLATFORM;
+        }
+    }
+    levelState.num_platforms += 5;
+    for(int i = 15; i < 20; ++i){
+        levelState.platforms[i].pos = {32*7, 400 - 32*i + 32*14};
+        levelState.platforms[i].type = DIRT_PLATFORM;
+        if(i == 19){
+            levelState.platforms[i].type = GRASS_PLATFORM;
+        }
+    }
+
+    levelState.num_platforms += 5;
+    for(int i = 20; i < 25; ++i){
+        levelState.platforms[i].pos = {32*21, 400 - 32*i + 32*19};
+        levelState.platforms[i].type = DIRT_PLATFORM;
+        if(i == 24){
+            levelState.platforms[i].type = GRASS_PLATFORM;
+        }
+    }
+
+    levelState.num_platforms += 13;
+    for (int i = 25; i < 38; ++i) {
+        levelState.platforms[i].pos = {32*7 + i * WIDTH_PLATFORM - 24*WIDTH_PLATFORM, 400 - 32*5};
+        levelState.platforms[i].type = GRASS_PLATFORM;
+    }
+    //          --------------------------
+    //  --------------  -----  -----------------                
+    //  -----------------------------  -  -  -----
+    // Configuración de lugares de aparición (spawn)
+    levelState.num_spawn_places = 4;
+    this->spawns.clear();
+    for (int i = 0; i < 4; ++i) {
+        levelState.spawn_places[i].pos = {470, 360};
+        levelState.spawn_places[i].is_active = true;
+        levelState.spawn_places[i].weapon = nullWeapon;
+        levelState.spawn_places[i].armor = nullArmor;
+        this->spawns.push_back(std::make_unique<Spawn>(470, 360, false, true, 0.0f));
+    }
+
+    
+
+
+    // Inicialización de cajas y proyectiles
+    this->boxes.clear();
 
 }
 
@@ -491,6 +598,9 @@ spawn_place_t Level::getRandomSpawnPlace(int x, int y) {
 void Level::updateState(level_t& state) {
     levelState = state;
 }
+
+
+
 
 /*
 ==20851== Thread 3:

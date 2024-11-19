@@ -13,6 +13,8 @@
 #include "game.h"
 #include "../common_src/utils.h"
 
+class Game;
+
 class Client {
 	private:
         Socket socket;
@@ -24,11 +26,14 @@ class Client {
         std::unique_ptr<Sender> sendThread;
         std::unique_ptr<Receiver> recvThread;
         std::unique_ptr<Game> gameThread;
+        std::atomic<bool> _keep_running;
         void checkIfClose();
 
     public:
         void requestId();
     	Client(const std::string& server_ip, const std::string& server_port); 
+        Client(const Client&) = default; // Prevent copy-constructionoperator=
+        ~Client();
         void run();
         void stop();
 };

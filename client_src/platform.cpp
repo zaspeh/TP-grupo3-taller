@@ -32,11 +32,11 @@ void Platform::render(const Camera& camera, float zoom){
     scaleRect.w = platformTexture->getWidth(); 
     scaleRect.x = platform.pos.x;
     scaleRect.y = platform.pos.y; 
-    
+
     //SDL_Rect destRect = scaleRect;
 
     SDL_Point screenPos = camera.getScreenPosition(scaleRect.x, scaleRect.y, zoom);
-        
+
     SDL_Rect destRect = {
         screenPos.x,
         screenPos.y,

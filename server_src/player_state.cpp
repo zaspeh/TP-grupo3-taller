@@ -185,8 +185,13 @@ weapon_t PlayerState::dropWeapon() {
 }
 
 bool PlayerState::shoot() {
+    bool retornValue = false;
     if (weapon != nullptr) {
-        return weapon->shoot(); // se hacen los cambios de balas y eso
+        retornValue = weapon->shoot(infinitAmmo); // se hacen los cambios de balas y eso
+        if ((weapon->getType() == GRENADE_WEAPON || weapon->getType() == BANANA_WEAPON) && weapon->getAmmo() == 0) {
+            weapon = nullptr;
+            duck.equipped_weapon.type = NULL_WEAPON;
+        }
     }
-    return false;
+    return retornValue;
 }

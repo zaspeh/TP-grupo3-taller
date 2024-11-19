@@ -19,6 +19,8 @@ private:
     Level level;
     level_t currentLevel;
     mutable std::mutex mtx;
+    bool pickAnyWeapon = false;
+    bool matchFinished = false;
     std::vector<WeaponPhysics> fallingWeapons;
     std::vector<weapon_t> weaponsInAir;
     std::vector<ArmorPhysics> fallingArmors; 
@@ -26,7 +28,8 @@ private:
     std::vector<ProjectilePhysics> projectilePhysics;
 
     void checkIfSomeoneWin();
-
+    void finishMatch(uint8_t id);
+    void changeLevel();
 public:
     // Constructor
     GameState();
@@ -40,7 +43,8 @@ public:
     game_state_t updatePlayers(float deltaTime);
     armor_t getArmorPosition(position_t position, bool helmetEquipped, bool armorEquipped);
     weapon_t getWeaponPosition(position_t position);
-    Weapon* createWeapon(uint8_t weaponType, uint8_t ammo);
+    Weapon* createWeapon(uint8_t weaponType);
+    bool chosedAWeapon(uint8_t id, uint8_t action);
     void checkIfDropWeapon(weapon_t droppedWeapon);
     void updateWeaponsPhysics(float deltaTime);
     void checkProjectils(std::shared_ptr<PlayerState> player);
@@ -50,6 +54,7 @@ public:
     void checkIfDropArmor(armor_t droppedArmor);
     void updateArmorsPhysics(float deltaTime);
     void updateBoxes();
+    void updateSpawns(float deltaTime);
 };
 
 #endif // GAME_STATE_H

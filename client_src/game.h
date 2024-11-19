@@ -1,15 +1,18 @@
 #ifndef GAME_H
 #define GAME_H
 
+#include <mutex>
 #include <chrono>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <string>
 #include <memory>
 #include <vector>
+#include <SDL2/SDL_ttf.h>
 #include "ltexture.h"
 #include "duck.h"
 #include "platform.h"
+#include "client.h"
 #include "spawn_place.h"
 #include "projectile.h"
 #include "box.h"
@@ -23,9 +26,12 @@
 
 constexpr float FRAME_DURATION_MS = 16.67f;
 
+class Client;
+
 class Game : public Thread
 {
     private:
+
         std::shared_ptr<Queue<game_state_t>> gameStateQueue;
         std::shared_ptr<Queue<uint8_t>> commandQueue;
         std::unique_ptr<SDL_Window, decltype(&SDL_DestroyWindow)> gWindow;
@@ -39,15 +45,19 @@ class Game : public Thread
         std::vector<std::unique_ptr<Box>> boxes;
         std::unique_ptr<LTexture> background;
         game_state_t gameState;
+        std::unique_ptr<TTF_Font, decltype(&TTF_CloseFont)> gFont{nullptr, TTF_CloseFont};
         Camera camera;
         Zoom zoom;
         void render();
         bool processEvents();
         void sendCommand(const uint8_t command);
         void update(game_state_t game_state);
+        void renderText(const std::string& message, int x, int y);
+        std::mutex sdl_mutex;
+        Client& client;
 
     public:
-        Game(std::shared_ptr<Queue<game_state_t>> gameStateQueue, std::shared_ptr<Queue<uint8_t>> commandQueue);
+        Game(std::shared_ptr<Queue<game_state_t>> gameStateQueue, std::shared_ptr<Queue<uint8_t>> commandQueue, Client& client);
         ~Game();
 
         bool init();

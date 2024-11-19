@@ -17,7 +17,7 @@ private:
     Weapon* weapon;
     Armor armor;
     Helmet helmet;
-
+    bool infinitAmmo = false;
     bool isOnGround = false;
     float verticalVelocity;  // Velocidad vertical para el salto
     //const float gravity = -9.8;  // Valor de gravedad (ejemplo)
@@ -46,13 +46,16 @@ public:
         duck.equipped_weapon = nullWeapon;
         duck.helmet = nullArmor;
         duck.chestplate = nullArmor;
+        infinitAmmo = false;
     }
 
     duck_t getState() {
         return duck;
     }
     void resetPlayer(duck_t newDuck, int x , int y) {
+        std::cout << "Score del pato antes de ser modificado " << static_cast<int>(duck.score) << std::endl; 
         duck = newDuck;
+        std::cout << "Score del pato después de ser modificado " << static_cast<int>(duck.score) << std::endl; 
         duck.pos = {x, y};
         duck.isAlive = true;
         duck.isJumping = false;
@@ -73,6 +76,10 @@ public:
 
     uint8_t getAmmo() const { return weapon->getAmmo(); } // ahora en weapon
     void setAmmo(uint8_t newAmmo) { weapon->setAmmo(newAmmo); }
+    // player->setInfiniteAmmo(!player->isInfiniteAmmo());
+
+    bool isInfiniteAmmo() const { return infinitAmmo; }
+    void setInfiniteAmmo(bool infiniteAmmo) { infinitAmmo = infiniteAmmo; }
 
     bool isAlive()  { return duck.isAlive; }
     void setAlive() { duck.isAlive = !duck.isAlive; }
