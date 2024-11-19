@@ -57,7 +57,8 @@ std::map<uint8_t, std::shared_ptr<PlayerState>> GameState::getPlayers() {
 bool GameState::chosedAWeapon(uint8_t id,uint8_t action){
     if(!pickAnyWeapon) return false;
     pickAnyWeapon = false;
-    Weapon *weapon = createWeapon(action);
+    weapon_t weaponState = {{0, 0}, action, ammoForWeapons[action]};
+    Weapon *weapon = createWeapon(weaponState);
     if(weapon == nullptr) return false;
     checkIfDropWeapon(players[id]->pickWeapon(weapon));
     return true;
@@ -111,7 +112,7 @@ game_state_t GameState::doAction(uint8_t id, uint8_t action) {
 
                 weaponST = getWeaponPosition(player->getPosition());
                 if (weaponST.type != NULL_WEAPON){ 
-                    weapon = createWeapon(weaponST.type);  // Pasar la munición guardada
+                    weapon = createWeapon(weaponST);
                     checkIfDropWeapon(player->pickWeapon(weapon));
                 } else { 
                     checkIfDropWeapon(player->dropWeapon());
@@ -119,11 +120,15 @@ game_state_t GameState::doAction(uint8_t id, uint8_t action) {
                 break;
 
             case SHOOT:
-                if(player->getWeapon() == nullptr || player->getWeaponType() == NULL_WEAPON) 
+                try {
+                    if(player->getWeapon() == nullptr || player->getWeaponType() == NULL_WEAPON) 
+                        break;
+                    if(player->shoot())
+                        createProjectile(player->getWeaponType(), player->getPosition(), player->getFacingDirection());
                     break;
-                if(player->shoot())
-                    createProjectile(player->getWeaponType(), player->getPosition(), player->getFacingDirection());
-                break;
+                } catch (const std::exception& e) {
+                    std::cerr << "Error al disparar: " << e.what() << std::endl;
+                }
             case LOOK_UP:
                 break;
             case FLOOR:
@@ -231,7 +236,6 @@ bool GameState::explotionInPosition(position_t position) {
 void GameState::updateProjectilsPhysics(float deltaTime) {
     for (size_t i = 0; i < state.level.num_projectiles; i++) {
         uint8_t maxDistance = checkWeaponDistance(state.level.projectiles[i].type);
-        std::cout << "Max distance: " << maxDistance << std::endl;
         state.level.projectiles[i].is_active = projectilePhysics[i].updatePosition(state.level.projectiles[i] , state.level, deltaTime, maxDistance, players);
         if (!state.level.projectiles[i].is_active && state.level.projectiles[i].type == GRENADE_WEAPON && !explotionInPosition(state.level.projectiles[i].pos))  // si la granada explota...
             state.level.explosions[state.level.num_explosions++] = state.level.projectiles[i].pos;
@@ -403,14 +407,6 @@ void GameState::checkIfSomeoneWin() {
     }
 }
 
-/*
-void GameState::finishMatch(uint8_t id) {
-    if (id != 0) {
-        players[id]->setScore(state.level.ducks[id].score);
-    }
-    state.level.ducks[id].isAlive = false;
-}*/
-
 void GameState::updateBoxes() {
     int i = 0;
     try {
@@ -574,40 +570,40 @@ armor_t GameState::getArmorPosition(position_t position, bool helmetEquipped, bo
     return armor;
 }
 
-Weapon* GameState::createWeapon(uint8_t weaponType) {
+Weapon* GameState::createWeapon(weapon_t weaponState) {
     std::cout << "Arma tomada\n";
     Weapon* newWeapon;
     try { 
-        switch (weaponType) {
+        switch (weaponState.type) {
             case GRENADE_WEAPON:
-                newWeapon = new Grenade();
+                newWeapon = new Grenade(weaponState);
                 break;
             case BANANA_WEAPON:
-                newWeapon = new Banana();
+                newWeapon = new Banana(weaponState);
                 break;
             case PEWPEWLASER_WEAPON:
-                newWeapon = new PewPewLaser();
+                newWeapon = new PewPewLaser(weaponState);
                 break;
             case LASERRIFLE_WEAPON:
-                newWeapon = new LaserRifle();
+                newWeapon = new LaserRifle(weaponState);
                 break;
             case DARTGUN_WEAPON:
-                newWeapon = new Dartgun();
+                newWeapon = new Dartgun(weaponState);
                 break;
             case AK_47_WEAPON:
-                newWeapon = new AK47();
+                newWeapon = new AK47(weaponState);
                 break;
             case COWBOY_WEAPON:
-                newWeapon = new CowBoyPistol();
+                newWeapon = new CowBoyPistol(weaponState);
                 break;
             case MAGNUM_WEAPON:
-                newWeapon = new Magnum();
+                newWeapon = new Magnum(weaponState);
                 break;
             case SHOTGUN_WEAPON:
-                newWeapon = new Shotgun();
+                newWeapon = new Shotgun(weaponState);
                 break;
             case SNIPER_WEAPON:
-                newWeapon = new Sniper();
+                newWeapon = new Sniper(weaponState);
                 break;
             default:
                 std::cerr << "Arma no creada\n";

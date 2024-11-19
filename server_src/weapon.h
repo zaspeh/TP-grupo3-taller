@@ -25,12 +25,11 @@ static std::map<int, uint8_t> ammoForWeapons = {
 class Weapon {
 protected:
     weapon_t weaponState;
-    int id;
     int range;
 
 public:
-    Weapon(int initialAmmo, int weaponRange, int id) :
-        id(id),
+    Weapon(weapon_t weaponSt, int weaponRange) :
+        weaponState(weaponSt),
         range(weaponRange) {
         }
     
@@ -43,10 +42,10 @@ public:
     void setAmmo(uint8_t newAmmo) { 
         std::cout << "Municiones: " << static_cast<int>(newAmmo) << std::endl;
         weaponState.ammo = newAmmo; }
-    int getId() const { return id; }
+    int getId() const { return weaponState.type; }
     int getRange() const { return range; }
     
-    uint8_t getType() const { return id; }
+    uint8_t getType() const { return weaponState.type; }
 };
 
 // Armas específicas
@@ -57,7 +56,7 @@ private:
     static const int EXPLOSION_RADIUS = 5;
 
 public:
-    Grenade() : Weapon(1, 5, GRENADE_WEAPON), pinPulled(false), timeToExplode(4.0f) {}
+    Grenade(weapon_t weaponState) : Weapon(weaponState, 5), pinPulled(false), timeToExplode(4.0f) {}
     
     bool shoot(bool infinitAmmo) override {
         if (!infinitAmmo){
@@ -82,7 +81,7 @@ public:
 
 class Banana : public Weapon {
 public:
-    Banana() : Weapon(1, 5, BANANA_WEAPON) {}
+    Banana(weapon_t weaponState) : Weapon(weaponState, 5) {}
     
     bool shoot(bool infinitAmmo) override {
         if (!infinitAmmo){
@@ -95,7 +94,7 @@ public:
 
 class Dartgun : public Weapon {
 public:
-    Dartgun() : Weapon(10, 15, DARTGUN_WEAPON) {}
+    Dartgun(weapon_t weaponState) : Weapon(weaponState, 15) {}
     
     bool shoot(bool infinitAmmo) override {
         if (!infinitAmmo) {
@@ -108,7 +107,7 @@ public:
 
 class AK47 : public Weapon {
 public:
-    AK47() : Weapon(20, 15, AK_47_WEAPON) {}
+    AK47(weapon_t weaponState) : Weapon(weaponState, 15) {}
     
     bool shoot(bool infinitAmmo) override {
         if (!infinitAmmo){
@@ -124,7 +123,7 @@ private:
     static const int SHOTS_PER_BURST = 3;
 
 public:
-    PewPewLaser() : Weapon(12, 35, PEWPEWLASER_WEAPON) {}
+    PewPewLaser(weapon_t weaponState) : Weapon(weaponState, 35) {}
     
     bool shoot(bool infinitAmmo) override {
         if (!infinitAmmo){
@@ -138,7 +137,7 @@ public:
 
 class LaserRifle : public Weapon {
 public:
-    LaserRifle() : Weapon(10, 30, LASERRIFLE_WEAPON) {}
+    LaserRifle(weapon_t weaponState) : Weapon(weaponState, 30) {}
     
     bool shoot(bool infinitAmmo) override {
         if (!infinitAmmo){
@@ -151,7 +150,7 @@ public:
 
 class CowBoyPistol : public Weapon {
 public:
-    CowBoyPistol() : Weapon(10, 30, COWBOY_WEAPON) {}
+    CowBoyPistol(weapon_t weaponState) : Weapon(weaponState, 30) {}
 
     bool shoot(bool infinitAmmo) override {
         if( !infinitAmmo ){
@@ -164,7 +163,7 @@ public:
 
 class Magnum : public Weapon {
 public:
-    Magnum() : Weapon(10, 30, MAGNUM_WEAPON) {}
+    Magnum(weapon_t weaponState) : Weapon(weaponState, 30) {}
 
     bool shoot(bool infinitAmmo) override {
         if (!infinitAmmo){
@@ -177,7 +176,7 @@ public:
 
 class Shotgun : public Weapon {
 public:
-    Shotgun() : Weapon(10, 30, SHOTGUN_WEAPON) {}
+    Shotgun(weapon_t weaponState) : Weapon(weaponState, 30) {}
 
     bool shoot(bool infinitAmmo) override {
         if( !infinitAmmo ){
@@ -190,7 +189,7 @@ public:
 
 class Sniper : public Weapon {
 public:
-    Sniper() : Weapon(10, 30, SNIPER_WEAPON) {}
+    Sniper(weapon_t weaponState) : Weapon(weaponState, 30) {}
 
     bool shoot(bool infinitAmmo) override {
         if (!infinitAmmo){
