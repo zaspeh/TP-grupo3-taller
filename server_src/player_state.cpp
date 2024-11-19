@@ -71,18 +71,14 @@ void PlayerState::updatePosition(float deltaTime, platform_t* platforms, uint8_t
         }
     }
 
+    // si choca con una explosion...
     for (int i = 0; i < numExplotions; i++) {
         bool horizontalOverlap = (duck.pos.x + WIDTH_DUCK > explotions[i].x) &&
                                  (duck.pos.x < explotions[i].x + WIDTH_EXPLOTION);
-        
-        if (horizontalOverlap) {
-            if (newY + HEIGHT_DUCK > explotions[i].y && 
-                duck.pos.y + HEIGHT_DUCK <= explotions[i].y + 5) {
-                duck.pos.y = explotions[i].y - HEIGHT_DUCK;
-                verticalVelocity = 0;
-                isOnGround = true;
-                break;
-            }
+        bool verticalOverlap = (duck.pos.y + HEIGHT_DUCK > explotions[i].y) &&
+                                (duck.pos.y < explotions[i].y + HEIGHT_EXPLOTION);
+        if (horizontalOverlap && verticalOverlap) {
+            duck.isAlive = false;
         }
     }
 

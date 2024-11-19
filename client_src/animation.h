@@ -23,6 +23,7 @@ private:
     DuckAnimationType type;
     SDL_Rect gSpriteClips[MAX_ANIMATIONS];
     LTexture gSpriteSheetTexture;
+    uint32_t lastFrameTime;
 };
 
 #endif

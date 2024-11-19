@@ -9,14 +9,80 @@ Game::Game(std::shared_ptr<Queue<game_state_t>> gameStateQueue, std::shared_ptr<
       client(client)
 {
     gameState = gameStateQueue->pop();
-    ducks.resize(MAX_DUCKS);
-    platforms.resize(MAX_PLATFORMS);
-    spawns.resize(MAX_SPAWN_PLACES);
-    droppedWeapons.resize(MAX_ITEMS);
-    droppedArmors.resize(MAX_ITEMS);
-    projectiles.resize(MAX_PROJECTILES);
-    boxes.resize(MAX_BOXES);
+    ducks.reserve(MAX_DUCKS);
+    platforms.reserve(MAX_PLATFORMS);
+    spawns.reserve(MAX_SPAWN_PLACES);
+    droppedWeapons.reserve(MAX_ITEMS);
+    droppedArmors.reserve(MAX_ITEMS);
+    projectiles.reserve(MAX_PROJECTILES);
+    boxes.reserve(MAX_BOXES);
 }
+
+
+/* bool Game::loadMedia()
+{
+    bool charged = true;
+    ducks.resize(gameState.level.num_ducks);  // Ajuste: asegurar el tamaño correcto del vector ducks
+    for (int i = 0; i < gameState.level.num_ducks && charged; i++) {
+        if (!ducks[i]) {
+            ducks[i] = std::make_unique<Duck>(gameState.level.ducks[i], SCREEN_WIDTH, SCREEN_HEIGHT, gRenderer.get());
+        }
+        if (!ducks[i]->loadTexture()) {
+            printf("Failed to load texture for duck %d.\n", i);
+            charged = false;
+        }
+    }
+    platforms.resize(gameState.level.num_platforms);  // Ajuste: asegurar el tamaño correcto del vector ducks
+    for (int i = 0; i < gameState.level.num_platforms && charged; i++) {
+        if (!platforms[i]) {
+            platforms[i] = std::make_unique<Platform>(gameState.level.platforms[i], gRenderer.get());
+        }
+        if (!platforms[i]->loadTexture()) {
+            printf("Failed to load texture for duck %d.\n", i);
+            charged = false;
+        }
+    }
+    spawns.resize(MAX_SPAWN_PLACES);
+    std::cout << "Tamaño de spawns: " << static_cast<int>(gameState.level.num_spawn_places) << std::endl; 
+    for (int i = 0; i < gameState.level.num_spawn_places && charged; i++) {
+        if (gameState.level.spawn_places[i].weapon.type == NULL_WEAPON && gameState.level.spawn_places[i].armor.type == NULL_ARMOR) continue;
+        if (!spawns[i]) {
+            std::cout << "Creando nuevo spawn: " << static_cast<int>(gameState.level.spawn_places[i].weapon.type)  << std::endl;
+            std::cout << "Creando nuevo spawn: " << static_cast<int>(gameState.level.spawn_places[i].armor.type)  << std::endl;
+            spawns[i] = std::make_unique<SpawnPlace>(gameState.level.spawn_places[i], gRenderer.get());
+        }
+        if (!spawns[i]->loadTexture()) {
+            printf("Failed to load texture for spawn %d.\n", i);
+            charged = false;
+        }
+    }
+
+    droppedWeapons.resize(MAX_ITEMS);
+    std::cout << "Cambiando el tamaño de las cajas\n";
+    droppedArmors.resize(MAX_ITEMS);
+    std::cout << "Cajas reziseadas.\n";
+    projectiles.resize(MAX_PROJECTILES);
+
+    boxes.resize(MAX_BOXES);
+    for (int i = 0; i < gameState.level.num_boxes && charged; i++) {
+        if (!boxes[i]) {
+            std::cout << "Cargando boxes\n";
+            boxes[i] = std::make_unique<Box>(gameState.level.boxes[i], gRenderer.get());
+        }
+        if (!boxes[i]->loadTexture()) {
+            printf("Failed to load texture for box %d.\n", i);
+            charged = false;
+        }
+    }
+
+    background = std::make_unique<LTexture>(gRenderer.get());
+
+    if(!background->loadFromFile("client_src/forest.png")){
+        charged = false;
+    }
+
+    return charged;
+} */
 
 bool Game::loadMedia() {
     bool success = true;
@@ -243,20 +309,20 @@ void Game::run()
 }
 
 void Game::render() {
-    std::lock_guard<std::mutex> lock(sdl_mutex);
-    if (!gRenderer || !gWindow) {
+
+    if (!gRenderer) {
         std::cerr << "Renderer is null" << std::endl;
         return;
     }
+    
+    SDL_SetRenderDrawColor(gRenderer.get(), 0xFF, 0xFF, 0xFF, 0xFF);
+    SDL_RenderClear(gRenderer.get());
 
-    SDL_Rect scaleRect = {0, 0, SCREEN_WIDTH, SCREEN_HEIGHT};
-    background->render(0, 0, nullptr, &scaleRect, SDL_FLIP_NONE);
-    /*SDL_Rect bgRect = camera.getBackgroundRect(
-            background->getWidth(), 
-            background->getHeight(), 
-            zoom.getCurrentZoom()
-        );
-    background->render(bgRect.x, bgRect.y, NULL, &bgRect, SDL_FLIP_NONE);*/
+    // Render background
+    if (background) {
+        SDL_Rect scaleRect = {0, 0, SCREEN_WIDTH, SCREEN_HEIGHT};
+        background->render(0, 0, nullptr, &scaleRect, SDL_FLIP_NONE);
+    }
 
 
     for (const auto& platform : platforms) {
@@ -285,17 +351,17 @@ void Game::render() {
 
     for (const auto& projectile : projectiles) {
         if (projectile) { 
-            projectile->render();
+            projectile->render(camera, zoom.getCurrentZoom());
         }
     }
 
     for (int i = 0; i < gameState.level.num_explosions; i++) {
         if (explotions[i]) {
             SDL_Rect explosionRect;
-            explosionRect.w = 16 * 2; // Ajusta estos valores según el tamaño deseado
-            explosionRect.h = 16 * 2;
+            explosionRect.w = 16 * 4; // Ajusta estos valores según el tamaño deseado
+            explosionRect.h = 16 * 3;
             explosionRect.x = gameState.level.explosions[i].x;
-            explosionRect.y = gameState.level.explosions[i].y;
+            explosionRect.y = gameState.level.explosions[i].y + 16;
 
             SDL_Point screenPos = camera.getScreenPosition(explosionRect.x, explosionRect.y, zoom.getCurrentZoom());
             SDL_Rect destRect = {
@@ -365,9 +431,14 @@ void Game::update(game_state_t gameState) {
 
     explotions.resize(gameState.level.num_explosions);
     for (int i = 0; i < gameState.level.num_explosions; ++i) {
-        if (gameState.level.explosions[i].x == 0 && gameState.level.explosions[i].y == 0) continue;
-        explotions[i] = std::make_unique<Animation>(5, 16, 16, gRenderer.get(), FIRE);
-        explotions[i]->loadTexture("client_src/guns/fire1.png");
+        if (gameState.level.explosions[i].x == 0 && gameState.level.explosions[i].y == 0) {
+            explotions[i] = nullptr;
+            continue;
+        }
+        if (!explotions[i]) {
+            explotions[i] = std::make_unique<Animation>(5, 16, 16, gRenderer.get(), FIRE);
+            explotions[i]->loadTexture("client_src/guns/fire1.png");
+        }
     }
 
     platforms.resize(gameState.level.num_platforms);
@@ -530,6 +601,8 @@ void Game::stop() {
     }
     std::cout << "Game joinneado." << std::endl;
 }
+
+
 
 Game::~Game() {
     try {

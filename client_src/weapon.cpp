@@ -91,8 +91,8 @@ void Weapon::render(int x, int y, bool faceLeft, const Camera& camera, float zoo
         
         SDL_RendererFlip flip = faceLeft ? SDL_FLIP_HORIZONTAL : SDL_FLIP_NONE;
         texture->render(
-            destRect.x + (faceLeft ? -10 : 10), 
-            destRect.y + yOffset,  // Usar el offset específico del arma
+            destRect.x + ((faceLeft ? -10 : 10)*zoom), 
+            destRect.y + (yOffset*zoom),  // Usar el offset específico del arma
             nullptr, 
             &destRect, 
             flip

@@ -22,6 +22,24 @@ void Projectile::updateState(const projectile_t& newState) {
     projectileState = newState;
 }
 
-void Projectile::render() {
-    texture->render(projectileState.pos.x + 8, projectileState.pos.y + 15, nullptr, &scaleRect, SDL_FLIP_NONE);
+void Projectile::render(const Camera& camera, float zoom) {
+
+    scaleRect = {0, 0, 0, 0};
+    scaleRect.h = texture->getHeight()*2;
+    scaleRect.w = texture->getWidth()*2; 
+    scaleRect.x = projectileState.pos.x;
+    scaleRect.y = projectileState.pos.y; 
+    
+    //SDL_Rect destRect = scaleRect;
+
+    SDL_Point screenPos = camera.getScreenPosition(scaleRect.x, scaleRect.y, zoom);
+        
+    SDL_Rect destRect = {
+        screenPos.x,
+        screenPos.y,
+        static_cast<int>(scaleRect.w * zoom),
+        static_cast<int>(scaleRect.h * zoom)
+    };
+
+    texture->render(destRect.x + (8*zoom), destRect.y + (15*zoom), nullptr, &destRect, SDL_FLIP_NONE);
 }

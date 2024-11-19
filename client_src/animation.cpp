@@ -6,7 +6,8 @@ Animation::Animation(int qAnimationFrames, int spriteWidth, int spriteHeight, SD
   spriteWidth(spriteWidth), 
   spriteHeight(spriteHeight), 
   type(type),
-  gSpriteSheetTexture(renderer) {
+  gSpriteSheetTexture(renderer),
+  lastFrameTime(SDL_GetTicks()) {
 
     if (type == WALKING){
         for (int i = 0; i < qAnimationFrames; ++i){
@@ -61,7 +62,6 @@ bool Animation::loadTexture(std::string path){
 }
 
 void Animation::renderAnimation(float x, float y, SDL_Rect &scaleRect, bool faceLeft, bool motion) {
-    static Uint32 lastFrameTime = 0;
     Uint32 currentTime = SDL_GetTicks();
 
     if (motion && (currentTime - lastFrameTime) > 100) {
