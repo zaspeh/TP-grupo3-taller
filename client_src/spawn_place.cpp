@@ -57,9 +57,13 @@ void SpawnPlace::render(const Camera& camera, float zoom) {
         spawnTexture->render(destRect.x, destRect.y, nullptr, &destRect, SDL_FLIP_NONE);
     }
 
-    if (spawnData.weapon.type != NULL_WEAPON) 
-        weapon->render(spawnData.weapon.pos.x, spawnData.weapon.pos.y, false, camera, zoom);
-    
+    if (spawnData.weapon.type != NULL_WEAPON){
+        int x = 0;
+        if (spawnData.weapon.type == BANANA_WEAPON || spawnData.weapon.type == GRENADE_WEAPON){
+            x = x + 15;
+        }
+        weapon->render(spawnData.weapon.pos.x + x, spawnData.weapon.pos.y, false, camera, zoom);
+    }
     if (spawnData.armor.type == HELMET_ARMOR)
         armor->render(spawnData.armor.pos.x+(zoom) - 17, spawnData.armor.pos.y+(zoom), false, spawnData.armor.type, camera, zoom);
     if (spawnData.armor.type == CHESTPLATE_ARMOR)
