@@ -118,6 +118,8 @@ void ClientProtocol::readLevel(level_t& level, bool &wasClosed) {
     readDroppedArmors(level.dropped_armors, level.num_dropped_armors, wasClosed);
     level.num_explosions = recvUint8(wasClosed);
     readPositions(level.explosions, level.num_explosions, wasClosed);
+    level.num_bananas = recvUint8(wasClosed);
+    readPositions(level.bananas, level.num_bananas, wasClosed);
 }
 
 game_state_t ClientProtocol::readFromServer(bool &wasClosed) {

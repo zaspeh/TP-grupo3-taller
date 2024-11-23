@@ -45,8 +45,12 @@ bool ProjectilePhysics::updatePosition(projectile_t &projectile, level_t& levelS
                                (projectile.pos.y <= levelState.platforms[i].pos.y + HEIGHT_PLATFORM);
 
         if (horizontalOverlap && verticalOverlap) {
-            if (projectile.type == GRENADE_WEAPON)
+            if (projectile.type == GRENADE_WEAPON) {
                 projectile.pos.y += (velocityY > 0) ? 16 : -16;
+            } else if (projectile.type == BANANA_WEAPON) {
+                levelState.bananas[levelState.num_bananas++] = projectile.pos;
+                levelState.bananas[levelState.num_bananas].y = levelState.platforms[i].pos.y - 5;
+            }
             return false;
         }
     }
@@ -86,6 +90,7 @@ bool ProjectilePhysics::updatePosition(projectile_t &projectile, level_t& levelS
 
     for (int i = 0; i < levelState.num_ducks; i++) {
         if (!players[i]->isAlive()) continue;
+        if (projectile.type == BANANA_WEAPON) continue;
 
         float duckLeft = levelState.ducks[i].pos.x - (WIDTH_DUCK / 2);
         float duckRight = levelState.ducks[i].pos.x + (WIDTH_DUCK / 2);

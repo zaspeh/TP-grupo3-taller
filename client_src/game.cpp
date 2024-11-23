@@ -17,6 +17,7 @@ Game::Game(std::shared_ptr<Queue<game_state_t>> gameStateQueue, std::shared_ptr<
     droppedArmors.resize(MAX_ITEMS);
     projectiles.resize(MAX_PROJECTILES);
     boxes.resize(MAX_BOXES);
+    bananas.resize(MAX_BOXES);
 }
 
 bool Game::loadMedia() {
@@ -305,6 +306,12 @@ void Game::render() {
         }
     }
 
+    for (const auto& banana : bananas) {
+        if (banana) {
+            banana->render(camera, zoom.getCurrentZoom());
+        }
+    }
+
     /*SDL_Rect msjRect;
     msjRect.w = 16 * 4;
     msjRect.h = 16 * 3;
@@ -386,6 +393,16 @@ void Game::update(game_state_t gameState) {
         }
     }
 
+    bananas.resize(gameState.level.num_bananas);
+    for (int i = 0; i < gameState.level.num_bananas; ++i) {
+        if (!bananas[i]) {
+            bananas[i] = std::make_unique<Banana>(gRenderer.get());
+            bananas[i]->loadTexture();
+            continue;
+        }
+        bananas[i]->updatePosition(gameState.level.bananas[i]);
+    }
+
     platforms.resize(gameState.level.num_platforms);
     for (int i = 0; i < gameState.level.num_platforms; ++i) {
         if (platforms[i]) {
@@ -424,7 +441,7 @@ void Game::update(game_state_t gameState) {
         if (!droppedArmors[i]) {
             droppedArmors[i] = std::make_unique<Armor>(gameState.level.dropped_armors[i], gRenderer.get());
             droppedArmors[i]->loadTexture();
-        } 
+        }
         if (droppedArmors[i]) {
             droppedArmors[i]->updateState(gameState.level.dropped_armors[i]);
         }
@@ -447,6 +464,8 @@ void Game::update(game_state_t gameState) {
         if (projectiles[i])
             projectiles[i]->updateState(gameState.level.projectiles[i]);
     }   
+
+    
 
     boxes.resize(gameState.level.num_boxes);
     for (int i = 0; i < gameState.level.num_boxes; ++i) {            

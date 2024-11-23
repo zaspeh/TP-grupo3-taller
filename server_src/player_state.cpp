@@ -1,8 +1,12 @@
 #include "player_state.h"
+#include <math.h>
 
 PlayerState::PlayerState(uint8_t clientID, int x, int y) : 
     weapon(nullptr), 
-    verticalVelocity(0.0)
+    verticalVelocity(0.0),
+    isSlipping(false),
+    slipDistance(0.0),
+    preFace(1)
 {
     duck.pos = {x, y};
     duck.id = clientID;
@@ -51,6 +55,7 @@ bool PlayerState::doNotCollideX(platform_t* plat, uint8_t numPlats, int new_x) {
 }
 
 void PlayerState::move(int dx, int dy, platform_t* plat, uint8_t numPlats) {
+    if (isSlipping) return;
     if (dx != 0) {
         int newX = duck.pos.x + dx;
         if (doNotCollideX(plat, numPlats, newX)) {
@@ -77,6 +82,23 @@ void PlayerState::updateWeapon(float deltaTime, level_t& level) {
     }
 }
 
+bool PlayerState::checkBananaCollision(position_t bananaPos) {
+    if (isSlipping) return false;
+
+    float dx = bananaPos.x - duck.pos.x;
+    float dy = bananaPos.y - (duck.pos.y + 20);
+    float distance = std::sqrt((dx*dx) + (dy*dy));
+    
+    if (distance < 32 && isOnGround) {
+        isSlipping = true;
+        slipDistance = 0.0f;
+        preFace = duck.faceLeft ? -1 : 1; 
+        return true;
+    }
+    return false;
+}
+
+
 void PlayerState::updatePosition(float deltaTime, platform_t* platforms, uint8_t numPlatforms, position_t* explotions, uint8_t numExplotions) {
     deltaTime = std::min(deltaTime, 0.016f);
 
@@ -89,6 +111,22 @@ void PlayerState::updatePosition(float deltaTime, platform_t* platforms, uint8_t
     
     isOnGround = false;
     bool hitCeiling = false;
+
+    if (isSlipping) {
+        float slipMove = SLIP_SPEED * deltaTime;
+        slipDistance += slipMove;
+        
+        // Forzar el movimiento en la dirección del deslizamiento, ignorando cualquier input del jugador
+        int newX = duck.pos.x + (preFace * slipMove);
+        if (doNotCollideX(platforms, numPlatforms, newX)) {
+            duck.pos.x = newX;
+        }
+        
+        if (slipDistance >= 400.0f) {
+            isSlipping = false;
+            slipDistance = 0.0f;
+        }
+    }
     
     for (int i = 0; i < numPlatforms; i++) {
         bool horizontalOverlap = (duck.pos.x + WIDTH_DUCK > platforms[i].pos.x + 20) && 

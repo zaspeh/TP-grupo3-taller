@@ -21,6 +21,10 @@ private:
     const float gravity = 3000.0f;  
     const float jumpStrength = -800.0f; 
     const float groundLevel = 100.0f; 
+    bool isSlipping;
+    float slipDistance;
+    static constexpr float SLIP_SPEED = 650.0f;
+    int preFace;
 
 public:
     PlayerState(uint8_t clientID, int x, int y);
@@ -93,6 +97,8 @@ public:
     void updatePosition(float deltaTime, platform_t* platforms, uint8_t numPlatforms, position_t* explotions, uint8_t numExplotions);
 
     void jump();
+
+    bool checkBananaCollision(position_t bananaPos);
 };
 
 #endif // PLAYERSTATE_H

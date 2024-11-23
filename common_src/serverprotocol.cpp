@@ -121,4 +121,6 @@ void ServerProtocol::sendLevel(level_t& level, bool &wasClosed) {
     sendDroppedArmors(level.dropped_armors, level.num_dropped_armors, wasClosed);
     sendUint8(level.num_explosions, wasClosed);
     sendPositions(level.explosions, level.num_explosions, wasClosed);
+    sendUint8(level.num_bananas, wasClosed);
+    sendPositions(level.bananas, level.num_bananas, wasClosed);
 }

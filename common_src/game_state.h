@@ -98,6 +98,8 @@ typedef struct {
     armor_t dropped_armors[MAX_ITEMS];
     uint8_t num_explosions;
     position_t explosions[MAX_ITEMS];
+    uint8_t num_bananas;
+    position_t bananas[MAX_ITEMS];
 } level_t;
 
 // Estado global del juego

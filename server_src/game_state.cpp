@@ -168,7 +168,8 @@ game_state_t GameState::doAction(uint8_t id, uint8_t action) {
 }
 
 
-void GameState::createProjectile(uint8_t weaponType, position_t origin, bool facingLeft) {
+
+void GameState::createProjectile(uint8_t weaponType, position_t origin, bool facingLeft, float randomAngle) {
 
     bool projectileLoaded = false;
     int index = 0;
@@ -204,19 +205,20 @@ void GameState::createProjectile(uint8_t weaponType, position_t origin, bool fac
     }
     
     float initialVelocity = 2000.0f;
-    float initialAngle;
     float gravity = 980.0f;
+    float initialAngle;
+
     if (weaponType == GRENADE_WEAPON || weaponType == BANANA_WEAPON) {
-        initialVelocity = 1000.0f;  
+        initialVelocity = 1000.0f;
         gravity = 2500.0f;
-        initialAngle = facingLeft ? M_PI - 5.5f : 5.5f; 
+        initialAngle = facingLeft ? M_PI - 5.5f : 5.5f;
     } else {
-        initialAngle = facingLeft ? M_PI : 0.0f;
+        initialAngle = facingLeft ? M_PI - randomAngle : randomAngle;
+        if( randomAngle != 0)
+            initialAngle = randomAngle;
     }
 
     projectilePhysics[index].initProjectile(initialVelocity, initialAngle, origin.x, gravity);
-    
-
     if(index == state.level.num_projectiles)
         state.level.num_projectiles++;
 }
@@ -235,8 +237,13 @@ void GameState::updateProjectilsPhysics(float deltaTime) {
         uint8_t maxDistance = checkWeaponDistance(state.level.projectiles[i].type);
         state.level.projectiles[i].is_active = projectilePhysics[i].updatePosition(state.level.projectiles[i], state.level, deltaTime, maxDistance, players);
         
-        if (!state.level.projectiles[i].is_active && state.level.projectiles[i].type == GRENADE_WEAPON && !explotionInPosition(state.level.projectiles[i].pos)) {
-            state.level.explosions[state.level.num_explosions++] = state.level.projectiles[i].pos;
+        // Si el proyectil se desactiva y es una granada, crear explosión y proyectiles adicionales
+        if (!state.level.projectiles[i].is_active && state.level.projectiles[i].type == GRENADE_WEAPON) {
+            // Crear explosión
+            if(!explotionInPosition(state.level.projectiles[i].pos))
+                state.level.explosions[state.level.num_explosions++] = state.level.projectiles[i].pos;
+            
+            createFiveShoots(state.level.projectiles[i].pos.x, state.level.projectiles[i].pos.y);
         }
     }
 }
@@ -308,6 +315,16 @@ game_state_t GameState::updatePlayers(float deltaTime) {
             player->updatePosition(deltaTime, state.level.platforms, state.level.num_platforms, state.level.explosions, state.level.num_explosions);
             player->updateWeapon(deltaTime, state.level);
             updateState(id, player); 
+            for (int i = 0; i < state.level.num_bananas; i++) {
+                if (player->checkBananaCollision(state.level.bananas[i])) {
+                    std::cout << "Colisión banana" << std::endl;
+                    for (int j = i; j < state.level.num_bananas - 1; j++) {
+                        state.level.bananas[j] = state.level.bananas[j + 1];
+                    }
+                    state.level.num_bananas--;
+                    break;
+                }
+            }
         }
 
         updateBoxes();
@@ -396,6 +413,22 @@ void GameState::checkIfSomeoneWin() {
     }
 }
 
+void GameState::createFiveShoots(int x, int y) {
+    // Crear 5 proyectiles adicionales
+    for (int j = 0; j < 5; j++) {
+        position_t explosionOrigin = {x, y};
+                        
+        // Generar ángulo aleatorio entre 0 y 2π
+        float randomAngle = static_cast<float>(rand()) / static_cast<float>(RAND_MAX) * 6.0f;
+                        
+        // Calcular dirección aleatoria
+        bool facingLeft = randomAngle > M_PI;
+                        
+        // Crear nuevo proyectil en la posición de la explosión
+        createProjectile(DARTGUN_WEAPON, explosionOrigin, facingLeft, randomAngle);
+    }
+}
+
 void GameState::updateBoxes() {
     int i = 0;
     try {
@@ -413,6 +446,9 @@ void GameState::updateBoxes() {
                 } else if (armorState.type != NULL_ARMOR) {
                     armorState.pos = {boxState.pos.x - 10, boxState.pos.y - 20};
                     checkIfDropArmor(armorState);
+                }else if (boxState.is_explosive) {
+                    state.level.explosions[state.level.num_explosions++] = {boxState.pos.x, boxState.pos.y};
+                    createFiveShoots(boxState.pos.x, boxState.pos.y);
                 }
 
                 box->breakBox();

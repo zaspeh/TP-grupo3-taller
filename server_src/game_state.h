@@ -45,7 +45,8 @@ private:
     void updateWeaponsPhysics(float deltaTime);
     void checkProjectils(std::shared_ptr<PlayerState> player);
     void updateProjectilsPhysics(float deltaTime);
-    void createProjectile(uint8_t weaponType, position_t origin, bool facingLeft);
+    void createFiveShoots(int x, int y);
+    void createProjectile(uint8_t weaponType, position_t origin, bool facingLeft, float randomAngle = 0.0f);
     armor_t getArmorPosition(position_t position, bool helmetEquipped, bool armorEquipped);
     weapon_t getWeaponPosition(position_t position);
     std::shared_ptr<Weapon> createWeapon(weapon_t weapon);

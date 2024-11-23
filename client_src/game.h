@@ -16,8 +16,10 @@
 #include "spawn_place.h"
 #include "projectile.h"
 #include "box.h"
+#include "armor.h"
 #include "zoom.h"
 #include "camera.h"
+#include "banana.h"
 #include "calculatorManager.h"
 #include "../common_src/thread.h"
 #include "../common_src/game_state.h"
@@ -31,7 +33,7 @@ class Client;
 class Game : public Thread
 {
     private:
-
+    std::vector<std::unique_ptr<Banana>> bananas;
         std::shared_ptr<Queue<game_state_t>> gameStateQueue;
         std::shared_ptr<Queue<uint8_t>> commandQueue;
         std::unique_ptr<SDL_Window, decltype(&SDL_DestroyWindow)> gWindow;

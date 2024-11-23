@@ -52,7 +52,6 @@ void Box::render(const Camera& camera, float zoom) {
     scaleRect.x = boxState.pos.x;
     scaleRect.y = boxState.pos.y;
 
-
     SDL_Point screenPos = camera.getScreenPosition(scaleRect.x, scaleRect.y, zoom);
         
     SDL_Rect destRect = {

@@ -60,6 +60,7 @@ void Level::clearLevelState() {
     levelState.num_projectiles = 0;
     levelState.num_dropped_weapons = 0;
     levelState.num_dropped_armors = 0;
+    levelState.num_bananas = 0;
 
     for (auto& duck : levelState.ducks)
         duck = {{0, 0}, 0, false, false, false, false, false, 0, false, 0, 0, nullWeapon, nullArmor, nullArmor};
@@ -85,6 +86,9 @@ void Level::clearLevelState() {
 
     for (auto& armor : levelState.dropped_armors)
         armor = nullArmor;
+
+    for (auto& banana : levelState.bananas)
+        banana = {0, 0};
 }
 
 void Level::initLevel0() {
