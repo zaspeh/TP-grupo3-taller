@@ -149,7 +149,7 @@ bool Game::init() {
         return false;
     }
 
-    SDL_Window* windowPtr = SDL_CreateWindow("Duck", 
+    SDL_Window* windowPtr = SDL_CreateWindow("Duck Game", 
         SDL_WINDOWPOS_UNDEFINED, 
         SDL_WINDOWPOS_UNDEFINED, 
         SCREEN_WIDTH, 
@@ -201,7 +201,25 @@ void Game::run()
         return;
     }
 
+    Menu menu;
+
+    if (!menu.init(gWindow.get(), gRenderer.get())) {
+        return;
+    }
+
+    while (menu.running()) {
+    std::cout << "Menu running..." << std::endl;  // Depuración
+    menu.handleEvents();
+    menu.update();
+    menu.render();
+
+}
+
+std::cout << "Menu ended, starting game..." << std::endl;  // Depuración
+
+
     bool quit = false;
+    
     auto next_frame = std::chrono::steady_clock::now();
 
     while (!quit && _keep_running) {
