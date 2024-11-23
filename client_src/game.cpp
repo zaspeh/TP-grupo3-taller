@@ -144,7 +144,7 @@ void Game::sendCommand(const uint8_t command){
 bool Game::init() {
     std::lock_guard<std::mutex> lock(sdl_mutex);
     
-    if (SDL_Init(SDL_INIT_VIDEO) < 0) {
+    if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) < 0) {
         std::cerr << "SDL could not initialize! SDL Error: " << SDL_GetError() << std::endl;
         return false;
     }
@@ -183,12 +183,25 @@ bool Game::init() {
         return false;
     }
 
-    if(TTF_Init() < 0) {
+    if (TTF_Init() < 0) {
         std::cerr << "SDL_ttf could not initialize! SDL_ttf Error: " << TTF_GetError() << std::endl;
         gRenderer.reset();
         gWindow.reset();
         SDL_Quit();
         return false;
+    }
+
+    if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0) {
+        std::cerr << "SDL_mixer could not initialize! SDL_mixer Error: " << Mix_GetError() << std::endl;
+        gRenderer.reset();
+        gWindow.reset();
+        SDL_Quit();
+        return false;
+    }
+
+    if (music.loadMusic("client_src/soundtrack/song1.mp3")) {
+        music.setVolume(8);  
+        music.play();
     }
 
     return true;
@@ -551,6 +564,7 @@ void Game::stop() {
         TTF_Quit();
         IMG_Quit();
         SDL_Quit();
+        Mix_CloseAudio();
 
     } catch (const std::exception& e) {
         std::cerr << "Error during game shutdown: " << e.what() << std::endl;
