@@ -29,9 +29,6 @@ private:
     
     void createLevelById(int id);
     void clearLevelState();
-    void initLevel0();
-    void initLevel1();
-    void initLevel2();
     void winningLevel();
     level_t levelState;
     int chosenLevel;
@@ -51,6 +48,9 @@ public:
 
     explicit Level();
 
+    void initLevel0();
+    void initLevel1();
+    void initLevel2();
     level_t& getLevel();
     void createNewLevel();
     void initWinningLevel(); 

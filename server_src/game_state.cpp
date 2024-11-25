@@ -5,7 +5,6 @@
 GameState::GameState(Server& server) : level(), server(server) {
     players = std::map<uint8_t, std::shared_ptr<PlayerState>>();
     projectilePhysics.resize(MAX_PROJECTILES);
-    
     state = {
         level.getLevel(),
         0,
@@ -122,8 +121,13 @@ game_state_t GameState::doAction(uint8_t id, uint8_t action) {
                     if(player->getWeapon() == nullptr || player->getWeaponType() == NULL_WEAPON) 
                         break;
                     std::cout << "Disparando proyectil\n" << std::endl;
-                    if(player->shoot())
+                    if(player->shoot()){
                         createProjectile(player->getWeaponType(), player->getPosition(), player->getFacingDirection());
+                        if(player->getWeaponType() == SHOTGUN_WEAPON){
+                            createProjectile(player->getWeaponType(), player->getPosition(), player->getFacingDirection(), getRandomAngle(player->getFacingDirection()));
+                            createProjectile(player->getWeaponType(), player->getPosition(), player->getFacingDirection(), getRandomAngle(player->getFacingDirection()));
+                        }
+                    }    
                     std::cout << "Proyectil creado\n" << std::endl;
                     break;
                 } catch (const std::exception& e) {
@@ -167,6 +171,20 @@ game_state_t GameState::doAction(uint8_t id, uint8_t action) {
     return state;
 }
 
+float GameState::getRandomAngle(bool faceLefting) {
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    // de 0.0 a 1.0 y de 5.0 a 6.0
+    std::uniform_real_distribution<float> dis(0.0f, 6.0f);
+
+    float angle = dis(gen);
+
+    while (angle > 1.0f && angle < 5.0f) {
+        angle = dis(gen);
+    }
+
+    return faceLefting ? M_PI - angle : angle;
+}
 
 
 void GameState::createProjectile(uint8_t weaponType, position_t origin, bool facingLeft, float randomAngle) {
