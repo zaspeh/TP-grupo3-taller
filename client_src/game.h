@@ -9,6 +9,7 @@
 #include <memory>
 #include <vector>
 #include <SDL2/SDL_ttf.h>
+#include "music.h" // musiquita bien chill de cojones
 #include "ltexture.h"
 #include "duck.h"
 #include "platform.h"
@@ -33,7 +34,9 @@ class Client;
 class Game : public Thread
 {
     private:
-    std::vector<std::unique_ptr<Banana>> bananas;
+        Music music;
+        Mix_Music* backgroundMusic;
+        std::vector<std::unique_ptr<Banana>> bananas;
         std::shared_ptr<Queue<game_state_t>> gameStateQueue;
         std::shared_ptr<Queue<uint8_t>> commandQueue;
         std::unique_ptr<SDL_Window, decltype(&SDL_DestroyWindow)> gWindow;
@@ -62,7 +65,10 @@ class Game : public Thread
     public:
         Game(std::shared_ptr<Queue<game_state_t>> gameStateQueue, std::shared_ptr<Queue<uint8_t>> commandQueue, Client& client);
         ~Game();
-
+        void loadMusic();
+        void playMusic();
+        void stopMusic();
+        void cleanupMusic();
         bool init();
         void initializeGameObjects();
         bool loadMedia();

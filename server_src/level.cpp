@@ -94,81 +94,118 @@ void Level::clearLevelState() {
 void Level::initLevel0() {
     clearLevelState(); 
 
-    levelState.num_platforms = 30;
-    for (int i = 0; i < 30; ++i) {
-        levelState.platforms[i] = {{i * WIDTH_PLATFORM, 650}, GRASS_PLATFORM};
+    levelState.num_platforms = 29;
+    for (int i = 0; i < 29; ++i) {
+        levelState.platforms[i] = {{i * WIDTH_PLATFORM+64, 650}, GRASS_PLATFORM};
     }
 
     levelState.num_platforms += 14;
-    for (int i = 30; i < 44; ++i) {
-        levelState.platforms[i] = {{i * WIDTH_PLATFORM - 22*WIDTH_PLATFORM, 550}, GRASS_PLATFORM};
+    for (int i = 29; i < 43; ++i) {
+        levelState.platforms[i] = {{i * WIDTH_PLATFORM - 21*WIDTH_PLATFORM+72, 550}, GRASS_PLATFORM};
     }
 
     levelState.num_platforms += 14;
-    for (int i = 44; i < 58; ++i) {
-        if (i < 51) 
-            levelState.platforms[i] = {{i * WIDTH_PLATFORM - 44*WIDTH_PLATFORM, 450}, GRASS_PLATFORM};
+    for (int i = 43; i < 57; ++i) {
+        if (i < 50) 
+            levelState.platforms[i] = {{i * WIDTH_PLATFORM - 42*WIDTH_PLATFORM+80, 450}, GRASS_PLATFORM};
         else 
-            levelState.platforms[i] = {{i * WIDTH_PLATFORM - 28*WIDTH_PLATFORM, 450}, GRASS_PLATFORM};
+            levelState.platforms[i] = {{i * WIDTH_PLATFORM - 27*WIDTH_PLATFORM+64, 450}, GRASS_PLATFORM};
     }
 
 
     levelState.num_platforms += 14;
-    for (int i = 58; i < 72; ++i) {
-        if (i < 65) {
-            levelState.platforms[i].pos = {i * WIDTH_PLATFORM - 50*WIDTH_PLATFORM, 350-i*HEIGHT_PLATFORM+58*HEIGHT_PLATFORM};
-            int ini = (i+1) * WIDTH_PLATFORM - 50*WIDTH_PLATFORM;
-            int fin = 64 * WIDTH_PLATFORM - 50*WIDTH_PLATFORM;
-            while (ini <= fin) {
-                levelState.platforms[levelState.num_platforms].pos = {ini, 350-i*HEIGHT_PLATFORM+58*HEIGHT_PLATFORM};
-                levelState.platforms[levelState.num_platforms++].type = DIRT_PLATFORM;
-                ini += WIDTH_PLATFORM;
-            }
+    for (int i = 57; i < 71; ++i) {
+        if (i < 64) {
+            levelState.platforms[i].pos = {i * WIDTH_PLATFORM - 47*WIDTH_PLATFORM+32, 300-i*HEIGHT_PLATFORM+58*HEIGHT_PLATFORM +20};
         } else {
-            levelState.platforms[i].pos = {i * WIDTH_PLATFORM - 50*WIDTH_PLATFORM, 350+i*HEIGHT_PLATFORM-71*HEIGHT_PLATFORM};
-            int ini =  65*WIDTH_PLATFORM - 50*WIDTH_PLATFORM;
-            int fin = (i) * WIDTH_PLATFORM - 50*WIDTH_PLATFORM;
-            while (ini < fin) {
-                levelState.platforms[levelState.num_platforms].pos = {ini, 350+i*HEIGHT_PLATFORM-71*HEIGHT_PLATFORM};
-                levelState.platforms[levelState.num_platforms++].type = DIRT_PLATFORM;
-                ini += WIDTH_PLATFORM;
-            }
+            levelState.platforms[i].pos = {i * WIDTH_PLATFORM - 47*WIDTH_PLATFORM+32, 300+i*HEIGHT_PLATFORM-69*HEIGHT_PLATFORM + 20};
         }
         levelState.platforms[i].type = GRASS_PLATFORM;
     }
+    // a cada plataforma le bajo 1.
+    for (int i = 57; i < 64; ++i) {
+        levelState.platforms[i].pos.y += i-57;
+    }
+    
+    levelState.platforms[70].pos.y += 0;
+    levelState.platforms[69].pos.y += 2;
+    levelState.platforms[68].pos.y += 3;
+    levelState.platforms[67].pos.y += 4;
+    levelState.platforms[66].pos.y += 5;
+    levelState.platforms[65].pos.y += 6;
+    levelState.platforms[64].pos.y += 6;
 
 
+    levelState.num_platforms += 12;
+    for(int i = 71; i < 83; ++i) {
+        levelState.platforms[i].pos = {i*WIDTH_PLATFORM -60*WIDTH_PLATFORM + 29+16, 332 + 20};
+        levelState.platforms[i].type = DIRT_PLATFORM;
+    }
+
+    levelState.num_platforms += 10;
+    for(int i = 83; i < 93; ++i) {
+        levelState.platforms[i].pos = {i*WIDTH_PLATFORM -70*WIDTH_PLATFORM + 8 + 16, 301 + 20};
+        levelState.platforms[i].type = DIRT_PLATFORM;
+    }
+
+    levelState.num_platforms += 8;
+    for(int i = 93; i < 101; ++i) { 
+        levelState.platforms[i].pos = {i*WIDTH_PLATFORM -79*WIDTH_PLATFORM + 17+ 16, 270 + 20};
+        levelState.platforms[i].type = DIRT_PLATFORM;
+    }
+
+    levelState.num_platforms += 6;
+    for(int i = 101; i < 107; ++i) {
+        levelState.platforms[i].pos = {i*WIDTH_PLATFORM -86*WIDTH_PLATFORM + 24+ 16, 239 + 20};
+        levelState.platforms[i].type = DIRT_PLATFORM;
+    }
+
+    levelState.num_platforms += 4;
+    for(int i = 107; i < 111; ++i) {
+        levelState.platforms[i].pos = {i*WIDTH_PLATFORM -91*WIDTH_PLATFORM + 29+ 16, 208 + 20};
+        levelState.platforms[i].type = DIRT_PLATFORM;
+    }
+
+    levelState.num_platforms += 2;
+    for(int i = 111; i < 113; ++i) {
+        levelState.platforms[i].pos = {i*WIDTH_PLATFORM -93*WIDTH_PLATFORM+ 16, 180 + 17};
+        levelState.platforms[i].type = DIRT_PLATFORM;
+    }
+
+    for (int i = 0; i < levelState.num_platforms; ++i) 
+        levelState.platforms[i].pos = {levelState.platforms[i].pos.x - i, levelState.platforms[i].pos.y};
+    
 
     levelState.num_spawn_places = 8;
     
-    levelState.spawn_places[0] = { {50, 500}, true, nullWeapon, nullArmor };
-    levelState.spawn_places[1] = { {100, 500}, true, nullWeapon, nullArmor };
-    levelState.spawn_places[2] = { {874, 500}, true, nullWeapon, nullArmor };
-    levelState.spawn_places[3] = { {924, 500}, true, nullWeapon, nullArmor };
-    levelState.spawn_places[4] = getRandomSpawnPlace(75, 418);
-    levelState.spawn_places[5] = getRandomSpawnPlace(425, 518);
-    levelState.spawn_places[6] = getRandomSpawnPlace(510, 518);
-    levelState.spawn_places[7] = getRandomSpawnPlace(875, 418);
+    levelState.spawn_places[0] = { {150, 500}, true, nullWeapon, nullArmor };
+    levelState.spawn_places[1] = { {200, 500}, true, nullWeapon, nullArmor };
+    levelState.spawn_places[2] = { {820, 500}, true, nullWeapon, nullArmor };
+    levelState.spawn_places[3] = { {870, 500}, true, nullWeapon, nullArmor };
+    levelState.spawn_places[4] = getRandomSpawnPlace(167, 418);
+    levelState.spawn_places[5] = getRandomSpawnPlace(470, 518);
+    levelState.spawn_places[6] = getRandomSpawnPlace(550, 518);
+    levelState.spawn_places[7] = getRandomSpawnPlace(848, 418);
 
     this->spawns.clear();
-    this->spawns.push_back(std::make_unique<Spawn>(50, 500, false, true, 0.0f));
-    this->spawns.push_back(std::make_unique<Spawn>(100, 500, false, true, 0.0f));
-    this->spawns.push_back(std::make_unique<Spawn>(874, 500, false, true, 0.0f));
-    this->spawns.push_back(std::make_unique<Spawn>(924, 500, false, true, 0.0f));
-    this->spawns.push_back(std::make_unique<Spawn>(75, 418, true, false, 0.0f));
-    this->spawns.push_back(std::make_unique<Spawn>(425, 518, true, false, 0.0f));
-    this->spawns.push_back(std::make_unique<Spawn>(510, 518, true, false, 0.0f));
-    this->spawns.push_back(std::make_unique<Spawn>(875, 418, true, false, 0.0f));
+    this->spawns.push_back(std::make_unique<Spawn>(150, 500, false, true, 0.0f));
+    this->spawns.push_back(std::make_unique<Spawn>(200, 500, false, true, 0.0f));
+    this->spawns.push_back(std::make_unique<Spawn>(820, 500, false, true, 0.0f));
+    this->spawns.push_back(std::make_unique<Spawn>(870, 500, false, true, 0.0f));
+    this->spawns.push_back(std::make_unique<Spawn>(167, 418, true, false, 0.0f));
+    this->spawns.push_back(std::make_unique<Spawn>(470, 518, true, false, 0.0f));
+    this->spawns.push_back(std::make_unique<Spawn>(550, 518, true, false, 0.0f));
+    this->spawns.push_back(std::make_unique<Spawn>(848, 418, true, false, 0.0f));
 
 
 
     // Inicialización de cajas y proyectiles
     this->boxes.clear();
-    this->boxes.push_back(getRandomBox(490, 152));
-    this->boxes.push_back(getRandomBox(335, 642));
-    this->boxes.push_back(getRandomBox(435, 642));
-    this->boxes.push_back(getRandomBox(535, 642));
-    this->boxes.push_back(getRandomBox(635, 642)); // 642
+    this->boxes.push_back(getRandomBox(525, 159));
+    this->boxes.push_back(getRandomBox(375, 642));
+    this->boxes.push_back(getRandomBox(475, 642));
+    this->boxes.push_back(getRandomBox(575, 642));
+    this->boxes.push_back(getRandomBox(675, 642)); 
     
 
 
@@ -202,86 +239,81 @@ void Level::initLevel1() {
         levelState.platforms[i] = {{i * WIDTH_PLATFORM - 16*WIDTH_PLATFORM, 300}, GRASS_PLATFORM};
     }
 
+    //         --------------------------
+    // ---------------   ------   ------------------
 
 
-    levelState.num_platforms += 15;
-    for (int i = 47; i < 62; ++i) {
-        int offset = i * WIDTH_PLATFORM - 44*WIDTH_PLATFORM + 2*WIDTH_PLATFORM*(i-47) - WIDTH_PLATFORM;
-        if (offset < 20*WIDTH_PLATFORM){
-            levelState.platforms[i] = {{offset, 500}, GRASS_PLATFORM};
-        } else if ( offset == 20*WIDTH_PLATFORM) {
-            continue;
+// 22
+    
+    levelState.num_platforms += 4;
+    for (int i = 47; i < 51; ++i) {
+        // pongo bloques en x = 11, 12, 19,20
+        if (i < 49) {
+            levelState.platforms[i] = {{i * WIDTH_PLATFORM - 37*WIDTH_PLATFORM + 15, 400}, GRASS_PLATFORM};
         } else {
-            levelState.platforms[i] = {{offset - WIDTH_PLATFORM, 500}, GRASS_PLATFORM};
+            levelState.platforms[i] = {{i * WIDTH_PLATFORM - 30*WIDTH_PLATFORM + 12, 400}, GRASS_PLATFORM};
         }
- 
+    }
+
+    levelState.num_platforms += 6;
+    for (int i = 51; i < 57; ++i) {
+        // pongo bloques en x = 4, 5, 6, 7
+        levelState.platforms[i] = {{i * WIDTH_PLATFORM - 48*WIDTH_PLATFORM + 4, 500}, GRASS_PLATFORM};
     }
 
     levelState.num_platforms += 7;
-    for (int i = 62; i < 69; ++i) {
-        if (i < 66) {
-            levelState.platforms[i] = {{i * WIDTH_PLATFORM - 60*WIDTH_PLATFORM, 500}, GRASS_PLATFORM};
-        } else {
-            levelState.platforms[i] = {{i * WIDTH_PLATFORM - 40*WIDTH_PLATFORM, 500}, GRASS_PLATFORM};
-        }
-
+    for (int i = 57; i < 64; ++i) {
+        levelState.platforms[i] = {{i * WIDTH_PLATFORM - 44*WIDTH_PLATFORM - 9, 500}, GRASS_PLATFORM};
     }
 
-
-    levelState.num_platforms += 4;
-    for (int i = 69; i < 73; ++i) {
-        // pongo bloques en x = 11, 12, 19,20
-        if (i < 71) {
-            levelState.platforms[i] = {{i * WIDTH_PLATFORM - 59*WIDTH_PLATFORM, 400}, GRASS_PLATFORM};
-        } else {
-            levelState.platforms[i] = {{i * WIDTH_PLATFORM - 52*WIDTH_PLATFORM, 400}, GRASS_PLATFORM};
-        }
+    levelState.num_platforms += 6;
+    for (int i = 64; i < 70; ++i) {
+        levelState.platforms[i] = {{i * WIDTH_PLATFORM - 40*WIDTH_PLATFORM - 16, 500}, GRASS_PLATFORM};
     }
 
+    for (int i = 0; i < levelState.num_platforms; ++i) 
+        levelState.platforms[i].pos = {levelState.platforms[i].pos.x - i, levelState.platforms[i].pos.y};
 
-    levelState.num_platforms += 8;
-    for (int i = 73; i < 81; ++i) {
-        levelState.platforms[i] = {{i * WIDTH_PLATFORM - 61*WIDTH_PLATFORM, 500}, GRASS_PLATFORM};
-    }
-
+    
     //          --------------------------
+
     //  --------------  -----  -----------------                
     //  -----------------------------  -  -  -----
     // Configuración de lugares de aparición (spawn)
     levelState.num_spawn_places = 10;
     
-    levelState.spawn_places[0] = {{14*32, 140}, true, nullWeapon, nullArmor};
-    levelState.spawn_places[1] = {{15*32, 140}, true, nullWeapon, nullArmor};
-    levelState.spawn_places[2] = {{16*32, 140}, true, nullWeapon, nullArmor};
-    levelState.spawn_places[3] = {{17*32, 140}, true, nullWeapon, nullArmor};
+    levelState.spawn_places[0] = {{13*32, 140}, true, nullWeapon, nullArmor};
+    levelState.spawn_places[1] = {{14*32, 140}, true, nullWeapon, nullArmor};
+    levelState.spawn_places[2] = {{15*32, 140}, true, nullWeapon, nullArmor};
+    levelState.spawn_places[3] = {{16*32, 140}, true, nullWeapon, nullArmor};
 
-    levelState.spawn_places[4] = getRandomSpawnPlace(100, 467);
-    levelState.spawn_places[5] = getRandomSpawnPlace(150, 467);
-    levelState.spawn_places[6] = getRandomSpawnPlace(830, 467);
-    levelState.spawn_places[7] = getRandomSpawnPlace(880, 467);
-    levelState.spawn_places[8] = getRandomSpawnPlace(460, 267);
-    levelState.spawn_places[9] = getRandomSpawnPlace(510, 267);
+    levelState.spawn_places[4] = getRandomSpawnPlace(114, 468);
+    levelState.spawn_places[5] = getRandomSpawnPlace(164, 468);
+    levelState.spawn_places[6] = getRandomSpawnPlace(750, 468);
+    levelState.spawn_places[7] = getRandomSpawnPlace(800, 468);
+    levelState.spawn_places[8] = getRandomSpawnPlace(432, 268);
+    levelState.spawn_places[9] = getRandomSpawnPlace(482, 268);
 
     this->spawns.clear();
+    this->spawns.push_back(std::make_unique<Spawn>(13*32, 140, false, true, 0.0f));
     this->spawns.push_back(std::make_unique<Spawn>(14*32, 140, false, true, 0.0f));
     this->spawns.push_back(std::make_unique<Spawn>(15*32, 140, false, true, 0.0f));
     this->spawns.push_back(std::make_unique<Spawn>(16*32, 140, false, true, 0.0f));
-    this->spawns.push_back(std::make_unique<Spawn>(17*32, 140, false, true, 0.0f));
-    this->spawns.push_back(std::make_unique<Spawn>(100, 467, true, false, 0.0f));
-    this->spawns.push_back(std::make_unique<Spawn>(150, 467, true, false, 0.0f));
-    this->spawns.push_back(std::make_unique<Spawn>(830, 467, true, false, 0.0f));
-    this->spawns.push_back(std::make_unique<Spawn>(880, 467, true, false, 0.0f));
-    this->spawns.push_back(std::make_unique<Spawn>(460, 267, true, false, 0.0f));
-    this->spawns.push_back(std::make_unique<Spawn>(510, 267, true, false, 0.0f));
+    this->spawns.push_back(std::make_unique<Spawn>(114, 468, true, false, 0.0f));
+    this->spawns.push_back(std::make_unique<Spawn>(164, 468, true, false, 0.0f));
+    this->spawns.push_back(std::make_unique<Spawn>(750, 468, true, false, 0.0f));
+    this->spawns.push_back(std::make_unique<Spawn>(800, 468, true, false, 0.0f));
+    this->spawns.push_back(std::make_unique<Spawn>(432, 268, true, false, 0.0f));
+    this->spawns.push_back(std::make_unique<Spawn>(482, 268, true, false, 0.0f));
 
     // Inicialización de cajas y proyectiles
     this->boxes.clear();
-    this->boxes.push_back(getRandomBox(100, 294));
-    this->boxes.push_back(getRandomBox(150, 294));
-    this->boxes.push_back(getRandomBox(830, 294));
-    this->boxes.push_back(getRandomBox(880, 294));
-    this->boxes.push_back(getRandomBox(480, 494)); 
-    this->boxes.push_back(getRandomBox(530, 494)); 
+    this->boxes.push_back(getRandomBox(140, 294));
+    this->boxes.push_back(getRandomBox(190, 294));
+    this->boxes.push_back(getRandomBox(774, 294));
+    this->boxes.push_back(getRandomBox(824, 294));
+    this->boxes.push_back(getRandomBox(14*32, 494)); 
+    this->boxes.push_back(getRandomBox(15*33, 494)); 
     
     levelState.num_boxes = 6;
     for (int i = 0; i < levelState.num_boxes; ++i)
@@ -292,61 +324,59 @@ void Level::initLevel1() {
 void Level::initLevel2() {
     clearLevelState();
  
-    levelState.num_platforms = 22;
+    levelState.num_platforms = 20;
     for (int i = 0; i < 20; ++i) {
         if ( 5 <= i && i < 15) {
             levelState.platforms[i] = {{32*5 + i * WIDTH_PLATFORM, 400 + HEIGHT_PLATFORM}, GRASS_PLATFORM};
         } else {
-            levelState.platforms[i] = {{32*5 + i * WIDTH_PLATFORM, 400}, GRASS_PLATFORM};
+            levelState.platforms[i] = {{32*5 + i * WIDTH_PLATFORM, 400+1}, GRASS_PLATFORM};
         }
     }
 
-    levelState.platforms[20] = {{9 * WIDTH_PLATFORM, 400 + HEIGHT_PLATFORM}, DIRT_PLATFORM};
-    levelState.platforms[21] = {{20 * WIDTH_PLATFORM, 400 + HEIGHT_PLATFORM}, DIRT_PLATFORM};
 
     // empiezo desde el 9
     levelState.num_platforms += 16;
-    for (int i = 22; i < 38; ++i) {
-        if ( 25 <= i && i < 35) 
-            levelState.platforms[i] = {{i * WIDTH_PLATFORM - 15*WIDTH_PLATFORM, 275 }, GRASS_PLATFORM};
+    for (int i = 20; i < 36; ++i) {
+        if ( 23 <= i && i < 33) 
+            levelState.platforms[i] = {{i * WIDTH_PLATFORM - 12*WIDTH_PLATFORM - 16, 275 +1}, GRASS_PLATFORM};
         else 
-            levelState.platforms[i] = {{i * WIDTH_PLATFORM - 15*WIDTH_PLATFORM, 275 + HEIGHT_PLATFORM}, GRASS_PLATFORM};
+            levelState.platforms[i] = {{i * WIDTH_PLATFORM - 12*WIDTH_PLATFORM - 16, 275 + HEIGHT_PLATFORM}, GRASS_PLATFORM};
     }
 
     levelState.num_platforms += 4;
-    levelState.platforms[38] = {{10 * WIDTH_PLATFORM, 275 + HEIGHT_PLATFORM}, DIRT_PLATFORM};
-    levelState.platforms[39] = {{19 * WIDTH_PLATFORM, 275 + HEIGHT_PLATFORM}, DIRT_PLATFORM};
-    levelState.platforms[40] = {{4 * WIDTH_PLATFORM, 400}, GRASS_PLATFORM};
-    levelState.platforms[41] = {{25 * WIDTH_PLATFORM, 400}, GRASS_PLATFORM};
-
-    levelState.num_platforms += 4;
-    for (int i = 42; i < 46; ++i) {
-        if (i < 44)
-            levelState.platforms[i] = {{i * WIDTH_PLATFORM - 35*WIDTH_PLATFORM, 150 + HEIGHT_PLATFORM}, GRASS_PLATFORM};
+    for (int i = 36; i < 40; ++i) {
+        if (i < 38)
+            levelState.platforms[i] = {{i * WIDTH_PLATFORM - 29*WIDTH_PLATFORM, 150 + HEIGHT_PLATFORM}, GRASS_PLATFORM};
         else 
-            levelState.platforms[i] = {{i * WIDTH_PLATFORM - 23*WIDTH_PLATFORM, 150 + HEIGHT_PLATFORM}, GRASS_PLATFORM};      
+            levelState.platforms[i] = {{i * WIDTH_PLATFORM - 15*WIDTH_PLATFORM - 14, 150 + HEIGHT_PLATFORM}, GRASS_PLATFORM};      
     }
 
 
+    for (int i = 0; i < levelState.num_platforms; ++i) 
+        levelState.platforms[i].pos = {levelState.platforms[i].pos.x - i, levelState.platforms[i].pos.y};
 
-    //          --------------------------
-    //  --------------  -----  -----------------                
-    //  -----------------------------  -  -  -----
+    
+    levelState.platforms[levelState.num_platforms++] = {{22* WIDTH_PLATFORM - 12*WIDTH_PLATFORM - 7, 275+HEIGHT_PLATFORM }, DIRT_PLATFORM};
+    levelState.platforms[levelState.num_platforms++] = {{19* WIDTH_PLATFORM - 16, 275+HEIGHT_PLATFORM }, DIRT_PLATFORM};
+    levelState.platforms[levelState.num_platforms++] = {{9* WIDTH_PLATFORM - 4, 400+HEIGHT_PLATFORM }, DIRT_PLATFORM};
+    levelState.platforms[levelState.num_platforms++] = {{20* WIDTH_PLATFORM - 15, 400+HEIGHT_PLATFORM }, DIRT_PLATFORM};
+
+
     // Configuración de lugares de aparición (spawn)
     levelState.num_spawn_places = 10;
     
-    levelState.spawn_places[0] = {{5*32, 360}, true, nullWeapon, nullArmor};
-    levelState.spawn_places[1] = {{25*32, 360}, true, nullWeapon, nullArmor};
-    levelState.spawn_places[2] = {{6*32, 360}, true, nullWeapon, nullArmor};
-    levelState.spawn_places[3] = {{26*32, 360}, true, nullWeapon, nullArmor};
+    levelState.spawn_places[0] = {{6*32, 360}, true, nullWeapon, nullArmor};
+    levelState.spawn_places[1] = {{24*32-16, 360}, true, nullWeapon, nullArmor};
+    levelState.spawn_places[2] = {{7*32, 360}, true, nullWeapon, nullArmor};
+    levelState.spawn_places[3] = {{23*32-16, 360}, true, nullWeapon, nullArmor};
 
 
-    levelState.spawn_places[4] = getRandomSpawnPlace(430, 367 + HEIGHT_PLATFORM);
+    levelState.spawn_places[4] = getRandomSpawnPlace(414, 367 + HEIGHT_PLATFORM);
     levelState.spawn_places[5] = getRandomSpawnPlace(510, 367 + HEIGHT_PLATFORM);
-    levelState.spawn_places[6] = getRandomSpawnPlace(430, 242);
-    levelState.spawn_places[7] = getRandomSpawnPlace(510, 242);
-    levelState.spawn_places[8] = getRandomSpawnPlace(247, 117 + HEIGHT_PLATFORM);
-    levelState.spawn_places[9] = getRandomSpawnPlace(695, 117 + HEIGHT_PLATFORM);
+    levelState.spawn_places[6] = getRandomSpawnPlace(414, 243);
+    levelState.spawn_places[7] = getRandomSpawnPlace(510, 243);
+    levelState.spawn_places[8] = getRandomSpawnPlace(211, 117 + HEIGHT_PLATFORM);
+    levelState.spawn_places[9] = getRandomSpawnPlace(707, 117 + HEIGHT_PLATFORM);
 
     this->spawns.clear();
     this->spawns.push_back(std::make_unique<Spawn>(5*32, 360, false, true, 0.0f));
@@ -355,20 +385,20 @@ void Level::initLevel2() {
     this->spawns.push_back(std::make_unique<Spawn>(26*32, 360, false, true, 0.0f));
     this->spawns.push_back(std::make_unique<Spawn>(430, 367 + HEIGHT_PLATFORM, true, false, 0.0f));
     this->spawns.push_back(std::make_unique<Spawn>(510, 367 + HEIGHT_PLATFORM, true, false, 0.0f));
-    this->spawns.push_back(std::make_unique<Spawn>(430, 242, true, false, 0.0f));
-    this->spawns.push_back(std::make_unique<Spawn>(510, 242, true, false, 0.0f));
+    this->spawns.push_back(std::make_unique<Spawn>(430, 243, true, false, 0.0f));
+    this->spawns.push_back(std::make_unique<Spawn>(510, 243, true, false, 0.0f));
     this->spawns.push_back(std::make_unique<Spawn>(247, 117 + HEIGHT_PLATFORM, true, false, 0.0f));
     this->spawns.push_back(std::make_unique<Spawn>(695, 117 + HEIGHT_PLATFORM, true, false, 0.0f));
 
 
     // Inicialización de cajas y proyectiles
     this->boxes.clear();
-    this->boxes.push_back(getRandomBox(200, 394));
-    this->boxes.push_back(getRandomBox(250, 394));
-    this->boxes.push_back(getRandomBox(360, 267));
-    this->boxes.push_back(getRandomBox(624, 267));
-    this->boxes.push_back(getRandomBox(734, 394)); 
-    this->boxes.push_back(getRandomBox(784, 394)); 
+    this->boxes.push_back(getRandomBox(255, 394));
+    this->boxes.push_back(getRandomBox(305, 394));
+    this->boxes.push_back(getRandomBox(343, 268));
+    this->boxes.push_back(getRandomBox(616, 268));
+    this->boxes.push_back(getRandomBox(658, 394));
+    this->boxes.push_back(getRandomBox(708, 394)); 
     
     levelState.num_boxes = 6;
     for (int i = 0; i < levelState.num_boxes; ++i)
@@ -383,27 +413,27 @@ void Level::winningLevel() {
     // Configuración de plataformas 
     levelState.num_platforms = 15;
     for (int i = 0; i < 15; ++i) {
-        levelState.platforms[i] = {{32*7 + i * WIDTH_PLATFORM, 400}, GRASS_PLATFORM};
+        levelState.platforms[i] = {{32*7 + i * WIDTH_PLATFORM - i, 400}, GRASS_PLATFORM};
         if(i == 0 || i == 14)
             levelState.platforms[i].type = DIRT_PLATFORM;
     }
     levelState.num_platforms += 5;
     for(int i = 15; i < 20; ++i){
-        levelState.platforms[i] = {{32*7, 400 - 32*i + 32*14}, DIRT_PLATFORM};
+        levelState.platforms[i] = {{32*7, 400 - 32*i + 32*14 + i - 14}, DIRT_PLATFORM};
         if(i == 19)
             levelState.platforms[i].type = GRASS_PLATFORM;
     }
 
     levelState.num_platforms += 5;
     for(int i = 20; i < 25; ++i){
-        levelState.platforms[i] = {{32*21, 400 - 32*i + 32*19}, DIRT_PLATFORM};
+        levelState.platforms[i] = {{32*21 - 14, 400 - 32*i + 32*19 + i - 19}, DIRT_PLATFORM};
         if(i == 24)
             levelState.platforms[i].type = GRASS_PLATFORM;
     }
 
     levelState.num_platforms += 13;
     for (int i = 25; i < 38; ++i) 
-        levelState.platforms[i] = {{32*7 + i * WIDTH_PLATFORM - 24*WIDTH_PLATFORM, 400 - 32*5}, GRASS_PLATFORM};
+        levelState.platforms[i] = {{32*7 + i * WIDTH_PLATFORM - 24*WIDTH_PLATFORM -i + 24, 400 - 32*5+5}, GRASS_PLATFORM};
     
 
     levelState.num_spawn_places = 4;
@@ -412,6 +442,7 @@ void Level::winningLevel() {
         levelState.spawn_places[i] = {{470, 360}, true, nullWeapon, nullArmor};
         this->spawns.push_back(std::make_unique<Spawn>(470, 360, false, true, 0.0f));
     }
+
 
 }
 
