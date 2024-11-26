@@ -208,15 +208,10 @@ void Game::run()
     }
 
     while (menu.running()) {
-    std::cout << "Menu running..." << std::endl;  // Depuración
-    menu.handleEvents();
-    menu.update();
-    menu.render();
-
-}
-
-std::cout << "Menu ended, starting game..." << std::endl;  // Depuración
-
+        menu.handleEvents();
+        menu.update();
+        menu.render();
+    }
 
     bool quit = false;
     

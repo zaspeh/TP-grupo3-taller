@@ -17,10 +17,8 @@ Menu::~Menu() {
 }
 
 bool Menu::init(SDL_Window* gWindow, SDL_Renderer* gRenderer) {
-    // No necesitamos inicializar SDL, IMG, ni TTF aquí, ya que ya se hizo en Game::init()
-
-    window = gWindow;   // Usamos la ventana proporcionada
-    renderer = gRenderer; // Usamos el renderizador proporcionado
+    window = gWindow;
+    renderer = gRenderer;
 
     // Inicializar texturas
     backgroundTexture = new LTexture(renderer);
@@ -64,7 +62,7 @@ void Menu::handleEvents() {
         else if (event.type == SDL_MOUSEBUTTONDOWN) {
             if (event.button.button == SDL_BUTTON_LEFT && isButtonHovered && !gameStarted) {
                 gameStarted = true;
-                stop(); // Detener el bucle al presionar el botón
+                stop();
             }
         }
         else if (event.type == SDL_KEYDOWN) {
@@ -73,7 +71,7 @@ void Menu::handleEvents() {
             }
             else if (event.key.keysym.sym == SDLK_RETURN && !gameStarted) {
                 gameStarted = true;
-                stop(); // Detener el bucle al presionar Enter
+                stop();
             }
         }
     }
@@ -91,12 +89,10 @@ void Menu::render() {
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
     SDL_RenderClear(renderer);
 
-    // Renderizar fondo escalado al tamaño de la ventana
     SDL_Rect backgroundRect = { 0, 0, WINDOW_WIDTH, WINDOW_HEIGHT };
     backgroundTexture->render(0, 0, nullptr, &backgroundRect);
 
     if (!gameStarted) {
-        // Renderizar el botón con estilo retro
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
         SDL_RenderFillRect(renderer, &buttonRect);
 
@@ -129,12 +125,11 @@ void Menu::render() {
             SDL_DestroyTexture(texture);
         }
 
-        // Renderizar logo más grande
         SDL_Rect logoRect = {
-            (WINDOW_WIDTH - 600) / 2,  // Centrado horizontalmente, 600 pixels de ancho
-            WINDOW_HEIGHT / 2 - 100,   // Posicionado en el centro vertical
-            600,                       // Ancho del logo
-            300                        // Alto del logo
+            (WINDOW_WIDTH - 600) / 2,
+            WINDOW_HEIGHT / 2 - 100, 
+            600,                      
+            300                        
         };
         logoTexture->render(logoRect.x, logoRect.y, NULL, &logoRect);
     }
@@ -173,7 +168,6 @@ void Menu::clean() {
         font = nullptr;
     }
 
-    // No destruimos la ventana ni el renderizador aquí, ya que se manejan en Game
     IMG_Quit();
     TTF_Quit();
 }
