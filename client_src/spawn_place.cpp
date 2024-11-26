@@ -65,9 +65,9 @@ void SpawnPlace::render(const Camera& camera, float zoom) {
         weapon->render(spawnData.weapon.pos.x + x, spawnData.weapon.pos.y, false, camera, zoom);
     }
     if (spawnData.armor.type == HELMET_ARMOR)
-        armor->render(spawnData.armor.pos.x+(zoom) - 17, spawnData.armor.pos.y+(zoom), false, spawnData.armor.type, camera, zoom);
+        armor->render(spawnData.armor.pos.x + 5, spawnData.armor.pos.y - 3, false, spawnData.armor.type, camera, zoom);
     if (spawnData.armor.type == CHESTPLATE_ARMOR)
-        armor->render(spawnData.armor.pos.x+(zoom) - 40, spawnData.armor.pos.y+(zoom), false, spawnData.armor.type, camera, zoom);
+        armor->render(spawnData.armor.pos.x + 25, spawnData.armor.pos.y + 25, false, spawnData.armor.type, camera, zoom);
 }
 
 void SpawnPlace::updateState(const spawn_place_t& newState) {

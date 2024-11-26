@@ -43,21 +43,7 @@ void Armor::renderArmorPiece(uint8_t armorType, armor_t& armorState, int x, int 
         scaleRect.h = texture->getHeight() * 2.1;
 
         SDL_RendererFlip flip = faceLeft ? SDL_FLIP_HORIZONTAL : SDL_FLIP_NONE;
-
-        // Desplazamientos específicos para cada pieza de armadura
-        float xOffset = 0;
-        float yOffset = 0;
-
-        if (armorType == CHESTPLATE_ARMOR) {
-            xOffset = 25;  
-            yOffset = 50;  
-        } else if (armorType == HELMET_ARMOR) {
-            xOffset = 8;  
-            yOffset = 0; 
-        }
-
-        //SDL_Rect destRect = scaleRect;
-
+        
         SDL_Point screenPos = camera.getScreenPosition(scaleRect.x, scaleRect.y, zoom);
         
         SDL_Rect destRect = {
@@ -67,7 +53,7 @@ void Armor::renderArmorPiece(uint8_t armorType, armor_t& armorState, int x, int 
             static_cast<int>(scaleRect.h * zoom)
         };
 
-        texture->render(destRect.x + xOffset * (faceLeft ? -10 : 5), destRect.y + yOffset, nullptr, &destRect, flip);
+        texture->render(destRect.x, destRect.y, nullptr, &destRect, flip);
     } else {
         std::cerr << "Texture not found or invalid for armor type: " << static_cast<int>(armorType) << std::endl;
     }
