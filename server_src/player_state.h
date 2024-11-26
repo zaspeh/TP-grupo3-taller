@@ -25,6 +25,8 @@ private:
     float slipDistance;
     static constexpr float SLIP_SPEED = 650.0f;
     int preFace;
+    float horizontalVelocity; 
+    void applyRecoil(float recoilForce, platform_t* platforms, uint8_t numPlatforms);
 
 public:
     PlayerState(uint8_t clientID, int x, int y);
@@ -86,7 +88,7 @@ public:
 
     void takeDamage(uint8_t damage);
 
-    bool shoot();
+    bool shoot(platform_t* platforms, uint8_t numPlatforms);
 
     weapon_t dropWeapon();
 

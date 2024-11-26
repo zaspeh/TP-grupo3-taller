@@ -1,5 +1,6 @@
 #include "player_state.h"
 #include <math.h>
+#include <algorithm>
 
 PlayerState::PlayerState(uint8_t clientID, int x, int y) : 
     weapon(nullptr), 
@@ -23,6 +24,7 @@ PlayerState::PlayerState(uint8_t clientID, int x, int y) :
     duck.helmet = nullArmor;
     duck.chestplate = nullArmor;
     infinitAmmo = false;
+    horizontalVelocity = 0.0f; 
 }
 
 void PlayerState::resetPlayer(duck_t newDuck, int x , int y) {
@@ -38,6 +40,7 @@ void PlayerState::resetPlayer(duck_t newDuck, int x , int y) {
     armor.unequip();
     duck.helmet.type = NULL_ARMOR;
     helmet.unequip();
+    horizontalVelocity = 0.0f;
 }
 
 bool PlayerState::doNotCollideX(platform_t* plat, uint8_t numPlats, int new_x) {
@@ -98,7 +101,6 @@ bool PlayerState::checkBananaCollision(position_t bananaPos) {
     return false;
 }
 
-
 void PlayerState::updatePosition(float deltaTime, platform_t* platforms, uint8_t numPlatforms, position_t* explotions, uint8_t numExplotions) {
     deltaTime = std::min(deltaTime, 0.016f);
 
@@ -116,7 +118,6 @@ void PlayerState::updatePosition(float deltaTime, platform_t* platforms, uint8_t
         float slipMove = SLIP_SPEED * deltaTime;
         slipDistance += slipMove;
         
-        // Forzar el movimiento en la dirección del deslizamiento, ignorando cualquier input del jugador
         int newX = duck.pos.x + (preFace * slipMove);
         if (doNotCollideX(platforms, numPlatforms, newX)) {
             duck.pos.x = newX;
@@ -126,8 +127,31 @@ void PlayerState::updatePosition(float deltaTime, platform_t* platforms, uint8_t
             isSlipping = false;
             slipDistance = 0.0f;
         }
+    } else {
+        const float BASE_FRICTION = 0.0f;
+        const float RECOIL_FRICTION = 25.0f;
+        
+        float currentFriction = std::abs(horizontalVelocity) > 50.0f ? RECOIL_FRICTION : BASE_FRICTION;
+        
+        if (isOnGround) {
+            horizontalVelocity *= (1.0f - currentFriction * deltaTime);
+        } else {
+            horizontalVelocity *= (1.0f - (currentFriction * 0.5f) * deltaTime);
+        }
+
+        if (std::abs(horizontalVelocity) > 50.0f) {
+            int newX = duck.pos.x + (horizontalVelocity * deltaTime);
+            if (doNotCollideX(platforms, numPlatforms, newX)) {
+                duck.pos.x = newX;
+            } else {
+                horizontalVelocity = 0.0f;
+            }
+        } else {
+            horizontalVelocity = 0.0f;
+        }
     }
     
+    // Colisiones con plataformas
     for (int i = 0; i < numPlatforms; i++) {
         bool horizontalOverlap = (duck.pos.x + WIDTH_DUCK > platforms[i].pos.x + 20) && 
                                 (duck.pos.x < platforms[i].pos.x + WIDTH_PLATFORM); 
@@ -157,6 +181,7 @@ void PlayerState::updatePosition(float deltaTime, platform_t* platforms, uint8_t
         }
     }
 
+    // Resto del código de colisiones con explosiones...
     for (int i = 0; i < numExplotions; i++) {
         bool horizontalOverlap = (duck.pos.x + WIDTH_DUCK > explotions[i].x) &&
                                  (duck.pos.x < explotions[i].x + WIDTH_EXPLOTION);
@@ -253,7 +278,7 @@ weapon_t PlayerState::dropWeapon() {
     return weaponST;
 }
 
-bool PlayerState::shoot() {
+bool PlayerState::shoot(platform_t* platforms, uint8_t numPlatforms) {
     bool returnValue = false;
 
     if (weapon != nullptr) {
@@ -268,8 +293,25 @@ bool PlayerState::shoot() {
             }
         }
 
-        returnValue = weapon->shoot(infinitAmmo); 
+        returnValue = weapon->shoot(infinitAmmo);
+        if (returnValue) {
+            applyRecoil(weapon->getRecoil(), platforms, numPlatforms);
+        }
     }
     
     return returnValue;
+}
+
+// Añadir este nuevo método a PlayerState
+void PlayerState::applyRecoil(float recoilForce, platform_t* platforms, uint8_t numPlatforms) {
+    float baseRecoil = duck.faceLeft ? recoilForce : -recoilForce;
+    
+    if (isOnGround) {
+        horizontalVelocity = baseRecoil * 6.0f;  
+        verticalVelocity = -recoilForce * 0.2f;
+        isOnGround = false;
+    } else {
+        horizontalVelocity = baseRecoil * 8.0f; 
+        verticalVelocity -= recoilForce * 0.1f;
+    }
 }

@@ -46,7 +46,7 @@ bool ProjectilePhysics::updatePosition(projectile_t &projectile, level_t& levelS
 
         if (horizontalOverlap && verticalOverlap) {
             if (projectile.type == GRENADE_WEAPON) {
-                projectile.pos.y += (velocityY > 0) ? 16 : -16;
+                projectile.pos.y += (velocityY > 0) ? -32 : 0;
             } else if (projectile.type == BANANA_WEAPON) {
                 levelState.bananas[levelState.num_bananas++] = projectile.pos;
                 levelState.bananas[levelState.num_bananas].y = levelState.platforms[i].pos.y - 5;
@@ -73,7 +73,7 @@ bool ProjectilePhysics::updatePosition(projectile_t &projectile, level_t& levelS
 
         if (horizontalOverlap && verticalOverlap) {
             if (projectile.type == GRENADE_WEAPON)
-                projectile.pos.y += (velocityY > 0) ? 16 : -16;
+                projectile.pos.y += (velocityY > 0) ? -32 : 0;
             levelState.boxes[i].health--;
             return false;
         }
