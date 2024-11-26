@@ -205,7 +205,7 @@ void PlayerState::updatePosition(float deltaTime, platform_t* platforms, uint8_t
         verticalVelocity = maxFallSpeed;
     }
 
-    if(duck.pos.y > 1024)   
+    if(duck.pos.y > 800)   
         duck.isAlive = false;
 }
 

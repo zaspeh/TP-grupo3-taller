@@ -92,6 +92,7 @@ constexpr const char* ERROR_PREFIX = "Error: ";
 #define CHESTPLATE_ARMOR 31
 #define RESTART_MATCH 14
 
+#define ASK_ID 12
 #define LEAVE_MATCH 13
 
 constexpr const uint8_t GRASS_PLATFORM = 1;

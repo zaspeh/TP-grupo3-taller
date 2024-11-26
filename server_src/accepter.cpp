@@ -8,7 +8,7 @@
 #include "server.h"
 
 Accepter::Accepter(int port, Server& server, Monitor& monitor, GameLoop& gameLoop):
-        socket_servidor(std::to_string(port).c_str()), server(server), monitor(monitor), gameLoop(gameLoop) {}
+        socket_servidor(std::to_string(port).c_str()), server(server), monitor(monitor), gameLoop(gameLoop), clientID(0) {}
 
 void Accepter::run() {
     gameLoop.initGame();
@@ -25,7 +25,7 @@ void Accepter::run() {
             sender->start();
             emisores.push_back(sender);
 
-            auto receiver = std::make_shared<Receiver>(server, protocol, gameLoop, monitor);
+            auto receiver = std::make_shared<Receiver>(server, protocol, gameLoop, monitor, clientID++);
             receiver->start();
             receptores.push_back(receiver);
         } catch (const std::exception& e) {

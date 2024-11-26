@@ -2,6 +2,11 @@
 #include "server.h"
 #include <cmath>
 
+#define WHITE 1
+#define YELLOW 2
+#define GRAY 3
+#define RED 4
+
 GameState::GameState(Server& server) : level(), server(server) {
     players = std::map<uint8_t, std::shared_ptr<PlayerState>>();
     projectilePhysics.resize(MAX_PROJECTILES);
@@ -147,13 +152,18 @@ game_state_t GameState::doAction(uint8_t id, uint8_t action) {
                 removePlayer(id);
                 break;
             default:
-                std::cout << "Unknown action: " << action << std::endl;
+                if (isColor(action)) 
+                    player->setColor(action);
                 break;
         }
     }
 
     updateState(id, player);
     return state;
+}
+
+bool GameState::isColor(uint8_t action) {
+    return action == WHITE || action == YELLOW || action == GRAY || action == RED;
 }
 
 float GameState::getRandomAngle(bool faceLefting) {
@@ -574,18 +584,17 @@ armor_t GameState::getArmorPosition(position_t position, bool helmetEquipped, bo
             armor_t pickedarmor = state.level.dropped_armors[i];
             if(pickedarmor.type == HELMET_ARMOR && !helmetEquipped) {   
                 armor = pickedarmor;
-                state.level.dropped_armors[i].type = NULL_ARMOR; 
-                spawns[i]->hasSomething = false;
-                spawns[i]->respawnTimer = 5.0f;
+                state.level.dropped_armors[i] = state.level.dropped_armors[state.level.num_dropped_armors - 1];
+                state.level.num_dropped_armors--;
+                std::cout << "AGARRO CASCO" << std::endl;
                 return armor;
             }
 
             if(pickedarmor.type == CHESTPLATE_ARMOR && !armorEquipped) {
                 armor = pickedarmor;
-                state.level.dropped_armors[i].type = NULL_ARMOR; 
-
-                spawns[i]->hasSomething = false;
-                spawns[i]->respawnTimer = 5.0f;
+                state.level.dropped_armors[i] = state.level.dropped_armors[state.level.num_dropped_armors - 1];
+                state.level.num_dropped_armors--;
+                std::cout << "AGARRO ARMADURA" << std::endl;
                 return armor;
             }
         }

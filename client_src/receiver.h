@@ -15,7 +15,7 @@ class Receiver : public Thread
     private:
         std::shared_ptr<ClientProtocol> protocol;
         std::shared_ptr<Queue<game_state_t>> gameStateQueue;
-
+        void readID(bool &wasClosed);
 public:
     Receiver(std::shared_ptr<ClientProtocol> protocol, std::shared_ptr<Queue<game_state_t>> queue);
     

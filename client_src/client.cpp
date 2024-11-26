@@ -38,16 +38,6 @@ void Client::checkIfClose() {
 }
 
 void Client::requestId() {
-    unsigned int id_input;
-    std::cout << "Ingrese el ID de cliente: ";
-    std::cin >> id_input;
-
-    if (id_input > 255) {
-        std::cerr << "ID inválido. Debe estar en el rango [0, 255]." << std::endl;
-        throw std::invalid_argument("ID fuera de rango");
-    }
-
-    client_id = static_cast<uint8_t>(id_input);
     commandQueue->push(NEW_CLIENT); 
 }
 
@@ -58,7 +48,7 @@ void Client::run() {
 
 void Client::stop(){
     if (!_keep_running) return;
-    _keep_running.store(false); 
+    _keep_running.store(false);
     gameThread->stop();
     sendThread->stop();
     recvThread->stop();

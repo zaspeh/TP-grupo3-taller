@@ -57,10 +57,6 @@ void GameLoop::doActionGameState(uint8_t player, uint8_t action) {
     monitor.procesar_mensaje(gameStateStruct);
 }
 
-void GameLoop::removePlayer(uint8_t player) {
-    gameState->removePlayer(player);
-}
-
 void GameLoop::stop() {
     if (!_keep_running) return;
 

@@ -29,7 +29,7 @@ bool Game::loadMedia() {
             throw std::runtime_error("Failed to load background texture");
         }
         
-        gFont.reset(TTF_OpenFont("client_src/Namaku.ttf", 28));
+        gFont.reset(TTF_OpenFont("client_src/barcadesemital.ttf", 28));
         if (!gFont) {
             throw std::runtime_error("Failed to load font");
         }
@@ -344,8 +344,11 @@ void Game::render() {
     for (int i = 0; i < gameState.level.num_ducks; i++) {
         if (gameState.level.ducks[i].score >= gameState.winning_score) {
             SDL_Point screenMsjWinPos = camera.getScreenPosition(gameState.level.ducks[i].pos.x - 100, gameState.level.ducks[i].pos.y-10, zoom.getCurrentZoom());
-            renderText("WINNER!!!!! now press 'G' to restart.",  screenMsjWinPos.x, screenMsjWinPos.y);
-            renderText("Close the window to quit.",  screenMsjPos.x, screenMsjPos.y); 
+            renderText("WINNER!!!!! now press 'G' to restart.",  screenMsjWinPos.x, screenMsjWinPos.y, 1);
+            renderText("Close the window to quit.",  screenMsjPos.x + 30, screenMsjPos.y + 20, 1); 
+        } else {
+            SDL_Point screenMsjWinPos = camera.getScreenPosition(gameState.level.ducks[i].pos.x + 8, gameState.level.ducks[i].pos.y-2, zoom.getCurrentZoom());
+            renderText("Player: " + std::to_string(gameState.level.ducks[i].id + 1),  screenMsjWinPos.x, screenMsjWinPos.y, 0);
         }
     }
 
@@ -493,13 +496,17 @@ void Game::update(game_state_t gameState) {
     }
 }
 
-void Game::renderText(const std::string& message, int x, int y) {
+void Game::renderText(const std::string& message, int x, int y, int color) {
     if (!gFont) {
         std::cerr << "Font not loaded, cannot render text." << std::endl;
         return;
     }
-
-    SDL_Color textColor = { 255, 128, 0, 255 };
+    SDL_Color textColor;
+    if (color == 1) {
+        textColor = { 255, 128, 0, 255 };
+    } else {
+        textColor = { 255, 255, 255, 255 };
+    }
     SDL_Surface* textSurface = TTF_RenderText_Solid(gFont.get(), message.c_str(), textColor);
 
     if (!textSurface) {
@@ -513,7 +520,10 @@ void Game::renderText(const std::string& message, int x, int y) {
         SDL_FreeSurface(textSurface);
         return;
     }
-
+    if(color == 0) {
+        textSurface->w = 90;
+        textSurface->h = 30;
+    }
     SDL_Rect renderQuad = {x, y, textSurface->w, textSurface->h};
 
     if (SDL_RenderCopy(gRenderer.get(), textTexture, nullptr, &renderQuad) != 0) {

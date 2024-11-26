@@ -16,9 +16,10 @@ private:
     std::shared_ptr<ServerProtocol> protocol;
     GameLoop& gameLoop;
     Monitor& monitor;
+    int clientID;
 
 public:
-    explicit Receiver(Server& server, std::shared_ptr<ServerProtocol> protocol, GameLoop& gameLoop, Monitor& monitor);
+    explicit Receiver(Server& server, std::shared_ptr<ServerProtocol> protocol, GameLoop& gameLoop, Monitor& monitor, int id);
     void run() override;
 };
 

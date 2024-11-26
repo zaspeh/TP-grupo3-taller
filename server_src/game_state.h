@@ -12,6 +12,11 @@
 #include "projectile_physics.h"
 #include "../common_src/utils.h"
 
+#define WHITE 1
+#define YELLOW 2
+#define GRAY 3
+#define RED 4
+
 class Server;
 class ProjectilePhysics;
 
@@ -31,6 +36,7 @@ private:
     std::vector<ProjectilePhysics> projectilePhysics;
     Server& server;
 
+    bool isColor(uint8_t action);
     void checkIfSomeoneWin();
     void finishMatch(uint8_t id);
     void changeLevel();

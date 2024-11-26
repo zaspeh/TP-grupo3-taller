@@ -25,6 +25,7 @@ private:
     void closeClients();
     void handleInput();
     std::vector<std::shared_ptr<ServerProtocol>> getClients();
+    void readID(bool &wasClosed);
 
 public:
     explicit Server(int port);

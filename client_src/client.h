@@ -18,7 +18,7 @@ class Game;
 class Client {
 	private:
         Socket socket;
-        uint8_t client_id;
+        uint8_t client_id = 0;
         static std::atomic<uint16_t> next_id;
         std::shared_ptr<ClientProtocol> clientprotocol;
         std::shared_ptr<Queue<game_state_t>> gameStateQueue;

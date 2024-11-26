@@ -39,6 +39,8 @@ public:
 
     void setPosition(const position_t& newPosition)  { duck.pos = newPosition; }
 
+    void setColor(uint8_t color)  { duck.color = color; }
+
     std::shared_ptr<Weapon> getWeapon() { return weapon; }
 
     uint8_t getWeaponType() const { return weapon->getId(); } 

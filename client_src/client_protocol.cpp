@@ -131,6 +131,9 @@ game_state_t ClientProtocol::readFromServer(bool &wasClosed) {
     return game_state;
 }
 
+void ClientProtocol::setID(int id) {
+    client_identifier = id;
+}
 
 ClientProtocol::ClientProtocol(Socket&& socket, uint8_t client_id)
         : Protocol(std::move(socket)),  

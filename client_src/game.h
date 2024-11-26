@@ -58,7 +58,7 @@ class Game : public Thread
         bool processEvents();
         void sendCommand(const uint8_t command);
         void update(game_state_t game_state);
-        void renderText(const std::string& message, int x, int y);
+        void renderText(const std::string& message, int x, int y, int color);
         std::mutex sdl_mutex;
         Client& client;
 
