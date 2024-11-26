@@ -5,7 +5,7 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
 #include <string>
-
+#include "../common_src/utils.h"
 #include "ltexture.h"
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
@@ -25,8 +25,8 @@ private:
     Uint32 blinkTimer;
     bool showText;
     
-    const int WINDOW_WIDTH = 800;
-    const int WINDOW_HEIGHT = 600;
+    const int WINDOW_WIDTH = LEVEL_WIDTH;
+    const int WINDOW_HEIGHT = LEVEL_HEIGHT;
     const int BUTTON_WIDTH = 200;
     const int BUTTON_HEIGHT = 50;
     const int BUTTON_TOP_MARGIN = 80;
