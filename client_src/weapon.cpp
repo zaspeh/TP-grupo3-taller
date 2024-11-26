@@ -57,7 +57,6 @@ bool Weapon::loadTexture(){
         case SNIPER_WEAPON:
             return (guns[SNIPER_WEAPON]->loadFromFile("client_src/guns/sniper.png"));
         default:
-            std::cerr << "Error: Invalid weapon type " << static_cast<int>(weaponState.type) << std::endl;
             return true;
     }
 

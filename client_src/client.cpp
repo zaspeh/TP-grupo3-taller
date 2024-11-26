@@ -24,16 +24,13 @@ void Client::checkIfClose() {
     std::cout << "Ingrese 'q' para cerrar el juego: ";
 
     while (_keep_running) {
-        if (std::cin.rdbuf()->in_avail() > 0) {
-            std::string input;
-            std::getline(std::cin, input);
-            if (input == "q") {
-                break;
-            }
-            std::cout << "Entrada inválida. Intente nuevamente: ";
-        } else {
-            std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        std::string input;
+        std::getline(std::cin, input);  // Directa lectura sin verificación del búfer
+
+        if (input == "q") {
+            break;
         }
+        std::cout << "Entrada inválida. Intente nuevamente: ";
     }
 
     std::cout << "Saliendo de checkIfClose" << std::endl;
@@ -55,6 +52,7 @@ void Client::requestId() {
 }
 
 void Client::run() {
+    std::cout << "Método run\n";
     checkIfClose();
 }
 

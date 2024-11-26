@@ -219,7 +219,6 @@ void Game::run()
 
     while (!quit && _keep_running) {
         quit = processEvents();
-        std::cout << quit << std::endl;
         SDL_SetRenderDrawColor(gRenderer.get(), 0xFF, 0xFF, 0xFF, 0xFF);
         SDL_RenderClear(gRenderer.get());
 
@@ -386,11 +385,9 @@ void Game::update(game_state_t gameState) {
                 SCREEN_HEIGHT,
                 gRenderer.get()
             );
-            std::cout << "Creando nuevo pato " << gameState.level.ducks[i].id << std::endl;
             if (!ducks[i]->loadTexture()) {
                 std::cout << "Failed to load texture for new duck with ID " << gameState.level.ducks[i].id << std::endl;
             }
-            std::cout << "New duck initialized with ID " << gameState.level.ducks[i].id << std::endl;
         }
     }
 
@@ -571,7 +568,6 @@ void Game::stop() {
     } catch (...) {
         std::cerr << "Unknown error during game shutdown." << std::endl;
     }
-    std::cout << "Game joinneado." << std::endl;
 }
 
 
