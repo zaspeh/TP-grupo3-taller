@@ -20,7 +20,7 @@ Weapon::Weapon(weapon_t weaponState, SDL_Renderer* renderer)
             {AK_47_WEAPON, 10},
             {DARTGUN_WEAPON, 15},
             {BANANA_WEAPON, 5},
-            {GRENADE_WEAPON, 8},
+            {GRENADE_WEAPON, 5},
             {PEWPEWLASER_WEAPON, 12},
             {LASERRIFLE_WEAPON, 10},
             {COWBOY_WEAPON, 30},
@@ -67,6 +67,18 @@ void Weapon::updateState(const weapon_t& newWeaponState){
 }
 
 void Weapon::render(int x, int y, bool faceLeft, const Camera& camera, float zoom) {
+    if (weaponState.type == BANANA_WEAPON || weaponState.type == GRENADE_WEAPON){
+        y =  y + 20;
+        if(faceLeft){
+            x = x + 20;
+        }
+    }else if(weaponState.type == SNIPER_WEAPON){
+        y =  y + 20;
+        if(faceLeft){
+            x = x + 10;
+        }
+    }
+
     SDL_Rect scaleRect = {x, y, 0, 0};
     auto it = guns.find(weaponState.type);
     if (it != guns.end()) {

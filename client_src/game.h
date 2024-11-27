@@ -26,6 +26,7 @@
 #include "../common_src/game_state.h"
 #include "../common_src/queue.h"
 #include "../common_src/utils.h"
+#include "menu.h"
 
 constexpr float FRAME_DURATION_MS = 16.67f;
 
