@@ -5,7 +5,6 @@
 GameState::GameState(Server& server) : level(), server(server) {
     players = std::map<uint8_t, std::shared_ptr<PlayerState>>();
     projectilePhysics.resize(MAX_PROJECTILES);
-    
     state = {
         level.getLevel(),
         0,
@@ -117,30 +116,20 @@ game_state_t GameState::doAction(uint8_t id, uint8_t action) {
                 break;
 
             case SHOOT:
-                std::cout << "Disparando" << std::endl;
-                try {
-                    if(player->getWeapon() == nullptr || player->getWeaponType() == NULL_WEAPON) 
-                        break;
-                    std::cout << "Disparando proyectil\n" << std::endl;
-                    if(player->shoot())
-                        createProjectile(player->getWeaponType(), player->getPosition(), player->getFacingDirection());
-                    std::cout << "Proyectil creado\n" << std::endl;
+                if(player->getWeapon() == nullptr || player->getWeaponType() == NULL_WEAPON) 
                     break;
-                } catch (const std::exception& e) {
-                    std::cerr << "Error al disparar: " << e.what() << std::endl;
-                }
+                if(player->shoot(state.level.platforms, state.level.num_platforms))
+                    createProjectile(player->getWeaponType(), player->getPosition(), player->getFacingDirection());
+                break;
             case LOOK_UP:
                 break;
             case FLOOR:
                 player->setCrouched(!player->isCrouched());
                 break;
             case NEW_CLIENT:
-                std::cout << "Agregando nuevo cliente\n";
                 player = connectPlayer(id);
-                std::cout << "Agregado\n";
                 break;
             case INFINIT_AMMO:
-                std::cout << "Infinite ammo: " << player->isInfiniteAmmo() << std::endl;
                 player->setInfiniteAmmo(!player->isInfiniteAmmo());
                 break;
             case PICK_ANY_WEAPON:
@@ -167,6 +156,20 @@ game_state_t GameState::doAction(uint8_t id, uint8_t action) {
     return state;
 }
 
+float GameState::getRandomAngle(bool faceLefting) {
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    // de 0.0 a 1.0 y de 5.0 a 6.0
+    std::uniform_real_distribution<float> dis(0.0f, 6.0f);
+
+    float angle = dis(gen);
+
+    while (angle > 1.0f && angle < 5.0f) {
+        angle = dis(gen);
+    }
+
+    return faceLefting ? M_PI - angle : angle;
+}
 
 
 void GameState::createProjectile(uint8_t weaponType, position_t origin, bool facingLeft, float randomAngle) {
@@ -237,9 +240,7 @@ void GameState::updateProjectilsPhysics(float deltaTime) {
         uint8_t maxDistance = checkWeaponDistance(state.level.projectiles[i].type);
         state.level.projectiles[i].is_active = projectilePhysics[i].updatePosition(state.level.projectiles[i], state.level, deltaTime, maxDistance, players);
         
-        // Si el proyectil se desactiva y es una granada, crear explosión y proyectiles adicionales
         if (!state.level.projectiles[i].is_active && state.level.projectiles[i].type == GRENADE_WEAPON) {
-            // Crear explosión
             if(!explotionInPosition(state.level.projectiles[i].pos))
                 state.level.explosions[state.level.num_explosions++] = state.level.projectiles[i].pos;
             
@@ -447,10 +448,9 @@ void GameState::updateBoxes() {
                     armorState.pos = {boxState.pos.x - 10, boxState.pos.y - 20};
                     checkIfDropArmor(armorState);
                 }else if (boxState.is_explosive) {
-                    state.level.explosions[state.level.num_explosions++] = {boxState.pos.x, boxState.pos.y};
+                    state.level.explosions[state.level.num_explosions++] = {boxState.pos.x, boxState.pos.y - 23};
                     createFiveShoots(boxState.pos.x, boxState.pos.y);
                 }
-
                 box->breakBox();
             }
             i++;

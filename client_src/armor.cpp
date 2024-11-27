@@ -14,11 +14,13 @@ Armor::Armor(armor_t armorState, SDL_Renderer* renderer) {
 bool Armor::loadTexture() {
     bool success = true;
 
-    if (chestplateState.type == CHESTPLATE_ARMOR) 
+    if (chestplateState.type != NULL_ARMOR) 
         success &= armors[CHESTPLATE_ARMOR]->loadFromFile("client_src/armors/chestplate.png");
 
-    if (helmetState.type == HELMET_ARMOR) 
+    if (helmetState.type != NULL_ARMOR) 
         success &= armors[HELMET_ARMOR]->loadFromFile("client_src/armors/helmet.png");
+
+        
 
     if (!success) {
         std::cerr << "Failed to load one or more armor textures." << std::endl;
@@ -69,14 +71,10 @@ int Armor::getType() {
 }
 
 void Armor::updateState(armor_t arm) {
-    chestplateState = nullArmor;
-    helmetState = nullArmor;
     if (arm.type == CHESTPLATE_ARMOR) 
         chestplateState = arm;
-
     if (arm.type == HELMET_ARMOR)
         helmetState = arm;
-
 }
 
 armor_t Armor::getState() {

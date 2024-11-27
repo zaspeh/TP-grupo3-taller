@@ -8,6 +8,19 @@
 #include "../common_src/game_state.h"
 #include "../common_src/utils.h"
 
+static std::map<int, float> weaponRecoil = {
+    {GRENADE_WEAPON, GRENADE_RECOIL},      
+    {BANANA_WEAPON, BANANA_RECOIL},       
+    {DARTGUN_WEAPON, DARTGUN_RECOIL},      
+    {AK_47_WEAPON, AK_47_RECOIL},        
+    {PEWPEWLASER_WEAPON, PEWPEWLASER_RECOIL},   
+    {LASERRIFLE_WEAPON, LASERRIFLE_RECOIL},   
+    {COWBOY_WEAPON, COWBOY_RECOIL},       
+    {MAGNUM_WEAPON, MAGNUM_RECOIL},       
+    {SHOTGUN_WEAPON, SHOTGUN_RECOIL},      
+    {SNIPER_WEAPON, SNIPER_RECOIL}        
+};
+
 static std::map<int, uint8_t> ammoForWeapons = {
     {GRENADE_WEAPON, GRENADE_AMMO},
     {BANANA_WEAPON, BANANA_AMMO},
@@ -47,6 +60,8 @@ public:
     int getRange() const { return range; }
     
     uint8_t getType() const { return weaponState.type; }
+
+    float getRecoil() const { return weaponRecoil[weaponState.type]; }
 };
 
 // Armas específicas
