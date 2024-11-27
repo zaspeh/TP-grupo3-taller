@@ -39,6 +39,8 @@ void GameState::removePlayer(uint8_t id) {
 
 void GameState::updateState(uint8_t id, std::shared_ptr<PlayerState> player) {
     state.level.ducks[id] = player->getState();
+    if (!player->isAlive())
+        checkIfSomeoneWin();
 }
 
 
@@ -418,7 +420,7 @@ void GameState::checkIfSomeoneWin() {
         }
     }   
 
-    if (aliveDucks == 1 && players.size() > 1) {
+    if ((aliveDucks == 1 && players.size() > 1) || (players.size() == 1 && aliveDucks == 0)) {
        changeLevel();
     }
 }
@@ -464,7 +466,7 @@ void GameState::updateBoxes() {
             }
             i++;
         }
-    } catch (...) { // ?
+    } catch (...) { 
         std::cerr << "Error inesperado en updateBoxes" << std::endl;
     }
 }

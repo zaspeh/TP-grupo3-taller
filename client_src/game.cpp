@@ -302,7 +302,8 @@ void Game::render() {
     }
 
     for (const auto& armor : droppedArmors) {
-        if (armor && armor->getState().type != NULL_ARMOR) armor->render(armor->getState().pos.x, armor->getState().pos.y, false, armor->getState().type, camera, zoom.getCurrentZoom());
+        if (armor && armor->getState().type == CHESTPLATE_ARMOR) armor->render(armor->getState().pos.x, armor->getState().pos.y + 25, false, armor->getState().type, camera, zoom.getCurrentZoom());
+        if (armor && armor->getState().type == HELMET_ARMOR) armor->render(armor->getState().pos.x, armor->getState().pos.y, false, armor->getState().type, camera, zoom.getCurrentZoom());
     }
 
     for (const auto& projectile : projectiles) {
