@@ -34,7 +34,7 @@ private:
     std::vector<ArmorPhysics> fallingArmors; 
     std::vector<armor_t> armorsInAir;  
     std::vector<ProjectilePhysics> projectilePhysics;
-    Server& server;
+    std::atomic<bool>& gameShouldContinue;
 
     bool isColor(uint8_t action);
     void checkIfSomeoneWin();
@@ -63,7 +63,7 @@ private:
     std::shared_ptr<PlayerState> connectPlayer(uint8_t id);
 
 public:
-    GameState(Server& server);
+    GameState(std::atomic<bool>& gameShouldContinue);
 
     void removePlayer(uint8_t id);
     game_state_t doAction(uint8_t id, uint8_t action);

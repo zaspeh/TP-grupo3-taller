@@ -19,6 +19,7 @@
 
 class Server: public Thread {
 private:
+    std::atomic<bool> gameShouldContinue; 
     GameLoop gameloop;
     Monitor monitor;
     Accepter accepter;

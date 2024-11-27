@@ -95,8 +95,6 @@ void SpawnPlace::updateState(const spawn_place_t& newState) {
     } else {
         armor = nullptr;
     }
-
-
 }
 
 position_t SpawnPlace::getPosition() const {
@@ -108,5 +106,4 @@ bool SpawnPlace::isActive() const {
 }
 
 SpawnPlace::~SpawnPlace() {
-    std::cout << "SpawnPlace destroyed.\n";
 }

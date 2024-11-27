@@ -7,7 +7,7 @@
 #define GRAY 3
 #define RED 4
 
-GameState::GameState(Server& server) : level(), server(server) {
+GameState::GameState(std::atomic<bool>& gameShouldContinue) : level(), gameShouldContinue(gameShouldContinue) {
     players = std::map<uint8_t, std::shared_ptr<PlayerState>>();
     projectilePhysics.resize(MAX_PROJECTILES);
     state = {
@@ -33,8 +33,7 @@ void GameState::removePlayer(uint8_t id) {
     }
     
     if (players.empty()) { 
-        std::cout << "Saliendo\n";
-        server.stop();
+        gameShouldContinue = false;
     }
 }
 
@@ -88,7 +87,6 @@ game_state_t GameState::doAction(uint8_t id, uint8_t action) {
     std::shared_ptr<Weapon> weapon = nullptr;
 
     if(!chosedAWeapon(id, action)){
-        std::cout << "Accion a realizarse: " << static_cast<int>(action) << std::endl;
         switch(action) {
             case MOVE_LEFT:
                 player->move(-10, 0, state.level.platforms, state.level.num_platforms);

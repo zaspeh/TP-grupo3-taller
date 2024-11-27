@@ -15,6 +15,7 @@ class GameState;
 
 class GameLoop: public Thread {
 private:
+    std::atomic<bool>& continueGame;
     Server& server;
     Queue<std::function<void()>> cola_comandos;
     std::atomic<int> iteraciones;
@@ -24,7 +25,7 @@ private:
     void ejecutar_comandos();
 
 public:
-    explicit GameLoop(Server& server, Monitor& monitor);
+    explicit GameLoop(Server& server, Monitor& monitor, std::atomic<bool>& gameShouldContinue);
     void initGame();
     void doActionGameState(uint8_t player, uint8_t action);
     void run() override;

@@ -7,7 +7,7 @@ Client::Client(const std::string& server_ip, const std::string& server_port)
           gameStateQueue(std::make_shared<Queue<game_state_t>>(100)), 
           commandQueue(std::make_shared<Queue<uint8_t>>(100)), _keep_running(true)
     {
-        requestId();
+        commandQueue->push(NEW_CLIENT);
         clientprotocol = std::make_shared<ClientProtocol>(std::move(socket), client_id);
 
         recvThread = std::make_unique<Receiver>(clientprotocol, gameStateQueue);
@@ -34,24 +34,25 @@ void Client::checkIfClose() {
     stop();
 }
 
-void Client::requestId() {
-    commandQueue->push(NEW_CLIENT); 
-}
-
 void Client::run() {
     checkIfClose();
 }
 
 void Client::stop(){
-    if (!_keep_running) return;
-    _keep_running.store(false);
-    gameThread->stop();
-    sendThread->stop();
-    sendThread->join();
-    gameThread->join();
+    try {
 
-    recvThread->stop();
-    recvThread->join();
+        if (!_keep_running) return;
+        _keep_running.store(false);
+        gameThread->stop();
+        sendThread->stop();
+        sendThread->join();
+        gameThread->join();
+
+        recvThread->stop();
+        recvThread->join();
+    } catch (const std::exception& e) {
+        std::cerr << "Error Client stop: " << e.what() << std::endl;
+    }
 }
 
 Client::~Client() {

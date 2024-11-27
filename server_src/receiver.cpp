@@ -29,7 +29,6 @@ void Receiver::run() {
             break;
         }
     }
-    std::cout << "Receiver\n";
 
     try {
         server.removeClient(protocol);

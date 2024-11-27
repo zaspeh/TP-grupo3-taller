@@ -7,10 +7,12 @@
 #include "server.h"
 #include "../common_src/utils.h"
 
-GameLoop::GameLoop(Server& server, Monitor& monitor): server(server), cola_comandos(100), iteraciones(0), gameState(nullptr), monitor(monitor) {}
+GameLoop::GameLoop(Server& server, Monitor& monitor, std::atomic<bool>& gameShouldContinue): continueGame(gameShouldContinue), server(server), cola_comandos(100), iteraciones(0), monitor(monitor) {
+    gameState = std::make_unique<GameState>(continueGame);
+}
                     
 void GameLoop::initGame() {
-    gameState = std::make_unique<GameState>(server);
+    gameState = std::make_unique<GameState>(continueGame);
 }
 
 void GameLoop::addCommand(std::function<void()> command) {
@@ -62,12 +64,10 @@ void GameLoop::doActionGameState(uint8_t player, uint8_t action) {
 
 void GameLoop::stop() {
     if (!_keep_running) return;
-    
     Thread::stop();
     std::function<void()> command;
     while (cola_comandos.try_pop(command)) {}
     cola_comandos.close();
-    std::cout << "Gameloop\n";
 }
 
 GameLoop::~GameLoop() {

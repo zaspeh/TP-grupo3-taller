@@ -31,19 +31,15 @@ void Level::initWinningLevel() {
 void Level::createLevelById(int id) {
     switch (id) {
         case 0:
-            std::cout << "Creando nivel 0\n";
             initLevel0();
             break;
         case 1:
-            std::cout << "Creando nivel 1\n";
             initLevel1();
             break;
         case 2:
-            std::cout << "Creando nivel 2\n";
             initLevel2();
             break;
         case 3:
-            std::cout << "Creando nivel ganador\n";
             winningLevel();
             break;
         default:

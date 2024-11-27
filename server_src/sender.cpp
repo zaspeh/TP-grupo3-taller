@@ -38,8 +38,6 @@ void Sender::run() {
             break;
         }
     }
-    std::cout << "Sender\n";
-
 }
 
 void Sender::broadcast_message_with_info(game_state_t gameState) {
