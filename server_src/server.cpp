@@ -15,15 +15,19 @@ void Server::handleInput() {
     try {
         std::string input;
         while (_keep_running) {
-            std::getline(std::cin, input);
-            if (input == SALIR) {
-                stop();
+            if (std::cin.rdbuf()->in_avail()) {  // verifica si hay input disponible
+                std::getline(std::cin, input);
+                if (input == SALIR) {
+                    stop();
+                }
             }
+            std::this_thread::sleep_for(std::chrono::milliseconds(100));  // pequeña pausa para no consumir CPU
         }
     } catch (const std::exception& e) {
         std::cerr << "Error: " << e.what() << std::endl;
         stop();
     }
+    std::cout << "handle input\n";
 }
 
 void Server::run() {
@@ -54,13 +58,16 @@ void Server::stop() {
     try {
         if (!_keep_running) return;
         Thread::stop();
-        monitor.cerrar_clientes();
-        accepter.stop();
+        std::cout << "Cerrando server\n";
         gameloop.stop();
+        accepter.stop();
         accepter.join();
+        std::cout << "Server cerrado\n";
         gameloop.join();
+        monitor.cerrar_clientes();
+        std::cout << "Gameloop acabado\n";
     } catch (const std::exception& e) {
-        std::cerr << "Error: " << e.what() << std::endl;
+        std::cerr << "Error server: " << e.what() << std::endl;
     }
 }
 

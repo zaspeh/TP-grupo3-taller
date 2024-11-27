@@ -14,7 +14,8 @@ void GameLoop::initGame() {
 }
 
 void GameLoop::addCommand(std::function<void()> command) {
-    cola_comandos.push(std::move(command));
+    if (_keep_running)
+        cola_comandos.push(std::move(command));
 }
 
 void GameLoop::ejecutar_comandos() {
@@ -53,17 +54,20 @@ void GameLoop::run() {
 }
 
 void GameLoop::doActionGameState(uint8_t player, uint8_t action) {
-    game_state_t gameStateStruct = gameState->doAction(player, action);
-    monitor.procesar_mensaje(gameStateStruct);
+    if (_keep_running) {
+        game_state_t gameStateStruct = gameState->doAction(player, action);
+        monitor.procesar_mensaje(gameStateStruct);
+    }
 }
 
 void GameLoop::stop() {
     if (!_keep_running) return;
-
+    
     Thread::stop();
     std::function<void()> command;
     while (cola_comandos.try_pop(command)) {}
     cola_comandos.close();
+    std::cout << "Gameloop\n";
 }
 
 GameLoop::~GameLoop() {

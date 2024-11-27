@@ -34,10 +34,12 @@ void Sender::run() {
                 break;
 
         } catch (const std::exception& e) {
-            std::cerr << "Error: " << e.what() << std::endl;
+            std::cerr << "Error sender: " << e.what() << std::endl;
             break;
         }
     }
+    std::cout << "Sender\n";
+
 }
 
 void Sender::broadcast_message_with_info(game_state_t gameState) {

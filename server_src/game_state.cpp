@@ -33,6 +33,7 @@ void GameState::removePlayer(uint8_t id) {
     }
     
     if (players.empty()) { 
+        std::cout << "Saliendo\n";
         server.stop();
     }
 }

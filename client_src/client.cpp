@@ -21,19 +21,16 @@ Client::Client(const std::string& server_ip, const std::string& server_port)
     }
 
 void Client::checkIfClose() {
-    std::cout << "Ingrese 'q' para cerrar el juego: ";
-
     while (_keep_running) {
         std::string input;
         std::getline(std::cin, input);  // Directa lectura sin verificación del búfer
 
         if (input == "q") {
             break;
+
         }
         std::cout << "Entrada inválida. Intente nuevamente: ";
     }
-
-    std::cout << "Saliendo de checkIfClose" << std::endl;
     stop();
 }
 
@@ -42,7 +39,6 @@ void Client::requestId() {
 }
 
 void Client::run() {
-    std::cout << "Método run\n";
     checkIfClose();
 }
 
@@ -51,10 +47,10 @@ void Client::stop(){
     _keep_running.store(false);
     gameThread->stop();
     sendThread->stop();
-    recvThread->stop();
-
-    gameThread->join();
     sendThread->join();
+    gameThread->join();
+
+    recvThread->stop();
     recvThread->join();
 }
 

@@ -31,6 +31,11 @@ void Sender::run() {
             break;
         }
     }
+    std::cout << "Saliendo del sender\n";
+    if (!wasClosed) {
+        protocol->sendCommand(LEAVE_MATCH, wasClosed);
+        std::cout << "Enviando comando de desconexión\n";
+    }
 }
 
 void Sender::stop() {

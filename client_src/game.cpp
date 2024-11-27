@@ -550,7 +550,7 @@ void Game::stop() {
         boxes.clear();
         background.reset();
 
-        if (gFont) {
+/*         if (gFont) {
             TTF_CloseFont(gFont.get());
             gFont.reset();  
         }
@@ -565,10 +565,10 @@ void Game::stop() {
         if (gWindow) {
             SDL_DestroyWindow(gWindow.get());
             gWindow.reset();
-        }
+        } */
 
 
-        TTF_Quit();
+        //TTF_Quit();
         IMG_Quit();
         SDL_Quit();
         Mix_CloseAudio();
