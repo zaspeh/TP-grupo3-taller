@@ -376,6 +376,7 @@ void Game::update(game_state_t gameState) {
         for (int j = 0; j < gameState.level.num_ducks; j++) {
             if (ducks[i] && ducks[i]->getId() == gameState.level.ducks[j].id) {
                 ducks[i]->updateState(gameState.level.ducks[j]);
+                //std::cout << "Actualizando pato: " <<  
                 found = true;
                 break;
             }

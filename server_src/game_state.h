@@ -61,6 +61,7 @@ private:
     std::shared_ptr<PlayerState> getPlayer(uint8_t id);
     void updateState(uint8_t id, std::shared_ptr<PlayerState> player);
     std::shared_ptr<PlayerState> connectPlayer(uint8_t id);
+    void compactDucks(); 
 
 public:
     GameState(std::atomic<bool>& gameShouldContinue);

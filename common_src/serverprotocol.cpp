@@ -54,6 +54,17 @@ void ServerProtocol::sendDucks(duck_t ducks[MAX_DUCKS], uint8_t num_ducks, bool 
     }
 }
 
+/* 
+void ServerProtocol::sendDucks(duck_t ducks[MAX_DUCKS], uint8_t num_ducks, bool &wasClosed) {
+    for (int i = 0; i < MAX_DUCKS; i++) {
+        if (ducks[i].id < MAX_DUCKS && ducks[i].isAlive) {
+            std::cout << "id del pato: " << static_cast<int>(i) << std::endl;
+            sendDuck(ducks[i], wasClosed); // Enviar el pato correspondiente
+        }
+    }
+}
+ */
+
 void ServerProtocol::sendPlatforms(platform_t platforms[MAX_PLATFORMS], uint8_t num_platforms, bool &wasClosed) {
     for (int i = 0; i < num_platforms; i++) {
         sendPosition(platforms[i].pos, wasClosed);

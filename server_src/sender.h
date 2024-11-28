@@ -17,6 +17,7 @@ private:
     Monitor& monitor;
     std::shared_ptr<ServerProtocol> protocol;
     std::shared_ptr<Queue<game_state_t>> gameStateQueue;
+    std::mutex queue;
 
 public:
     explicit Sender(Server& server, Monitor& monitor, std::shared_ptr<ServerProtocol> protocol,

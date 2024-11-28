@@ -23,6 +23,21 @@ std::shared_ptr<PlayerState> GameState::getPlayer(uint8_t id) {
     return players.count(id) ? players[id] : nullptr;
 }
 
+void GameState::compactDucks() {
+    std::array<duck_t, MAX_DUCKS> compactedDucks;
+    uint8_t compactedIndex = 0;
+
+    for (uint8_t i = 0; i < MAX_DUCKS; i++) {
+        if (state.level.ducks[i].isAlive) {
+            compactedDucks[compactedIndex] = state.level.ducks[i];
+            compactedIndex++;
+        }
+    }
+
+    // Actualizar el arreglo de patos en el estado del nivel
+    std::copy(compactedDucks.begin(), compactedDucks.end(), state.level.ducks);
+}
+
 void GameState::removePlayer(uint8_t id) {
     if (players.count(id)) {
         players.erase(id);
@@ -30,7 +45,9 @@ void GameState::removePlayer(uint8_t id) {
             state.level.num_ducks--;
         }
         state.level.ducks[id].isAlive = false;
+        compactDucks();
     }
+
     
     if (players.empty()) { 
         gameShouldContinue = false;
@@ -83,6 +100,8 @@ game_state_t GameState::doAction(uint8_t id, uint8_t action) {
         matchFinished = false;
         changeLevel();
     }
+    
+    std::cout << "Id del jugador: " << static_cast<int>(id) << std::endl;
 
     weapon_t weaponST;
     armor_t armorST;
@@ -151,7 +170,7 @@ game_state_t GameState::doAction(uint8_t id, uint8_t action) {
                     break;
                 case LEAVE_MATCH:
                     removePlayer(id);
-                    break;
+                    return state;
                 default:
                     if (isColor(action)) 
                         player->setColor(action);

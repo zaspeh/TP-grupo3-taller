@@ -38,26 +38,32 @@ void Sender::run() {
             break;
         }
     }
+    std::cerr << "Saliendo del sender"<< std::endl;
+    stop();
 }
 
 void Sender::broadcast_message_with_info(game_state_t gameState) {
+    std::lock_guard<std::mutex> lock(queue);
     if (gameStateQueue->isClosed()) {
         return;  
     }
     try {
-        gameStateQueue->push(gameState);
+        gameStateQueue->try_push(gameState);
     } catch (const std::exception& e) {
         std::cerr << "Error: " << e.what() << std::endl;
     }
 }
 
 void Sender::stop() {
+    std::lock_guard<std::mutex> lock(queue);
+    std::cout << "Deteniendo el sender\n";
     if (!_keep_running) return;
     try {
         Thread::stop();
         game_state_t msg;
         while (gameStateQueue->try_pop(msg)) {}
         gameStateQueue->close();
+        std::cout << "COla cerrada\n";
     } catch (const std::exception& e) {
         std::cerr << "Error: " << e.what() << std::endl;
     }
