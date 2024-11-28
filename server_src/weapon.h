@@ -75,9 +75,9 @@ public:
     Grenade(weapon_t weaponState) : Weapon(weaponState, 5), pinPulled(false), timeToExplode(4.0f) {}
     
     bool shoot(bool infinitAmmo) override {
-        if (!infinitAmmo){
-            if (!canShoot()) return false;
+        if (!pinPulled) {
             pinPulled = true;
+            return false;  // Retornamos false porque aún no queremos crear el proyectil
         }
         return true;
     }
@@ -88,9 +88,12 @@ public:
     void setTimeToExplode(float newTimeToExplode) { timeToExplode = newTimeToExplode; }
 
     void throw_grenade() {
-        if (pinPulled && getAmmo() > 0) {
-            setAmmo(getAmmo() - 1);
+        if (pinPulled) {
+            if (getAmmo() > 0) {
+                setAmmo(getAmmo() - 1);
+            }
             pinPulled = false;
+            timeToExplode = 4.0f;  // Reseteamos el tiempo para la próxima granada
         }
     }
 };

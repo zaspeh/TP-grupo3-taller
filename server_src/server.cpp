@@ -1,5 +1,7 @@
 
 #include "server.h"
+#include <sys/select.h>
+#include <unistd.h>
 
 #include <string>
 
@@ -11,17 +13,26 @@ std::vector<std::shared_ptr<Sender>>& Server::obtener_emisores() {
     return accepter.obtener_emisores();
 }
 
+bool inputAvailable() {
+    fd_set set;
+    struct timeval timeout;
+    FD_ZERO(&set);
+    FD_SET(STDIN_FILENO, &set);
+    timeout.tv_sec = 0;
+    timeout.tv_usec = 100000; 
+    return select(STDIN_FILENO + 1, &set, nullptr, nullptr, &timeout) > 0;
+}
+
 void Server::handleInput() {
     try {
         std::string input;
         while (_keep_running && gameShouldContinue) {
-            if (std::cin.rdbuf()->in_avail()) {  
+            if (inputAvailable()) {
                 std::getline(std::cin, input);
                 if (input == SALIR) {
                     stop();
                 }
             }
-            std::this_thread::sleep_for(std::chrono::milliseconds(100));  
         }
         if (!gameShouldContinue) {
             stop();  

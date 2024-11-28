@@ -7,7 +7,8 @@ PlayerState::PlayerState(uint8_t clientID, int x, int y) :
     verticalVelocity(0.0),
     isSlipping(false),
     slipDistance(0.0),
-    preFace(1)
+    preFace(1),
+    isOnGround(true)
 {
     duck.pos = {x, y};
     duck.id = clientID;
@@ -286,6 +287,10 @@ bool PlayerState::shoot(platform_t* platforms, uint8_t numPlatforms) {
             std::shared_ptr<Grenade> grenade = std::dynamic_pointer_cast<Grenade>(weapon); 
             if (grenade != nullptr && grenade->getPinPulled()) {
                 grenade->throw_grenade();
+                // Si está en modo infinito, reseteamos la munición
+                if (infinitAmmo) {
+                    weapon->setAmmo(1);
+                }
                 return true;
             } else if (!grenade->getPinPulled()) {
                 weapon->shoot(infinitAmmo);

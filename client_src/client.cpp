@@ -43,9 +43,9 @@ void Client::stop(){
 
         if (!_keep_running) return;
         _keep_running.store(false);
-        gameThread->stop();
         sendThread->stop();
         sendThread->join();
+        gameThread->stop();
         gameThread->join();
 
         recvThread->stop();

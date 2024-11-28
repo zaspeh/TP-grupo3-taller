@@ -16,7 +16,6 @@ private:
     Armor armor;
     Helmet helmet;
     bool infinitAmmo = false;
-    bool isOnGround = false;
     float verticalVelocity; 
     const float gravity = 3000.0f;  
     const float jumpStrength = -800.0f; 
@@ -25,6 +24,7 @@ private:
     float slipDistance;
     static constexpr float SLIP_SPEED = 650.0f;
     int preFace;
+    bool isOnGround;
     float horizontalVelocity; 
     void applyRecoil(float recoilForce, platform_t* platforms, uint8_t numPlatforms);
 

@@ -71,10 +71,16 @@ int Armor::getType() {
 }
 
 void Armor::updateState(armor_t arm) {
-    if (arm.type == CHESTPLATE_ARMOR) 
+    if (arm.type == CHESTPLATE_ARMOR) {
         chestplateState = arm;
-    if (arm.type == HELMET_ARMOR)
+        if (helmetState.type == NULL_ARMOR)
+            helmetState = nullArmor;
+    }
+    if (arm.type == HELMET_ARMOR) {
         helmetState = arm;
+        if (chestplateState.type == NULL_ARMOR)
+            chestplateState = nullArmor;
+    }
 }
 
 armor_t Armor::getState() {

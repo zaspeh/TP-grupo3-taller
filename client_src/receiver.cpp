@@ -4,7 +4,7 @@ Receiver::Receiver(std::shared_ptr<ClientProtocol> protocol, std::shared_ptr<Que
 
 void Receiver::readID(bool &wasClosed) {
     game_state_t state = protocol->readFromServer(wasClosed);
-    protocol->setID(state.level.num_ducks-1);
+    protocol->setID(state.level.num_ducks);
     gameStateQueue->push(state);
 }
 

@@ -88,75 +88,78 @@ game_state_t GameState::doAction(uint8_t id, uint8_t action) {
     armor_t armorST;
     std::shared_ptr<Weapon> weapon = nullptr;
 
-    if(!chosedAWeapon(id, action)){
-        switch(action) {
-            case MOVE_LEFT:
-                player->move(-10, 0, state.level.platforms, state.level.num_platforms);
-                player->setFacingDirection(1);
-                break;
-            case MOVE_RIGHT:
-                player->move(10, 0, state.level.platforms, state.level.num_platforms);
-                player->setFacingDirection(0);
-                break;
-            case JUMP:
-                player->jump();
-                break;
-            case TAKE_WEAPON:
-                armorST = getArmorPosition(player->getPosition(), player->hasHelmetEquipped(), player->hasArmorEquipped());
-
-                if (armorST.type != NULL_ARMOR) { 
-                    if (armorST.type == HELMET_ARMOR)
-                        player->setHelmetEquipped(armorST);
-                    if (armorST.type == CHESTPLATE_ARMOR)
-                        player->setArmorEquipped(armorST);
+    try { 
+        if(!chosedAWeapon(id, action)){
+            switch(action) {
+                case MOVE_LEFT:
+                    player->move(-10, 0, state.level.platforms, state.level.num_platforms);
+                    player->setFacingDirection(1);
                     break;
-                }
-
-                weaponST = getWeaponPosition(player->getPosition());
-                if (weaponST.type != NULL_WEAPON){ 
-                    weapon = createWeapon(weaponST);
-                    checkIfDropWeapon(player->pickWeapon(weapon));
-                } else { 
-                    checkIfDropWeapon(player->dropWeapon());
-                }
-                break;
-
-            case SHOOT:
-                if(player->getWeapon() == nullptr || player->getWeaponType() == NULL_WEAPON) 
+                case MOVE_RIGHT:
+                    player->move(10, 0, state.level.platforms, state.level.num_platforms);
+                    player->setFacingDirection(0);
                     break;
-                if(player->shoot(state.level.platforms, state.level.num_platforms))
-                    createProjectile(player->getWeaponType(), player->getPosition(), player->getFacingDirection());
-                break;
-            case LOOK_UP:
-                break;
-            case FLOOR:
-                player->setCrouched(!player->isCrouched());
-                break;
-            case NEW_CLIENT:
-                player = connectPlayer(id);
-                break;
-            case INFINIT_AMMO:
-                player->setInfiniteAmmo(!player->isInfiniteAmmo());
-                break;
-            case PICK_ANY_WEAPON:
-                pickAnyWeapon = !pickAnyWeapon;
-                break;
-            case CHESTPLATE_ARMOR:
-                armorST = { {0,0} , CHESTPLATE_ARMOR };
-                player->setArmorEquipped(armorST);
-                break;
-            case HELMET_ARMOR:
-                armorST = { {0,0} , HELMET_ARMOR };
-                player->setHelmetEquipped(armorST);
-                break;
-            case LEAVE_MATCH:
-                removePlayer(id);
-                break;
-            default:
-                if (isColor(action)) 
-                    player->setColor(action);
-                break;
+                case JUMP:
+                    player->jump();
+                    break;
+                case TAKE_WEAPON:
+                    armorST = getArmorPosition(player->getPosition(), player->hasHelmetEquipped(), player->hasArmorEquipped());
+
+                    if (armorST.type != NULL_ARMOR) { 
+                        if (armorST.type == HELMET_ARMOR)
+                            player->setHelmetEquipped(armorST);
+                        if (armorST.type == CHESTPLATE_ARMOR)
+                            player->setArmorEquipped(armorST);
+                        break;
+                    }
+
+                    weaponST = getWeaponPosition(player->getPosition());
+                    if (weaponST.type != NULL_WEAPON){ 
+                        weapon = createWeapon(weaponST);
+                        checkIfDropWeapon(player->pickWeapon(weapon));
+                    } else { 
+                        checkIfDropWeapon(player->dropWeapon());
+                    }
+                    break;
+                case SHOOT:
+                    if(player->getWeapon() == nullptr || player->getWeaponType() == NULL_WEAPON) 
+                        break;
+                    if(player->shoot(state.level.platforms, state.level.num_platforms))
+                        createProjectile(player->getWeaponType(), player->getPosition(), player->getFacingDirection());
+                    break;
+                case LOOK_UP:
+                    break;
+                case FLOOR:
+                    player->setCrouched(!player->isCrouched());
+                    break;
+                case NEW_CLIENT:
+                    player = connectPlayer(id);
+                    break;
+                case INFINIT_AMMO:
+                    player->setInfiniteAmmo(!player->isInfiniteAmmo());
+                    break;
+                case PICK_ANY_WEAPON:
+                    pickAnyWeapon = !pickAnyWeapon;
+                    break;
+                case CHESTPLATE_ARMOR:
+                    armorST = { {0,0} , CHESTPLATE_ARMOR };
+                    player->setArmorEquipped(armorST);
+                    break;
+                case HELMET_ARMOR:
+                    armorST = { {0,0} , HELMET_ARMOR };
+                    player->setHelmetEquipped(armorST);
+                    break;
+                case LEAVE_MATCH:
+                    removePlayer(id);
+                    break;
+                default:
+                    if (isColor(action)) 
+                        player->setColor(action);
+                    break;
+            }
         }
+    } catch (const std::exception& e) {
+        std::cerr << "Error: " << e.what() << std::endl;
     }
 
     updateState(id, player);
@@ -329,7 +332,6 @@ game_state_t GameState::updatePlayers(float deltaTime) {
             updateState(id, player); 
             for (int i = 0; i < state.level.num_bananas; i++) {
                 if (player->checkBananaCollision(state.level.bananas[i])) {
-                    std::cout << "Colisión banana" << std::endl;
                     for (int j = i; j < state.level.num_bananas - 1; j++) {
                         state.level.bananas[j] = state.level.bananas[j + 1];
                     }
@@ -369,7 +371,6 @@ void GameState::updateSpawns(float deltaTime) {
 }
 
 void GameState::finishMatch(uint8_t id) {
-    std::cout << "EL JUGADOR : " << static_cast<int>(id) << " HA GANADO" << std::endl;
     matchFinished = true;
     
     std::map<uint8_t, duck_t> currentDucks;
@@ -587,7 +588,6 @@ armor_t GameState::getArmorPosition(position_t position, bool helmetEquipped, bo
                 armor = pickedarmor;
                 state.level.dropped_armors[i] = state.level.dropped_armors[state.level.num_dropped_armors - 1];
                 state.level.num_dropped_armors--;
-                std::cout << "AGARRO CASCO" << std::endl;
                 return armor;
             }
 
@@ -595,7 +595,6 @@ armor_t GameState::getArmorPosition(position_t position, bool helmetEquipped, bo
                 armor = pickedarmor;
                 state.level.dropped_armors[i] = state.level.dropped_armors[state.level.num_dropped_armors - 1];
                 state.level.num_dropped_armors--;
-                std::cout << "AGARRO ARMADURA" << std::endl;
                 return armor;
             }
         }
