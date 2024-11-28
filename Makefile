@@ -39,6 +39,9 @@ CFLAGS += -O0
 # Para valgrind o debug
 CFLAGS += -ggdb -DDEBUG -fno-inline
 
+# Para el SDL
+CFLAGS += -D_REENTRANT -I/usr/include/SDL2
+
 # Opciones del enlazador.
 LDFLAGS = -lSDL2 -lSDL2_image -lSDL2_ttf -lSDL2_mixer# Agregar bibliotecas SDL2 y SDL2_image
 
