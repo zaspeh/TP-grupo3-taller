@@ -168,8 +168,13 @@ game_state_t GameState::doAction(uint8_t id, uint8_t action) {
                 case SHOOT:
                     if(player->getWeapon() == nullptr || player->getWeaponType() == NULL_WEAPON) 
                         break;
-                    if(player->shoot(state.level.platforms, state.level.num_platforms))
+                    if(player->shoot(state.level.platforms, state.level.num_platforms)){
                         createProjectile(player->getWeaponType(), player->getPosition(), player->getFacingDirection());
+                        if(player->getWeaponType() == SHOTGUN_WEAPON){
+                            createProjectile(player->getWeaponType(), player->getPosition(), player->getFacingDirection(), getRandomAngle(player->getFacingDirection()));
+                            createProjectile(player->getWeaponType(), player->getPosition(), player->getFacingDirection(), getRandomAngle(player->getFacingDirection()));
+                        }
+                    }
                     break;
                 case LOOK_UP:
                     break;
@@ -765,3 +770,4 @@ void GameState::checkIfDropArmor(armor_t droppedArmor) {
         fallingArmors.emplace_back();
     }
 }
+
