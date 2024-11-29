@@ -41,6 +41,7 @@ private:
     bool isMoving;
     int color;
     std::unordered_map<DuckAnimationType, std::unique_ptr<Animation>> animations;
+    std::unordered_map<DuckAnimationType, std::unique_ptr<Animation>> armorAnimations;
     SDL_Renderer* gRenderer;
     SDL_Rect scaleRect;
     int screenWidth;
