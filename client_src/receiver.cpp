@@ -5,7 +5,7 @@ Receiver::Receiver(std::shared_ptr<ClientProtocol> protocol, std::shared_ptr<Que
 void Receiver::readID(bool &wasClosed) {
     game_state_t state = protocol->readFromServer(wasClosed);
     std::cout << "ID actualizado: " << static_cast<int>(state.level.num_ducks) << std::endl;
-    protocol->setID(state.level.num_ducks); // Sin valgrind agregar -1
+    protocol->setID(state.level.num_ducks - 1); // Con valgrind quitar -1
     gameStateQueue->push(state);
 }
 
