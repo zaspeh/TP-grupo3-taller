@@ -371,12 +371,14 @@ void Game::render() {
 
 void Game::update(game_state_t gameState) {
     std::lock_guard<std::mutex> lock(sdl_mutex);
+    //std::cout << "Número de patos recibidos: " << static_cast<int>(gameState.level.num_ducks) << std::endl;
     for (size_t i = 0; i < ducks.size(); i++) {
         bool found = false;
         for (int j = 0; j < gameState.level.num_ducks; j++) {
+            //std::cout << "Duck con id: " << static_cast<int>(gameState.level.ducks[j].id) << " - position: " << gameState.level.ducks[i].pos.x << "," << gameState.level.ducks[i].pos.y << std::endl;
             if (ducks[i] && ducks[i]->getId() == gameState.level.ducks[j].id) {
+                //std::cout << "Actualizando el estado del pato" << ducks[i]->getId() << std::endl;
                 ducks[i]->updateState(gameState.level.ducks[j]);
-                //std::cout << "Actualizando pato: " <<  
                 found = true;
                 break;
             }

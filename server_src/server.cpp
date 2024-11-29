@@ -35,6 +35,7 @@ void Server::handleInput() {
             }
         }
         if (!gameShouldContinue) {
+            std::cout << "Llamando a stop\n";
             stop();  
         }
     } catch (const std::exception& e) {

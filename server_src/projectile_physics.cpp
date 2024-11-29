@@ -89,6 +89,7 @@ bool ProjectilePhysics::updatePosition(projectile_t &projectile, level_t& levelS
     }
 
     for (int i = 0; i < levelState.num_ducks; i++) {
+        if (!players[i]) continue;
         if (!players[i]->isAlive()) continue;
         if (projectile.type == BANANA_WEAPON) continue;
 
