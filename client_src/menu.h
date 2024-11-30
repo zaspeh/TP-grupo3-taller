@@ -3,6 +3,7 @@
 
 #include "ltexture.h"
 #include <SDL2/SDL.h>
+#include <memory>
 #include <SDL2/SDL_ttf.h>
 #include <string>
 #include "../common_src/utils.h"
@@ -15,9 +16,12 @@ class Menu {
 private:
     SDL_Window* window;
     SDL_Renderer* renderer;
-    TTF_Font* font;
+    std::unique_ptr<TTF_Font, decltype(&TTF_CloseFont)> font{nullptr, TTF_CloseFont};
+    std::unique_ptr<LTexture> backgroundTexture;
+    std::unique_ptr<LTexture> logoTexture;
+    /* TTF_Font* font;
     LTexture* backgroundTexture;
-    LTexture* logoTexture;
+    LTexture* logoTexture; */
     SDL_Rect buttonRect;
     bool isRunning;
     bool gameStarted;

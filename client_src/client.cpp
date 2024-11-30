@@ -40,9 +40,8 @@ void Client::run() {
 
 void Client::stop(){
     try {
-
         if (!_keep_running) return;
-        _keep_running.store(false);
+        _keep_running = false;
         sendThread->stop();
         sendThread->join();
         gameThread->stop();

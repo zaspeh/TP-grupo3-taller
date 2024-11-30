@@ -1,8 +1,12 @@
 #include "menu.h"
 
-Menu::Menu() : window(nullptr), renderer(nullptr), font(nullptr), 
-               backgroundTexture(nullptr), logoTexture(nullptr),
-               isRunning(false), gameStarted(false), isButtonHovered(false), showText(true) 
+Menu::Menu() : 
+    window(nullptr), 
+    renderer(nullptr),
+    isRunning(false), 
+    gameStarted(false), 
+    isButtonHovered(false), 
+    showText(true) 
 {
     buttonRect = {
         (WINDOW_WIDTH - BUTTON_WIDTH) / 2,
@@ -12,17 +16,13 @@ Menu::Menu() : window(nullptr), renderer(nullptr), font(nullptr),
     };
 }
 
-Menu::~Menu() {
-    clean();
-}
-
 bool Menu::init(SDL_Window* gWindow, SDL_Renderer* gRenderer) {
     window = gWindow;
     renderer = gRenderer;
 
     // Inicializar texturas
-    backgroundTexture = new LTexture(renderer);
-    logoTexture = new LTexture(renderer);
+    backgroundTexture = std::make_unique<LTexture>(renderer);
+    logoTexture = std::make_unique<LTexture>(renderer);
 
     // Cargar texturas
     if (!backgroundTexture->loadFromFile("client_src/forest.png")) {
@@ -36,11 +36,12 @@ bool Menu::init(SDL_Window* gWindow, SDL_Renderer* gRenderer) {
     }
 
     // Cargar fuente
-    font = TTF_OpenFont("/usr/share/fonts/truetype/liberation/LiberationMono-Bold.ttf", 20);
-    if (!font) {
+    TTF_Font* tempFont = TTF_OpenFont("/usr/share/fonts/truetype/liberation/LiberationMono-Bold.ttf", 20);
+    if (!tempFont) {
         printf("Error fuente: %s\n", TTF_GetError());
         return false;
     }
+    font.reset(tempFont);
 
     blinkTimer = SDL_GetTicks();
     isRunning = true;
@@ -109,7 +110,7 @@ void Menu::render() {
 
         if (showText) {
             SDL_Color textColor = {255, 255, 255, 255};
-            SDL_Surface* surface = TTF_RenderText_Solid(font, "PRESS START", textColor);
+            SDL_Surface* surface = TTF_RenderText_Solid(font.get(), "PRESS START", textColor);
             SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, surface);
 
             SDL_Rect textRect = {
@@ -135,7 +136,7 @@ void Menu::render() {
     }
     else {
         SDL_Color textColor = {255, 255, 255, 255};
-        SDL_Surface* surface = TTF_RenderText_Solid(font, "GAME STARTED!", textColor);
+        SDL_Surface* surface = TTF_RenderText_Solid(font.get(), "GAME STARTED!", textColor);
         SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, surface);
 
         SDL_Rect textRect = {
@@ -156,20 +157,23 @@ void Menu::render() {
 
 void Menu::clean() {
     if (backgroundTexture) {
-        delete backgroundTexture;
-        backgroundTexture = nullptr;
+        backgroundTexture->free();
+        backgroundTexture.reset();
     }
+    
     if (logoTexture) {
-        delete logoTexture;
-        logoTexture = nullptr;
-    }
-    if (font) {
-        TTF_CloseFont(font);
-        font = nullptr;
+        logoTexture->free();
+        logoTexture.reset();
     }
 
-    IMG_Quit();
-    TTF_Quit();
+    // Luego limpiar la fuente
+    if (font) {
+        font.reset();
+    }
 }
 
+
+Menu::~Menu() {
+    clean();
+}
 

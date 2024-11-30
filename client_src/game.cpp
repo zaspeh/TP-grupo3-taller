@@ -553,7 +553,9 @@ void Game::renderText(const std::string& message, int x, int y, int color) {
 
 
 void Game::stop() {
+    printf("Stop1.\n");
     std::lock_guard<std::mutex> lock(sdl_mutex);
+    printf("Stop2.\n");
     if (!_keep_running) return;
     try {
         Thread::stop();
@@ -565,30 +567,31 @@ void Game::stop() {
         droppedArmors.clear();
         projectiles.clear();
         boxes.clear();
+        bananas.clear();
         background.reset();
+        printf("Stop3.\n");
 
-/*         if (gFont) {
-            TTF_CloseFont(gFont.get());
-            gFont.reset();  
-        }
-        
+        // Luego cerrar el font antes de finalizar SDL_TTF
+        music.stop();
+        Mix_CloseAudio();
+        printf("Stop4.\n");
+        gFont.reset(nullptr);  // Asegurarse de que la fuente se libere antes de TTF_Quit
+        TTF_Quit();
+
+        // Finalmente cerrar todos los subsistemas SDL en orden inverso
+        IMG_Quit();
+        printf("Stop5.\n");
         
         if (gRenderer) {
-            SDL_RenderClear(gRenderer.get());
-            SDL_RenderPresent(gRenderer.get());
-            gRenderer.reset();
+            gRenderer.reset(nullptr);
         }
         
         if (gWindow) {
-            SDL_DestroyWindow(gWindow.get());
-            gWindow.reset();
-        } */
-
-
-        //TTF_Quit();
-        //IMG_Quit();
+            gWindow.reset(nullptr);
+        }
+        
         SDL_Quit();
-        Mix_CloseAudio();
+        printf("Stop6.\n");
 
     } catch (const std::exception& e) {
         std::cerr << "Error during game shutdown: " << e.what() << std::endl;

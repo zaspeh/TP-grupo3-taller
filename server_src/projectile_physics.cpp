@@ -111,6 +111,7 @@ bool ProjectilePhysics::updatePosition(projectile_t &projectile, level_t& levelS
                 levelState.ducks[i].chestplate.type = NULL_ARMOR;
                 players[i]->setArmorEquipped(levelState.ducks[i].chestplate);
             } else {
+                std::cout << "Pato debería morir\n";
                 levelState.ducks[i].isAlive = false;
                 players[i]->setAlive();
             }

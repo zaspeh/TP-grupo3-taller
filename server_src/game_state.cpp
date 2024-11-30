@@ -49,7 +49,7 @@ void GameState::removePlayer(uint8_t id) {
     }
 
     
-    if (players.empty()) { 
+    if (state.level.num_ducks == 0) { 
         std::cout << "Sin jugadores: cerrando el juego\n";
         gameShouldContinue = false;
     }
@@ -98,7 +98,8 @@ bool GameState::chosedAWeapon(uint8_t id,uint8_t action){
 }
 
 game_state_t GameState::doAction(uint8_t id, uint8_t action) {
-    std::lock_guard<std::mutex> lock(mtx);
+    //std::lock_guard<std::mutex> lock(mtx);
+    
     auto player = players[id];
     if (player && !player->isAlive()) {
         return state;
@@ -464,6 +465,7 @@ void GameState::finishMatch(uint8_t id) {
 
 // Problema al cambiar de nivel y un pato desconectado
 void GameState::changeLevel() {
+    std::lock_guard<std::mutex> lock(mtx);
     std::map<uint8_t, duck_t> currentDucks;
     for (auto& [id, player] : players) {
         if (!player) continue;

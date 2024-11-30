@@ -10,6 +10,14 @@ LTexture::~LTexture()
 
 bool LTexture::loadFromFile(std::string path)
 {
+    if (path.empty()) {
+        printf("Empty path provided to loadFromFile\n");
+        return false;
+    }
+    if (gRenderer == NULL) {
+        printf("Renderer is NULL in loadFromFile\n");
+        return false;
+    }
     free();
     SDL_Surface* loadedSurface = IMG_Load(path.c_str());
     if (loadedSurface == NULL)
@@ -29,12 +37,10 @@ bool LTexture::loadFromFile(std::string path)
     return true;
 }
 
-void LTexture::free()
-{
-    if (mTexture != NULL)
-    {
+void LTexture::free() {
+    if (mTexture != nullptr && gRenderer != nullptr) {
         SDL_DestroyTexture(mTexture);
-        mTexture = NULL;
+        mTexture = nullptr;
         mWidth = 0;
         mHeight = 0;
     }
