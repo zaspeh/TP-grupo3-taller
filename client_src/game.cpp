@@ -226,6 +226,11 @@ void Game::run()
         menu.render();
     }
 
+    if (menu.wasClosed()){
+        client.stop();
+        return;
+    }
+
     bool quit = false;
     
     auto next_frame = std::chrono::steady_clock::now();

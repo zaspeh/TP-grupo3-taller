@@ -18,12 +18,23 @@ private:
     TTF_Font* font;
     LTexture* backgroundTexture;
     LTexture* logoTexture;
-    SDL_Rect buttonRect;
+    LTexture* yellowDuck;
+    LTexture* orangeDuck;
+    LTexture* grayDuck;
+    LTexture* whiteDuck;
+    SDL_Rect buttonPlayRect;
+    SDL_Rect buttonYellowDuckRect;
+    SDL_Rect buttonGrayDuckRect;
+    SDL_Rect buttonOrangeDuckRect;
+    SDL_Rect buttonWhiteDuckRect;
     bool isRunning;
     bool gameStarted;
-    bool isButtonHovered;
+    bool isButtonPlayHovered;
+    bool isButtonPlayPressed;
     Uint32 blinkTimer;
     bool showText;
+    bool closed;
+    int chosenColor;
     
     const int WINDOW_WIDTH = LEVEL_WIDTH;
     const int WINDOW_HEIGHT = LEVEL_HEIGHT;
@@ -40,7 +51,10 @@ public:
     void update();
     void render();
     void clean();
+    bool isButtonHovered(SDL_Rect button, int mouseX, int mouseY);
     bool running() const { return isRunning; }
+    int chosenDuckColor() const { return chosenColor; }
+    bool wasClosed() const { return closed; }
     void stop() { isRunning = false; }
 };
 
