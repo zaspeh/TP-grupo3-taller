@@ -14,7 +14,7 @@ Duck::Duck(duck_t duckState, int screenWidth, int screenHeight, SDL_Renderer* re
         animations.emplace(DUCKING, std::make_unique<Animation>(DUCKING_ANIMATION_FRAMES, SPRITE_WIDTH, SPRITE_HEIGHT, renderer, DUCKING));
         armorAnimations.emplace(WALKING, std::make_unique<Animation>(WALKING_ANIMATION_FRAMES-1, SPRITE_WIDTH, SPRITE_HEIGHT, renderer, ARMOR));
         armorAnimations.emplace(JUMPING, std::make_unique<Animation>(JUMPING_ANIMATION_FRAMES, SPRITE_WIDTH, SPRITE_HEIGHT, renderer, JUMPING));
-        armorAnimations.emplace(DUCKING, std::make_unique<Animation>(DUCKING_ANIMATION_FRAMES-1, SPRITE_WIDTH, SPRITE_HEIGHT, renderer, DUCKING));
+        armorAnimations.emplace(DUCKING, std::make_unique<Animation>(DUCKING_ANIMATION_FRAMES, SPRITE_WIDTH, SPRITE_HEIGHT, renderer, DUCKING));
         wings = std::make_unique<Animation>(FLAPPING_ANIMATION_FRAMES, SPRITE_FLAP_WIDTH, SPRITE_FLAP_HEIGHT, renderer, FLAPPING);
         
         weapon = std::make_unique<Weapon>(duckState.equipped_weapon, renderer);
