@@ -82,6 +82,7 @@ bool Game::processEvents() {
         eventDetected = true;
         if (e.type == SDL_QUIT) {
             sendCommand(LEAVE_MATCH);
+            client.endGame();
             return true;
         } else if (e.type == SDL_KEYDOWN) {
             switch (e.key.keysym.sym) {
@@ -260,7 +261,7 @@ void Game::run()
             next_frame = frame_end;
         }
     }
-    client.stop();
+    //client.stop();
 }
 
 void Game::render() {

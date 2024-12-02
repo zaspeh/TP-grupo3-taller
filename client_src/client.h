@@ -27,12 +27,14 @@ class Client {
         std::unique_ptr<Receiver> recvThread;
         std::unique_ptr<Game> gameThread;
         std::atomic<bool> _keep_running;
+        std::atomic<bool> clientContinue;
         void checkIfClose();
 
     public:
         void requestId();
     	Client(const std::string& server_ip, const std::string& server_port); 
         Client(const Client&) = default; 
+        void endGame();
         ~Client();
         void run();
         void stop();
