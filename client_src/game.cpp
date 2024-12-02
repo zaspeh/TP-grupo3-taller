@@ -231,6 +231,8 @@ void Game::run()
         return;
     }
 
+    int color = menu.chosenDuckColor();
+
     bool quit = false;
     
     auto next_frame = std::chrono::steady_clock::now();
