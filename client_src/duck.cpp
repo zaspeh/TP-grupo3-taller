@@ -12,6 +12,9 @@ Duck::Duck(duck_t duckState, int screenWidth, int screenHeight, SDL_Renderer* re
         animations.emplace(WALKING, std::make_unique<Animation>(WALKING_ANIMATION_FRAMES, SPRITE_WIDTH, SPRITE_HEIGHT, renderer, WALKING));
         animations.emplace(JUMPING, std::make_unique<Animation>(JUMPING_ANIMATION_FRAMES, SPRITE_WIDTH, SPRITE_HEIGHT, renderer, JUMPING));
         animations.emplace(DUCKING, std::make_unique<Animation>(DUCKING_ANIMATION_FRAMES, SPRITE_WIDTH, SPRITE_HEIGHT, renderer, DUCKING));
+        armorAnimations.emplace(WALKING, std::make_unique<Animation>(WALKING_ANIMATION_FRAMES-1, SPRITE_WIDTH, SPRITE_HEIGHT, renderer, ARMOR));
+        armorAnimations.emplace(JUMPING, std::make_unique<Animation>(JUMPING_ANIMATION_FRAMES, SPRITE_WIDTH, SPRITE_HEIGHT, renderer, JUMPING));
+        armorAnimations.emplace(DUCKING, std::make_unique<Animation>(DUCKING_ANIMATION_FRAMES-1, SPRITE_WIDTH, SPRITE_HEIGHT, renderer, DUCKING));
         wings = std::make_unique<Animation>(FLAPPING_ANIMATION_FRAMES, SPRITE_FLAP_WIDTH, SPRITE_FLAP_HEIGHT, renderer, FLAPPING);
         
         weapon = std::make_unique<Weapon>(duckState.equipped_weapon, renderer);
@@ -26,17 +29,18 @@ bool Duck::loadTexture() {
     bool allLoaded = true;
     std::string pathDuck = "client_src/duckyellow.png";
     std::string pathWings = "client_src/duckyellowflap.png";
-
-    switch (duckState.id) {
-    case 0:
+    std::string pathArmorAnimation = "client_src/armoranimation.png";
+    std::cout << "Duck loaded: " << static_cast<int>(duckState.color) << " " << duckState.color << std::endl;
+    switch (duckState.color) {
+    case YELLOW_DUCK:
         pathDuck = "client_src/duckyellow.png";
         pathWings = "client_src/duckyellowflap.png";
         break;
-    case 1:
+    case GREY_DUCK:
         pathDuck = "client_src/duckgray.png";
         pathWings = "client_src/duckgrayflap.png";
         break;
-    case 2:
+    case ORANGE_DUCK:
         pathDuck = "client_src/duckorange.png";
         pathWings = "client_src/duckorangeflap.png";
         break;
@@ -57,6 +61,21 @@ bool Duck::loadTexture() {
     }
 
     if (!animations[DUCKING]->loadTexture(pathDuck)) {
+        std::cerr << "Failed to load DUCKING texture." << std::endl;
+        allLoaded = false;
+    }
+
+    if (!armorAnimations[WALKING]->loadTexture(pathArmorAnimation)) {
+        std::cerr << "Failed to load WALKING texture." << std::endl;
+        allLoaded = false;
+    }
+
+    if (!armorAnimations[JUMPING]->loadTexture(pathArmorAnimation)) {
+        std::cerr << "Failed to load JUMPING texture." << std::endl;
+        allLoaded = false;
+    }
+
+    if (!armorAnimations[DUCKING]->loadTexture(pathArmorAnimation)) {
         std::cerr << "Failed to load DUCKING texture." << std::endl;
         allLoaded = false;
     }
@@ -128,13 +147,31 @@ void Duck::render(const Camera& camera, float zoom) {
             else
                 armor->render(duckState.pos.x , duckState.pos.y - 17, faceLeft, HELMET_ARMOR, camera, zoom);
         } 
-        if (duckState.chestplate.type == CHESTPLATE_ARMOR) {
+        /*if (duckState.chestplate.type == CHESTPLATE_ARMOR) {
             if (!armor->loadTexture())
                 std::cout << "Failed to load texture weapon\n"; 
             if (faceLeft)
                 armor->render(duckState.pos.x + 18, duckState.pos.y + 27, faceLeft, CHESTPLATE_ARMOR, camera, zoom);
             else 
                 armor->render(duckState.pos.x + 15, duckState.pos.y + 27, faceLeft, CHESTPLATE_ARMOR, camera, zoom);
+        }*/
+
+        if (duckState.chestplate.type == CHESTPLATE_ARMOR){
+            SDL_Rect scaleArmor;
+            scaleArmor.h = 32 * 2;
+            scaleArmor.w = 32 * 2;
+            scaleArmor.y = duckState.pos.y;
+            scaleArmor.x = duckState.pos.x;
+
+            SDL_Point screenPosArmor = camera.getScreenPosition(scaleArmor.x, scaleArmor.y, zoom);
+            SDL_Rect destRectArmor = {
+                screenPosArmor.x,
+                screenPosArmor.y,
+                static_cast<int>(scaleArmor.w * zoom),
+                static_cast<int>(scaleArmor.h * zoom)
+            };
+
+            armorAnimations[currentAnimation]->renderAnimation(destRectArmor.x, destRectArmor.y, destRectArmor, faceLeft, isMoving);
         }
 
         if (weapon->getType() != NULL_WEAPON) {
@@ -151,7 +188,7 @@ void Duck::render(const Camera& camera, float zoom) {
 void Duck::updateState(const duck_t& newDuckState) {
     isMoving = (duckState.pos.x != newDuckState.pos.x || duckState.pos.y != newDuckState.pos.y);
     duckState = newDuckState;
-
+    loadTexture();
     if (duckState.isJumping) {
         currentAnimation = JUMPING;
     } else if (duckState.isDucking) {

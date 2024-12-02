@@ -95,6 +95,12 @@ constexpr const char* ERROR_PREFIX = "Error: ";
 #define ASK_ID 12
 #define LEAVE_MATCH 13
 
+#define YELLOW_DUCK 40
+#define GREY_DUCK 41
+#define ORANGE_DUCK 42 
+#define WHITE_DUCK 43   
+
+
 constexpr const uint8_t GRASS_PLATFORM = 1;
 constexpr const uint8_t DIRT_PLATFORM = 2;
 

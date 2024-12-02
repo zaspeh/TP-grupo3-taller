@@ -206,6 +206,7 @@ game_state_t GameState::doAction(uint8_t id, uint8_t action) {
                 default:
                     if (isColor(action)) 
                         player->setColor(action);
+                    
                     break;
             }
         }
@@ -218,7 +219,7 @@ game_state_t GameState::doAction(uint8_t id, uint8_t action) {
 }
 
 bool GameState::isColor(uint8_t action) {
-    return action == WHITE || action == YELLOW || action == GRAY || action == RED;
+    return action == WHITE_DUCK || action == YELLOW_DUCK || action == GREY_DUCK || action == ORANGE_DUCK;
 }
 
 float GameState::getRandomAngle(bool faceLefting) {

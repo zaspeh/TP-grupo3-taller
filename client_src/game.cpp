@@ -226,6 +226,14 @@ void Game::run()
         menu.update();
         menu.render();
     }
+    int color = menu.chosenDuckColor();
+    sendCommand(static_cast<uint8_t>(color));
+
+    if (menu.wasClosed()){
+        client.stop();
+        return;
+    }
+
 
     bool quit = false;
     
@@ -260,6 +268,7 @@ void Game::run()
         if (frame_end > next_frame) {
             next_frame = frame_end;
         }
+
     }
     //client.stop();
 }

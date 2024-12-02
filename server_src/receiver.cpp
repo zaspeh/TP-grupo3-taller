@@ -19,7 +19,7 @@ void Receiver::run() {
                 idPlayer = clientID;
             else 
                 idPlayer = mensaje[0];
-            
+
             gameLoop.addCommand([this, idPlayer, mensaje]() {
                 gameLoop.doActionGameState(idPlayer, mensaje[1]);
             });
