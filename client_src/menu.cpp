@@ -200,10 +200,25 @@ void Menu::render() {
             };
             logoTexture->render(logoRect.x, logoRect.y, NULL, &logoRect);
         }else{
+            SDL_Color textColor = {255, 255, 255, 255};
+            SDL_Surface* surface = TTF_RenderText_Solid(font, "CHOOSE YOUR COLOR", textColor);
+            SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, surface);
+
+            SDL_Rect textRect = {
+                buttonPlayRect.x + (buttonPlayRect.w - surface->w) / 2,
+                buttonPlayRect.y + (buttonPlayRect.h - surface->h) / 2,
+                surface->w,
+                surface->h
+            };
+
+            SDL_RenderCopy(renderer, texture, NULL, &textRect);
+
             yellowDuck->render(buttonYellowDuckRect.x, buttonYellowDuckRect.y, NULL, &buttonYellowDuckRect, SDL_FLIP_NONE);
             grayDuck->render(buttonGrayDuckRect.x, buttonGrayDuckRect.y, NULL, &buttonGrayDuckRect, SDL_FLIP_NONE);
             orangeDuck->render(buttonOrangeDuckRect.x, buttonOrangeDuckRect.y, NULL, &buttonOrangeDuckRect, SDL_FLIP_NONE);
             whiteDuck->render(buttonWhiteDuckRect.x, buttonWhiteDuckRect.y, NULL, &buttonWhiteDuckRect, SDL_FLIP_NONE);
+            SDL_FreeSurface(surface);
+            SDL_DestroyTexture(texture);
         }
     }
 
