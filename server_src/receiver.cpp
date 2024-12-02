@@ -25,7 +25,7 @@ void Receiver::run() {
             });
             
         } catch (const std::exception& e) {
-            std::cerr << "Error receiver: " << e.what() << std::endl;
+            //std::cerr << "Error receiver: " << e.what() << std::endl;
             break;
         }
     }
@@ -35,5 +35,5 @@ void Receiver::run() {
     } catch (const std::exception& e) {
         std::cerr << "Error: " << e.what() << std::endl;
     }
-    std::cout << "Saliendo del receiver\n";
+    //std::cout << "Saliendo del receiver\n";
 }

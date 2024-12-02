@@ -30,7 +30,6 @@ bool Duck::loadTexture() {
     std::string pathDuck = "client_src/duckyellow.png";
     std::string pathWings = "client_src/duckyellowflap.png";
     std::string pathArmorAnimation = "client_src/armoranimation.png";
-    std::cout << "Duck loaded: " << static_cast<int>(duckState.color) << " " << duckState.color << std::endl;
     switch (duckState.color) {
     case YELLOW_DUCK:
         pathDuck = "client_src/duckyellow.png";

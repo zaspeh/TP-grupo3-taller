@@ -35,7 +35,7 @@ void Server::handleInput() {
             }
         }
         if (!gameShouldContinue) {
-            std::cout << "Llamando a stop\n";
+            //std::cout << "Llamando a stop\n";
             stop();  
         }
     } catch (const std::exception& e) {
@@ -50,7 +50,7 @@ void Server::run() {
         handleInput();
 
     } catch (const std::exception& e) {
-        std::cerr << "Error: " << e.what() << std::endl;
+        //std::cerr << "Error: " << e.what() << std::endl;
         stop();
     }
 }

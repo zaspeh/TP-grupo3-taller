@@ -12,7 +12,7 @@ public:
         float sumX = 0, sumY = 0;
         int qAliveDucks = 0;
         for (const auto& duck : ducks) {
-            if(duck->isAlive()){
+            if(duck && duck->isAlive()){
                 sumX += duck->getPosX();
                 sumY += duck->getPosY();
                 qAliveDucks++;
@@ -25,6 +25,7 @@ public:
         float maxDistance = 0;
         for (size_t i = 0; i < ducks.size(); ++i) {
             for (size_t j = i + 1; j < ducks.size(); ++j) {
+                if (!ducks[i]) continue; 
                 if(ducks[i]->isAlive() && ducks[j]->isAlive()){
                     float dx = ducks[i]->getPosX() - ducks[j]->getPosX();
                     float dy = ducks[i]->getPosY() - ducks[j]->getPosY();

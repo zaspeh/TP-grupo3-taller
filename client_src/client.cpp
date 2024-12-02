@@ -52,9 +52,9 @@ void Client::checkIfClose() {
         while (_keep_running && clientContinue) {
             if (inputAvailable()) {
                 std::getline(std::cin, input);
-                if (input == "q") {
+                /* if (input == "q") {
                     stop();
-                }
+                } */
             }
         }
         if (!clientContinue) {
@@ -78,11 +78,11 @@ void Client::stop(){
         if (!_keep_running) return;
         _keep_running = false;
         sendThread->stop();
-        sendThread->join();
         gameThread->stop();
-        gameThread->join();
-
         recvThread->stop();
+
+        gameThread->join();
+        sendThread->join();
         recvThread->join();
     } catch (const std::exception& e) {
         std::cerr << "Error Client stop: " << e.what() << std::endl;

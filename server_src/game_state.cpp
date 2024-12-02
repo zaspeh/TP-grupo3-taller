@@ -43,14 +43,14 @@ void GameState::compactDucks() {
 void GameState::removePlayer(uint8_t id) {
     if (players.count(id)) {
         players.erase(id);
-        std::cout << "Cantidad de patos: " << players.size() << std::endl;
+        //std::cout << "Cantidad de patos: " << players.size() << std::endl;
         state.level.ducks[id].isAlive = false;
         compactDucks();
     }
 
     
     if (state.level.num_ducks == 0) { 
-        std::cout << "Sin jugadores: cerrando el juego\n";
+        //std::cout << "Sin jugadores: cerrando el juego\n";
         gameShouldContinue = false;
     }
 }
@@ -124,7 +124,7 @@ game_state_t GameState::doAction(uint8_t id, uint8_t action) {
         changeLevel();
     }
     
-    std::cout << "Id del jugador: " << static_cast<int>(id) << std::endl;
+    //std::cout << "Id del jugador: " << static_cast<int>(id) << std::endl;
 
     weapon_t weaponST;
     armor_t armorST;

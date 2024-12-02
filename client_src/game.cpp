@@ -270,6 +270,7 @@ void Game::run()
         }
 
     }
+    printf("Saliendo del game run\n");
     //client.stop();
 }
 
@@ -370,7 +371,7 @@ void Game::render() {
             SDL_Point screenMsjWinPos = camera.getScreenPosition(gameState.level.ducks[i].pos.x - 100, gameState.level.ducks[i].pos.y-10, zoom.getCurrentZoom());
             renderText("WINNER!!!!! now press 'G' to restart.",  screenMsjWinPos.x, screenMsjWinPos.y, 1);
             renderText("Close the window to quit.",  screenMsjPos.x + 30, screenMsjPos.y + 20, 1); 
-        } else {
+        } else if(gameState.level.ducks[i].isAlive) {
             SDL_Point screenMsjWinPos = camera.getScreenPosition(gameState.level.ducks[i].pos.x + 8, gameState.level.ducks[i].pos.y-2, zoom.getCurrentZoom());
             renderText("Player: " + std::to_string(gameState.level.ducks[i].id + 1),  screenMsjWinPos.x, screenMsjWinPos.y, 0);
         }
@@ -581,7 +582,7 @@ void Game::stop() {
         background.reset();
         printf("Stop3.\n");
 
-        // Luego cerrar el font antes de finalizar SDL_TTF
+/*         // Luego cerrar el font antes de finalizar SDL_TTF
         music.stop();
         Mix_CloseAudio();
         printf("Stop4.\n");
@@ -600,6 +601,24 @@ void Game::stop() {
             gWindow.reset(nullptr);
         }
         
+        SDL_Quit(); */
+
+            // Audio cleanup
+        music.stop();
+        Mix_HaltChannel(-1);
+        Mix_CloseAudio();
+        Mix_Quit();
+        
+        // Font cleanup
+        gFont.reset(nullptr);
+        TTF_Quit();
+        
+        // Graphics cleanup
+        IMG_Quit();
+        gRenderer.reset(nullptr);
+        gWindow.reset(nullptr);
+        
+        SDL_QuitSubSystem(SDL_INIT_VIDEO | SDL_INIT_AUDIO);
         SDL_Quit();
         printf("Stop6.\n");
 
