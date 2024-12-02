@@ -41,8 +41,8 @@ void Armor::renderArmorPiece(uint8_t armorType, armor_t& armorState, int x, int 
     SDL_Rect scaleRect = {x, y, 0, 0};
     if (it != armors.end() && armorType != NULL_ARMOR) {
         LTexture* texture = it->second.get();
-        scaleRect.w = texture->getWidth() * 2.1;
-        scaleRect.h = texture->getHeight() * 2.1;
+        scaleRect.w = (texture->getWidth()-1) * 2.1;
+        scaleRect.h = (texture->getHeight()-1) * 2.1;
 
         SDL_RendererFlip flip = faceLeft ? SDL_FLIP_HORIZONTAL : SDL_FLIP_NONE;
         
