@@ -27,12 +27,14 @@ void GameState::compactDucks() {
     std::array<duck_t, MAX_DUCKS> compactedDucks;
     uint8_t compactedIndex = 0;
 
-    for (uint8_t i = 0; i < MAX_DUCKS; i++) {
+    for (uint8_t i = 0; i < state.level.num_ducks; i++) {
         if (state.level.ducks[i].isAlive) {
             compactedDucks[compactedIndex] = state.level.ducks[i];
             compactedIndex++;
         }
     }
+    if (state.level.num_ducks > 0)
+        state.level.num_ducks--;
 
     // Actualizar el arreglo de patos en el estado del nivel
     std::copy(compactedDucks.begin(), compactedDucks.end(), state.level.ducks);
@@ -41,23 +43,32 @@ void GameState::compactDucks() {
 void GameState::removePlayer(uint8_t id) {
     if (players.count(id)) {
         players.erase(id);
-        if (state.level.num_ducks > 0) {
-            state.level.num_ducks--;
-        }
+        std::cout << "Cantidad de patos: " << players.size() << std::endl;
         state.level.ducks[id].isAlive = false;
         compactDucks();
     }
 
     
-    if (players.empty()) { 
+    if (state.level.num_ducks == 0) { 
+        std::cout << "Sin jugadores: cerrando el juego\n";
         gameShouldContinue = false;
     }
 }
 
 void GameState::updateState(uint8_t id, std::shared_ptr<PlayerState> player) {
-    state.level.ducks[id] = player->getState();
-    if (!player->isAlive())
+    // Encontrar la posición correcta del pato en el arreglo
+    int duckIndex = 0;
+    for (int i = 0; i < state.level.num_ducks; i++) {
+        if (state.level.ducks[i].id == id) {  // Agregar campo 'id' a duck_t
+            duckIndex = i;
+            break;
+        }
+    }
+    state.level.ducks[duckIndex] = player->getState();
+    if (!player->isAlive()) {
         checkIfSomeoneWin();
+        std::cout << "Entrando por aquí\n";
+    }
 }
 
 
@@ -65,8 +76,9 @@ std::shared_ptr<PlayerState> GameState::connectPlayer(uint8_t id) {
     position_t pos = level.getSpawnPosition();
     players[id] = std::make_shared<PlayerState>(id, pos.x, pos.y);  
     state.level.ducks[id] = players[id]->getState();
-    state.level.num_ducks++;  
-
+    std::cout << "HOla2\n";
+    state.level.num_ducks++;
+    std::cout << "Cantidad de patos: " << static_cast<int>(state.level.num_ducks) << std::endl;
     return players[id];
 }
 
@@ -86,17 +98,28 @@ bool GameState::chosedAWeapon(uint8_t id,uint8_t action){
 }
 
 game_state_t GameState::doAction(uint8_t id, uint8_t action) {
-    std::lock_guard<std::mutex> lock(mtx);
+    //std::lock_guard<std::mutex> lock(mtx);
+    
     auto player = players[id];
     if (player && !player->isAlive()) {
         return state;
     }
     if (matchFinished && action == RESTART_MATCH) {
         for (auto& [id, player] : players) {
-            state.level.ducks[id].score = 0;
-            player->resetPlayer(state.level.ducks[id], player->getPosition().x, player->getPosition().y);
-            state.level.ducks[id] = player->getState(); 
+            if (!player) continue;
+            int duckIndex = 0;
+            for (int i = 0; i < state.level.num_ducks; i++) {
+                if (state.level.ducks[i].id == id) {
+                    duckIndex = i;
+                    break;
+                }
+            }
+            state.level.ducks[duckIndex].score = 0;
+            std::cout << "Resetenado el score del pato " << static_cast<int>(id) << " a " << static_cast<int>(state.level.ducks[duckIndex].score) << std::endl; 
+            player->resetPlayer(state.level.ducks[duckIndex], player->getPosition().x, player->getPosition().y);
+            state.level.ducks[duckIndex] = player->getState(); 
         }
+        std::cout << "Match no terminado\n";
         matchFinished = false;
         changeLevel();
     }
@@ -109,12 +132,15 @@ game_state_t GameState::doAction(uint8_t id, uint8_t action) {
 
     try { 
         if(!chosedAWeapon(id, action)){
+            //std::cout << "Acción: " << static_cast<int>(action) << std::endl;
             switch(action) {
                 case MOVE_LEFT:
+                    //std::cout << "Jugador moviéndose hacia la izquierda\n";
                     player->move(-10, 0, state.level.platforms, state.level.num_platforms);
                     player->setFacingDirection(1);
                     break;
                 case MOVE_RIGHT:
+                    //std::cout << "Jugador moviéndose hacia la derecha\n";
                     player->move(10, 0, state.level.platforms, state.level.num_platforms);
                     player->setFacingDirection(0);
                     break;
@@ -157,6 +183,7 @@ game_state_t GameState::doAction(uint8_t id, uint8_t action) {
                     player->setCrouched(!player->isCrouched());
                     break;
                 case NEW_CLIENT:
+                    std::cout << "Connect player\n";
                     player = connectPlayer(id);
                     break;
                 case INFINIT_AMMO:
@@ -179,6 +206,7 @@ game_state_t GameState::doAction(uint8_t id, uint8_t action) {
                 default:
                     if (isColor(action)) 
                         player->setColor(action);
+                    
                     break;
             }
         }
@@ -191,7 +219,7 @@ game_state_t GameState::doAction(uint8_t id, uint8_t action) {
 }
 
 bool GameState::isColor(uint8_t action) {
-    return action == WHITE || action == YELLOW || action == GRAY || action == RED;
+    return action == WHITE_DUCK || action == YELLOW_DUCK || action == GREY_DUCK || action == ORANGE_DUCK;
 }
 
 float GameState::getRandomAngle(bool faceLefting) {
@@ -250,7 +278,7 @@ void GameState::createProjectile(uint8_t weaponType, position_t origin, bool fac
     float initialAngle;
 
     if (weaponType == GRENADE_WEAPON || weaponType == BANANA_WEAPON) {
-        initialVelocity = 1000.0f;
+        initialVelocity = 800.0f;
         gravity = 2500.0f;
         initialAngle = facingLeft ? M_PI - 5.5f : 5.5f;
     } else {
@@ -351,6 +379,7 @@ game_state_t GameState::updatePlayers(float deltaTime) {
     deltaTime = std::min(deltaTime, 0.033f); 
     try {
         for (auto& [id, player] : players) {
+            if (!player) continue;
             player->updatePosition(deltaTime, state.level.platforms, state.level.num_platforms, state.level.explosions, state.level.num_explosions);
             player->updateWeapon(deltaTime, state.level);
             updateState(id, player); 
@@ -395,59 +424,114 @@ void GameState::updateSpawns(float deltaTime) {
 }
 
 void GameState::finishMatch(uint8_t id) {
-    matchFinished = true;
-    
-    std::map<uint8_t, duck_t> currentDucks;
-    for (auto& [id, player] : players) {
-        currentDucks[id] = state.level.ducks[id];
-    }
+   matchFinished = true;
+   
+   std::map<uint8_t, duck_t> currentDucks;
+   for (auto& [id, player] : players) {
+       if (!player) continue;
+       
+       int duckIndex = 0;
+       for (int i = 0; i < state.level.num_ducks; i++) {
+           if (state.level.ducks[i].id == id) {
+               duckIndex = i;
+               break;
+           }
+       }
+       //std::cout << "Actualizando el estado del pato con id: " << static_cast<int>(id) << std::endl;
+       currentDucks[id] = state.level.ducks[duckIndex];
+   }
 
-    level.initWinningLevel();
-    state.level = level.getLevel();
+   level.initWinningLevel();
+   state.level = level.getLevel();
 
-    for (auto& [id, player] : players) {
-        position_t pos = level.getSpawnPosition();
-        player->resetPlayer(currentDucks[id], pos.x, pos.y);
-        state.level.ducks[id] = player->getState();
-    }
-        
-    state.level.num_ducks = players.size();
+   for (auto& [id, player] : players) {
+       if (!player) continue;
+       
+       position_t pos = level.getSpawnPosition();
+       player->resetPlayer(currentDucks[id], pos.x, pos.y);
+       
+       int newDuckIndex = 0;
+       for (int i = 0; i < state.level.num_ducks; i++) {
+           if (state.level.ducks[i].id == id) {
+               newDuckIndex = i;
+               break;
+           }
+       }
+       std::cout << "Actualizando el estado del pato con id: " << static_cast<int>(id) << std::endl;
+       state.level.ducks[newDuckIndex] = player->getState();
+       std::cout << "Pos x: " << static_cast<int>(state.level.ducks[newDuckIndex].pos.x) << " - Pos y: " << static_cast<int>(state.level.ducks[newDuckIndex].pos.x) << std::endl;  
+   }
+   state.level.num_ducks = currentDucks.size();
 }
 
+// Problema al cambiar de nivel y un pato desconectado
 void GameState::changeLevel() {
+    std::lock_guard<std::mutex> lock(mtx);
     std::map<uint8_t, duck_t> currentDucks;
     for (auto& [id, player] : players) {
-        if(state.level.ducks[id].isAlive && !matchFinished) state.level.ducks[id].score += 1;
-        currentDucks[id] = state.level.ducks[id];
+        if (!player) continue;
+        // Find correct duck index
+        int duckIndex = 0;
+        for (int i = 0; i < state.level.num_ducks; i++) {
+            if (state.level.ducks[i].id == id) {
+                duckIndex = i;
+                break;
+            }
+        }
+        
+        if(state.level.ducks[duckIndex].isAlive && !matchFinished) {
+            state.level.ducks[duckIndex].score += 1;
+        }
+        currentDucks[id] = state.level.ducks[duckIndex];
     }
 
     level.createNewLevel();
     state.level = level.getLevel();
+    state.level.num_ducks = players.size();
 
     for (auto& [id, player] : players) {
+        if (!player) continue;
         position_t pos = level.getSpawnPosition();
         player->resetPlayer(currentDucks[id], pos.x, pos.y);
-        state.level.ducks[id] = player->getState(); 
-    }
         
-    state.level.num_ducks = players.size();
+        // Find position for new duck
+        int newDuckIndex = 0;
+        for (int i = 0; i < state.level.num_ducks; i++) {
+            if (state.level.ducks[i].id == id) {
+                newDuckIndex = i;
+                break;
+            }
+        }
+        state.level.ducks[newDuckIndex] = player->getState();
+    }
 }
 
 void GameState::checkIfSomeoneWin() {
-    int aliveDucks = 0;
-    for (auto& [id, player] : players) {
-        if (player->isAlive()) 
-            aliveDucks++;
-        
-        if (state.level.ducks[id].score >= state.winning_score && !matchFinished) {
-            finishMatch(id);
-            return;
-        }
-    }   
-
-    if ((aliveDucks == 1 && players.size() > 1) || (players.size() == 1 && aliveDucks == 0)) {
-       changeLevel();
-    }
+   int aliveDucks = 0;
+   for (auto& [id, player] : players) {
+       if (player && player->isAlive())
+           aliveDucks++;
+           
+       // Encontrar la posición correcta del pato en el arreglo
+       int duckIndex = 0;
+       for (int i = 0; i < state.level.num_ducks; i++) {
+           if (state.level.ducks[i].id == id) {
+               duckIndex = i;
+               break;
+           }
+       }
+       
+       if (state.level.ducks[duckIndex].score >= state.winning_score && !matchFinished) {
+            std::cout << "El pato " << static_cast<int>(id) << " acaba de ganar el juego y su score es " << static_cast<int>(state.level.ducks[duckIndex].score) << std::endl;
+           finishMatch(id);
+           return;
+       }
+   }
+   
+   if ((aliveDucks == 1 && state.level.num_ducks > 1) || (state.level.num_ducks == 1 && aliveDucks == 0)) {
+    std::cout << "Cambiando de nivel\n";
+       changeLevel(); 
+   }
 }
 
 void GameState::createFiveShoots(int x, int y) {

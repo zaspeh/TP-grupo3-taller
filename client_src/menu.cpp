@@ -1,7 +1,7 @@
 #include "menu.h"
+#include <iostream>
 
-Menu::Menu() : window(nullptr), renderer(nullptr), font(nullptr), 
-               backgroundTexture(nullptr), logoTexture(nullptr),
+Menu::Menu() : window(nullptr), renderer(nullptr),
                isRunning(false), gameStarted(false), isButtonPlayHovered(false), isButtonPlayPressed(false), showText(true), closed(false), chosenColor(0)
 {
     buttonPlayRect = {
@@ -31,21 +31,17 @@ Menu::Menu() : window(nullptr), renderer(nullptr), font(nullptr),
 
 }
 
-Menu::~Menu() {
-    clean();
-}
-
 bool Menu::init(SDL_Window* gWindow, SDL_Renderer* gRenderer) {
     window = gWindow;
     renderer = gRenderer;
 
     // Inicializar texturas
-    backgroundTexture = new LTexture(renderer);
-    logoTexture = new LTexture(renderer);
-    yellowDuck = new LTexture(renderer);
-    orangeDuck = new LTexture(renderer);
-    grayDuck = new LTexture(renderer);
-    whiteDuck = new LTexture(renderer);
+    backgroundTexture = std::make_unique<LTexture>(renderer);
+    logoTexture = std::make_unique<LTexture>(renderer);
+    yellowDuck = std::make_unique<LTexture>(renderer);
+    orangeDuck = std::make_unique<LTexture>(renderer);
+    grayDuck = std::make_unique<LTexture>(renderer);
+    whiteDuck = std::make_unique<LTexture>(renderer);
 
     // Cargar texturas
     if (!backgroundTexture->loadFromFile("client_src/forest.png")) {
@@ -79,11 +75,12 @@ bool Menu::init(SDL_Window* gWindow, SDL_Renderer* gRenderer) {
     }
 
     // Cargar fuente
-    font = TTF_OpenFont("/usr/share/fonts/truetype/liberation/LiberationMono-Bold.ttf", 20);
-    if (!font) {
+    TTF_Font* tempFont = TTF_OpenFont("/usr/share/fonts/truetype/liberation/LiberationMono-Bold.ttf", 20);
+    if (!tempFont) {
         printf("Error fuente: %s\n", TTF_GetError());
         return false;
     }
+    font.reset(tempFont);
 
     blinkTimer = SDL_GetTicks();
     isRunning = true;
@@ -113,23 +110,24 @@ void Menu::handleEvents() {
             }
             if (event.button.button == SDL_BUTTON_LEFT && isButtonPlayPressed && !gameStarted){
                 if(isButtonHovered(buttonYellowDuckRect, mouseX, mouseY)){
-                    chosenColor = 0;
+                    chosenColor = YELLOW_DUCK;
                     gameStarted = true;
                     stop();
                 }else if(isButtonHovered(buttonGrayDuckRect, mouseX, mouseY)){
-                    chosenColor = 1;
+                    chosenColor = GREY_DUCK;
                     gameStarted = true;
                     stop();
                 }else if(isButtonHovered(buttonOrangeDuckRect, mouseX, mouseY)){
-                    chosenColor = 2;
+                    chosenColor = ORANGE_DUCK;
                     gameStarted = true;
                     stop();
                 }else if(isButtonHovered(buttonWhiteDuckRect, mouseX, mouseY)){
-                    chosenColor = 3;
+                    chosenColor = WHITE_DUCK;
                     gameStarted = true;
                     stop();
                 }
             }
+            std::cout << "Color elegido: " << chosenColor << std::endl;
         }
         else if (event.type == SDL_KEYDOWN) {
             if (event.key.keysym.sym == SDLK_ESCAPE) {
@@ -176,7 +174,7 @@ void Menu::render() {
 
             if (showText) {
                 SDL_Color textColor = {255, 255, 255, 255};
-                SDL_Surface* surface = TTF_RenderText_Solid(font, "PRESS START", textColor);
+                SDL_Surface* surface = TTF_RenderText_Solid(font.get(), "PRESS START", textColor);
                 SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, surface);
 
                 SDL_Rect textRect = {
@@ -201,7 +199,7 @@ void Menu::render() {
             logoTexture->render(logoRect.x, logoRect.y, NULL, &logoRect);
         }else{
             SDL_Color textColor = {255, 255, 255, 255};
-            SDL_Surface* surface = TTF_RenderText_Solid(font, "CHOOSE YOUR COLOR", textColor);
+            SDL_Surface* surface = TTF_RenderText_Solid(font.get(), "CHOOSE YOUR COLOR", textColor);
             SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, surface);
 
             SDL_Rect textRect = {
@@ -227,36 +225,39 @@ void Menu::render() {
 
 void Menu::clean() {
     if (backgroundTexture) {
-        delete backgroundTexture;
-        backgroundTexture = nullptr;
+        backgroundTexture->free();
+        backgroundTexture.reset();
     }
+    
     if (logoTexture) {
-        delete logoTexture;
+        logoTexture.reset();
         logoTexture = nullptr;
     }
     if (yellowDuck) {
-        delete yellowDuck;
+        yellowDuck.reset();
         yellowDuck = nullptr;
     }
     if (orangeDuck) {
-        delete orangeDuck;
+        orangeDuck.reset();
         orangeDuck = nullptr;
     }
     if (grayDuck) {
-        delete grayDuck;
+        grayDuck.reset();
         grayDuck = nullptr;
     }
     if (whiteDuck) {
-        delete whiteDuck;
+        whiteDuck.reset();
         whiteDuck = nullptr;
     }
-    if (font) {
-        TTF_CloseFont(font);
-        font = nullptr;
-    }
 
-    IMG_Quit();
-    TTF_Quit();
+    // Luego limpiar la fuente
+    if (font) {
+        font.reset();
+    }
 }
 
+
+Menu::~Menu() {
+    clean();
+}
 

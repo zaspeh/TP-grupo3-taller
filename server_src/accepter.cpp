@@ -33,27 +33,33 @@ void Accepter::run() {
             break;
         }
     }
+    std::cout << "Saliendo de run en accepter\n";
 }
 
 
 void Accepter::stop() {
     if (!_keep_running) return;
+    try {
+        Thread::stop();
 
-    Thread::stop();
+        socket_servidor.shutdown(SHUT_RDWR);
+        socket_servidor.close();
 
-    socket_servidor.shutdown(SHUT_RDWR);
-    socket_servidor.close();
-
-    for (auto& sender: emisores) {
-        sender->stop();
-        sender->join();
+        for (auto& sender: emisores) {
+            sender->stop();
+            sender->join();
+        }
+        for (auto& receiver: receptores) {
+            receiver->stop();
+            receiver->join();
+        }
+        emisores.clear();
+        receptores.clear();
+        std::cout << "Saliendo del accepter\n";
+    } catch (const std::exception& e) {
+        std::cerr << "Error accepter" << e.what() << std::endl;
     }
-    for (auto& receiver: receptores) {
-        receiver->stop();
-        receiver->join();
-    }
-    emisores.clear();
-    receptores.clear();
+
 }
 
 Accepter::~Accepter() {

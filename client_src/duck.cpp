@@ -30,17 +30,17 @@ bool Duck::loadTexture() {
     std::string pathDuck = "client_src/duckyellow.png";
     std::string pathWings = "client_src/duckyellowflap.png";
     std::string pathArmorAnimation = "client_src/armoranimation.png";
-
-    switch (duckState.id) {
-    case 0:
+    std::cout << "Duck loaded: " << static_cast<int>(duckState.color) << " " << duckState.color << std::endl;
+    switch (duckState.color) {
+    case YELLOW_DUCK:
         pathDuck = "client_src/duckyellow.png";
         pathWings = "client_src/duckyellowflap.png";
         break;
-    case 1:
+    case GREY_DUCK:
         pathDuck = "client_src/duckgray.png";
         pathWings = "client_src/duckgrayflap.png";
         break;
-    case 2:
+    case ORANGE_DUCK:
         pathDuck = "client_src/duckorange.png";
         pathWings = "client_src/duckorangeflap.png";
         break;
@@ -188,7 +188,7 @@ void Duck::render(const Camera& camera, float zoom) {
 void Duck::updateState(const duck_t& newDuckState) {
     isMoving = (duckState.pos.x != newDuckState.pos.x || duckState.pos.y != newDuckState.pos.y);
     duckState = newDuckState;
-
+    loadTexture();
     if (duckState.isJumping) {
         currentAnimation = JUMPING;
     } else if (duckState.isDucking) {

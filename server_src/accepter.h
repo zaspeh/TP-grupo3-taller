@@ -25,7 +25,7 @@ private:
     GameLoop & gameLoop;
     std::vector<std::shared_ptr<Sender>> emisores;
     std::vector<std::shared_ptr<Receiver>> receptores;
-    int clientID;
+    std::atomic<int> clientID;
 
 public:
     Accepter(int port, Server& server, Monitor& monitor, GameLoop& gameLoop);

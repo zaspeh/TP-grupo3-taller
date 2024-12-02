@@ -2,6 +2,8 @@
 #include <iostream>
 
 Armor::Armor(armor_t armorState, SDL_Renderer* renderer) {
+    chestplateState = nullArmor;
+    helmetState = nullArmor;
     updateState(armorState);
     try {
         armors.emplace(CHESTPLATE_ARMOR, std::make_unique<LTexture>(renderer));
@@ -73,13 +75,9 @@ int Armor::getType() {
 void Armor::updateState(armor_t arm) {
     if (arm.type == CHESTPLATE_ARMOR) {
         chestplateState = arm;
-        if (helmetState.type == NULL_ARMOR)
-            helmetState = nullArmor;
     }
     if (arm.type == HELMET_ARMOR) {
         helmetState = arm;
-        if (chestplateState.type == NULL_ARMOR)
-            chestplateState = nullArmor;
     }
 }
 

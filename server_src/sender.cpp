@@ -12,13 +12,13 @@ Sender::Sender(Server& server, Monitor& monitor, std::shared_ptr<ServerProtocol>
 
 void Sender::run() {
     while (_keep_running) {
-        game_state_t mensaje;
+        game_state_t state;
         try {
             if (isQueueClosed() || protocol == nullptr) 
                 break;
             
             try {
-                mensaje = gameStateQueue->pop();
+                state = gameStateQueue->pop();
             } catch (const std::exception& e) {
                 std::cerr << "Error: " << e.what() << std::endl;
                 break;
@@ -28,7 +28,7 @@ void Sender::run() {
                 break;
 
             bool wasClosed = false;
-            protocol->sendGameState(mensaje, wasClosed);
+            protocol->sendGameState(state, wasClosed);
 
             if (wasClosed) 
                 break;
@@ -56,14 +56,14 @@ void Sender::broadcast_message_with_info(game_state_t gameState) {
 
 void Sender::stop() {
     std::lock_guard<std::mutex> lock(queue);
-    std::cout << "Deteniendo el sender\n";
     if (!_keep_running) return;
+    //std::cout << "Deteniendo el sender\n";
     try {
         Thread::stop();
         game_state_t msg;
         while (gameStateQueue->try_pop(msg)) {}
         gameStateQueue->close();
-        std::cout << "COla cerrada\n";
+        std::cout << "COla cerrada en el sender\n";
     } catch (const std::exception& e) {
         std::cerr << "Error: " << e.what() << std::endl;
     }
