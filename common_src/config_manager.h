@@ -7,12 +7,12 @@
 class ConfigManager {
 public:
     static YAML::Node& getInstance() {
-        static YAML::Node instance = YAML::LoadFile("/home/joseph/Escritorio/TALLER/TP-grupo3-taller/config.yaml");
+        static YAML::Node instance = YAML::LoadFile("./config.yaml");
         return instance;
     }
 
 private:
-    ConfigManager() = default; // Constructor privado para prevenir instancias.
+    ConfigManager() = default;
 };
 
 #endif // CONFIG_MANAGER_H
