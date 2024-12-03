@@ -1,5 +1,6 @@
 #include "game.h"
 #include <algorithm>  
+#include <chrono>
 
 Game::Game(std::shared_ptr<Queue<game_state_t>> gameStateQueue, std::shared_ptr<Queue<uint8_t>> commandQueue, Client& client)
     : gameStateQueue(gameStateQueue),
@@ -63,7 +64,6 @@ void Game::initializeGameObjects() {
     boxes.resize(gameState.level.num_boxes);
 }
 
-#include <chrono>
 
 const std::chrono::milliseconds COMMAND_INTERVAL(50); 
 const std::chrono::milliseconds SHOOT_INTERVAL(200); 

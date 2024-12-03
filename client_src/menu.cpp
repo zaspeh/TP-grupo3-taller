@@ -11,8 +11,8 @@ Menu::Menu() : window(nullptr), renderer(nullptr),
         BUTTON_HEIGHT
     };
 
-    int window_width = 1024;
-    int window_height = 720;
+    int window_width = config["general"]["level_width"].as<int>();
+    int window_height = config["general"]["level_height"].as<int>();
     int button_width = 160;
     int button_height = 230;
 
