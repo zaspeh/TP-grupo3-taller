@@ -27,6 +27,8 @@
 #include "../common_src/queue.h"
 #include "../common_src/utils.h"
 #include "menu.h"
+#include "../common_src/config_manager.h"
+
 
 constexpr float FRAME_DURATION_MS = 16.67f;
 
@@ -62,6 +64,7 @@ class Game : public Thread
         void renderText(const std::string& message, int x, int y, int color);
         std::mutex sdl_mutex;
         Client& client;
+        YAML::Node config = ConfigManager::getInstance();
 
     public:
         Game(std::shared_ptr<Queue<game_state_t>> gameStateQueue, std::shared_ptr<Queue<uint8_t>> commandQueue, Client& client);

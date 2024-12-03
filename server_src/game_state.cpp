@@ -7,16 +7,17 @@
 #define GRAY 3
 #define RED 4
 
-GameState::GameState(std::atomic<bool>& gameShouldContinue) : level(), gameShouldContinue(gameShouldContinue) {
+GameState::GameState(Server& server) : level(), server(server), config(ConfigManager::getInstance()) {
     players = std::map<uint8_t, std::shared_ptr<PlayerState>>();
     projectilePhysics.resize(MAX_PROJECTILES);
     state = {
         level.getLevel(),
         0,
         0,
-        5
+        config["general"]["winning_score"].as<uint8_t>()
     };
 }
+
 
 std::shared_ptr<PlayerState> GameState::getPlayer(uint8_t id) {
     std::lock_guard<std::mutex> lock(mtx);
@@ -51,15 +52,14 @@ void GameState::removePlayer(uint8_t id) {
     
     if (state.level.num_ducks == 0) { 
         //std::cout << "Sin jugadores: cerrando el juego\n";
-        gameShouldContinue = false;
+        server.closeServer();
     }
 }
 
 void GameState::updateState(uint8_t id, std::shared_ptr<PlayerState> player) {
-    // Encontrar la posición correcta del pato en el arreglo
     int duckIndex = 0;
     for (int i = 0; i < state.level.num_ducks; i++) {
-        if (state.level.ducks[i].id == id) {  // Agregar campo 'id' a duck_t
+        if (state.level.ducks[i].id == id) { 
             duckIndex = i;
             break;
         }
@@ -76,7 +76,6 @@ std::shared_ptr<PlayerState> GameState::connectPlayer(uint8_t id) {
     position_t pos = level.getSpawnPosition();
     players[id] = std::make_shared<PlayerState>(id, pos.x, pos.y);  
     state.level.ducks[id] = players[id]->getState();
-    std::cout << "HOla2\n";
     state.level.num_ducks++;
     std::cout << "Cantidad de patos: " << static_cast<int>(state.level.num_ducks) << std::endl;
     return players[id];
@@ -388,7 +387,7 @@ game_state_t GameState::updatePlayers(float deltaTime) {
                     for (int j = i; j < state.level.num_bananas - 1; j++) {
                         state.level.bananas[j] = state.level.bananas[j + 1];
                     }
-                    state.level.num_bananas--;
+                    state.level.num_bananas--; 
                     break;
                 }
             }
@@ -583,26 +582,26 @@ void GameState::updateBoxes() {
 
 uint8_t GameState::checkWeaponDistance(uint8_t weaponType) {
     switch (weaponType) {
-        case GRENADE_WEAPON:
-            return GRENADE_DISTANCE;
+        case GRENADE_WEAPON: // utilizo YAML::Node config = YAML::LoadFile("../config.yaml") ;
+            return config["weapons"]["grenade"]["distance"].as<int>();
         case BANANA_WEAPON:
-            return BANANA_DISTANCE;
+            return config["weapons"]["banana"]["distance"].as<int>();
         case PEWPEWLASER_WEAPON:
-            return PEWPEWLASER_DISTANCE;
+            return config["weapons"]["pewpewlaser"]["distance"].as<int>();
         case LASERRIFLE_WEAPON:
-            return LASERRIFLE_DISTANCE;
+            return config["weapons"]["laserrifle"]["distance"].as<int>();
         case DARTGUN_WEAPON:
-            return DARTGUN_DISTANCE;
+            return config["weapons"]["dartgun"]["distance"].as<int>();
         case AK_47_WEAPON:
-            return AK_47_DISTANCE;
+            return config["weapons"]["ak47"]["distance"].as<int>();
         case COWBOY_WEAPON:
-            return COWBOY_DISTANCE;
+            return config["weapons"]["cowboy"]["distance"].as<int>();
         case MAGNUM_WEAPON:
-            return MAGNUM_DISTANCE;
+            return config["weapons"]["magnum"]["distance"].as<int>();
         case SHOTGUN_WEAPON:
-            return SHOTGUN_DISTANCE;
+            return config["weapons"]["shotgun"]["distance"].as<int>();
         case SNIPER_WEAPON:
-            return SNIPER_DISTANCE;
+            return config["weapons"]["sniper"]["distance"].as<int>();
         default:
             return 0;
     }   

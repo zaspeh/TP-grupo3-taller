@@ -4,6 +4,7 @@
 #include "weapon.h"
 #include "equipment.h"
 #include "../common_src/game_state.h"
+#include "../common_src/config_manager.h"
 #include <iostream>
 #include <memory>
 
@@ -27,6 +28,8 @@ private:
     bool isOnGround;
     float horizontalVelocity; 
     void applyRecoil(float recoilForce, platform_t* platforms, uint8_t numPlatforms);
+    YAML::Node config = ConfigManager::getInstance();
+
 
 public:
     PlayerState(uint8_t clientID, int x, int y);

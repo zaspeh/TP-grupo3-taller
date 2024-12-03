@@ -25,7 +25,7 @@ public:
         float maxDistance = 0;
         for (size_t i = 0; i < ducks.size(); ++i) {
             for (size_t j = i + 1; j < ducks.size(); ++j) {
-                if (!ducks[i]) continue; 
+                if (!ducks[i] || !ducks[j]) continue; 
                 if(ducks[i]->isAlive() && ducks[j]->isAlive()){
                     float dx = ducks[i]->getPosX() - ducks[j]->getPosX();
                     float dy = ducks[i]->getPosY() - ducks[j]->getPosY();

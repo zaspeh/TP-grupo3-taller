@@ -201,7 +201,7 @@ bool Game::init() {
     }
 
     if (music.loadMusic("client_src/soundtrack/song1.mp3")) {
-        music.setVolume(8);  
+        music.setVolume(config["general"]["volume"].as<int>());  
         music.play();
     }
 

@@ -1,38 +1,16 @@
-// Weapon.h
 #ifndef WEAPON_H
 #define WEAPON_H
 
 #include <string>
 #include <iostream>
 #include <map>
-#include "../common_src/game_state.h"
 #include "../common_src/utils.h"
+#include "../common_src/game_state.h"
+#include "../common_src/config_manager.h"
 
-static std::map<int, float> weaponRecoil = {
-    {GRENADE_WEAPON, GRENADE_RECOIL},      
-    {BANANA_WEAPON, BANANA_RECOIL},       
-    {DARTGUN_WEAPON, DARTGUN_RECOIL},      
-    {AK_47_WEAPON, AK_47_RECOIL},        
-    {PEWPEWLASER_WEAPON, PEWPEWLASER_RECOIL},   
-    {LASERRIFLE_WEAPON, LASERRIFLE_RECOIL},   
-    {COWBOY_WEAPON, COWBOY_RECOIL},       
-    {MAGNUM_WEAPON, MAGNUM_RECOIL},       
-    {SHOTGUN_WEAPON, SHOTGUN_RECOIL},      
-    {SNIPER_WEAPON, SNIPER_RECOIL}        
-};
-
-static std::map<int, uint8_t> ammoForWeapons = {
-    {GRENADE_WEAPON, GRENADE_AMMO},
-    {BANANA_WEAPON, BANANA_AMMO},
-    {DARTGUN_WEAPON, DARTGUN_AMMO},
-    {AK_47_WEAPON, AK_47_AMMO},
-    {PEWPEWLASER_WEAPON, PEWPEWLASER_AMMO},
-    {LASERRIFLE_WEAPON, LASERRIFLE_AMMO},
-    {COWBOY_WEAPON, COWBOY_AMMO},
-    {MAGNUM_WEAPON, MAGNUM_AMMO},
-    {SHOTGUN_WEAPON, SHOTGUN_AMMO},
-    {SNIPER_WEAPON, SNIPER_AMMO}
-};
+// Declaración de mapas globales.
+extern std::map<int, float> weaponRecoil;
+extern std::map<int, uint8_t> ammoForWeapons;
 
 class Weapon {
 protected:
@@ -40,17 +18,15 @@ protected:
     int range;
 
 public:
-    Weapon(weapon_t weaponSt, int weaponRange) :
-        weaponState(weaponSt),
-        range(weaponRange) {
-        }
-    
+    Weapon(weapon_t weaponSt, int weaponRange)
+        : weaponState(weaponSt), range(weaponRange) {}
+
     virtual ~Weapon() = default;
-    
+
     virtual bool shoot(bool infinitAmmo) = 0;
 
     virtual bool canShoot() const { return weaponState.ammo > 0; }
-    
+
     int getAmmo() const { return weaponState.ammo; }
 
     void setAmmo(uint8_t newAmmo) { weaponState.ammo = newAmmo; }
@@ -58,13 +34,13 @@ public:
     int getId() const { return weaponState.type; }
 
     int getRange() const { return range; }
-    
+
     uint8_t getType() const { return weaponState.type; }
 
     float getRecoil() const { return weaponRecoil[weaponState.type]; }
 };
 
-// Armas específicas
+// Clases de armas específicas.
 class Grenade : public Weapon {
 private:
     bool pinPulled;
@@ -72,12 +48,13 @@ private:
     static const int EXPLOSION_RADIUS = 5;
 
 public:
-    Grenade(weapon_t weaponState) : Weapon(weaponState, 5), pinPulled(false), timeToExplode(4.0f) {}
-    
+    Grenade(weapon_t weaponState) 
+        : Weapon(weaponState, 5), pinPulled(false), timeToExplode(4.0f) {}
+
     bool shoot(bool infinitAmmo) override {
         if (!pinPulled) {
             pinPulled = true;
-            return false;  // Retornamos false porque aún no queremos crear el proyectil
+            return false;
         }
         return true;
     }
@@ -93,7 +70,7 @@ public:
                 setAmmo(getAmmo() - 1);
             }
             pinPulled = false;
-            timeToExplode = 4.0f;  // Reseteamos el tiempo para la próxima granada
+            timeToExplode = 4.0f;
         }
     }
 };
@@ -101,9 +78,9 @@ public:
 class Banana : public Weapon {
 public:
     Banana(weapon_t weaponState) : Weapon(weaponState, 5) {}
-    
+
     bool shoot(bool infinitAmmo) override {
-        if (!infinitAmmo){
+        if (!infinitAmmo) {
             if (!canShoot()) return false;
             setAmmo(getAmmo() - 1);
         }
@@ -111,10 +88,11 @@ public:
     }
 };
 
+// Resto de las clases de armas similares a Banana.
 class Dartgun : public Weapon {
 public:
     Dartgun(weapon_t weaponState) : Weapon(weaponState, 15) {}
-    
+
     bool shoot(bool infinitAmmo) override {
         if (!infinitAmmo) {
             if (!canShoot()) return false;
@@ -127,9 +105,9 @@ public:
 class AK47 : public Weapon {
 public:
     AK47(weapon_t weaponState) : Weapon(weaponState, 15) {}
-    
+
     bool shoot(bool infinitAmmo) override {
-        if (!infinitAmmo){
+        if (!infinitAmmo) {
             if (!canShoot()) return false;
             setAmmo(getAmmo() - 1);
         }
@@ -138,14 +116,11 @@ public:
 };
 
 class PewPewLaser : public Weapon {
-private:
-    static const int SHOTS_PER_BURST = 3;
-
 public:
     PewPewLaser(weapon_t weaponState) : Weapon(weaponState, 35) {}
-    
+
     bool shoot(bool infinitAmmo) override {
-        if (!infinitAmmo){
+        if (!infinitAmmo) {
             if (!canShoot()) return false;
             setAmmo(getAmmo() - 1);
         }
@@ -156,22 +131,22 @@ public:
 class LaserRifle : public Weapon {
 public:
     LaserRifle(weapon_t weaponState) : Weapon(weaponState, 30) {}
-    
+
     bool shoot(bool infinitAmmo) override {
-        if (!infinitAmmo){
+        if (!infinitAmmo) {
             if (!canShoot()) return false;
             setAmmo(getAmmo() - 1);
         }
         return true;
     }
-}; 
+};
 
 class CowBoyPistol : public Weapon {
 public:
     CowBoyPistol(weapon_t weaponState) : Weapon(weaponState, 30) {}
 
     bool shoot(bool infinitAmmo) override {
-        if( !infinitAmmo ){
+        if (!infinitAmmo) {
             if (!canShoot()) return false;
             setAmmo(getAmmo() - 1);
         }
@@ -184,7 +159,7 @@ public:
     Magnum(weapon_t weaponState) : Weapon(weaponState, 30) {}
 
     bool shoot(bool infinitAmmo) override {
-        if (!infinitAmmo){
+        if (!infinitAmmo) {
             if (!canShoot()) return false;
             setAmmo(getAmmo() - 1);
         }
@@ -197,7 +172,7 @@ public:
     Shotgun(weapon_t weaponState) : Weapon(weaponState, 30) {}
 
     bool shoot(bool infinitAmmo) override {
-        if( !infinitAmmo ){
+        if (!infinitAmmo) {
             if (!canShoot()) return false;
             setAmmo(getAmmo() - 1);
         }
@@ -210,7 +185,7 @@ public:
     Sniper(weapon_t weaponState) : Weapon(weaponState, 30) {}
 
     bool shoot(bool infinitAmmo) override {
-        if (!infinitAmmo){
+        if (!infinitAmmo) {
             if (!canShoot()) return false;
             setAmmo(getAmmo() - 1);
         }

@@ -79,8 +79,8 @@ bool ProjectilePhysics::updatePosition(projectile_t &projectile, level_t& levelS
         }
     }
 
-    if (projectile.pos.x < 0 || projectile.pos.x > LEVEL_WIDTH || 
-        projectile.pos.y < 0 || projectile.pos.y > LEVEL_HEIGHT) {
+    if (projectile.pos.x < 0 || projectile.pos.x > config["general"]["level_width"].as<int>() || 
+        projectile.pos.y < 0 || projectile.pos.y > config["general"]["level_height"].as<int>()) {
         return false;
     }
 

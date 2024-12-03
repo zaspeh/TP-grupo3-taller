@@ -10,6 +10,7 @@
 #include "box.h"
 #include "game_state.h"
 #include "player_state.h"
+#include "../common_src/config_manager.h"
 
 class ProjectilePhysics {
 private:
@@ -20,7 +21,8 @@ private:
     float initialX;
     bool isActive;
     float gravity;
-
+    YAML::Node config = ConfigManager::getInstance();
+    
 public:
     ProjectilePhysics();
 

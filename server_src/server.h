@@ -15,7 +15,6 @@
 #include "monitor.h"
 #include "receiver.h"
 #include "sender.h"
-#include "game_state.h"
 
 class Server: public Thread {
 private:
@@ -33,6 +32,7 @@ public:
     void run() override;
     void stop() override;
     void addClient(std::shared_ptr<ServerProtocol> client);
+    void closeServer();
     void removeClient(std::shared_ptr<ServerProtocol> client);
     std::vector<std::shared_ptr<Sender>>& obtener_emisores();
     ~Server();

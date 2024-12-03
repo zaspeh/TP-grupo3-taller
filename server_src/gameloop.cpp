@@ -8,11 +8,10 @@
 #include "../common_src/utils.h"
 
 GameLoop::GameLoop(Server& server, Monitor& monitor, std::atomic<bool>& gameShouldContinue): continueGame(gameShouldContinue), server(server), cola_comandos(100), iteraciones(0), monitor(monitor) {
-    gameState = std::make_unique<GameState>(continueGame);
 }
                     
 void GameLoop::initGame() {
-    gameState = std::make_unique<GameState>(continueGame);
+    gameState = std::make_unique<GameState>(server);
 }
 
 void GameLoop::addCommand(std::function<void()> command) {

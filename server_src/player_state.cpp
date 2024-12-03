@@ -182,12 +182,11 @@ void PlayerState::updatePosition(float deltaTime, platform_t* platforms, uint8_t
         }
     }
 
-    // Resto del código de colisiones con explosiones...
     for (int i = 0; i < numExplotions; i++) {
         bool horizontalOverlap = (duck.pos.x + WIDTH_DUCK > explotions[i].x) &&
-                                 (duck.pos.x < explotions[i].x + WIDTH_EXPLOTION);
+                                 (duck.pos.x < explotions[i].x + config["explosions"]["width"].as<uint8_t>());
         bool verticalOverlap = (duck.pos.y + HEIGHT_DUCK > explotions[i].y) &&
-                                (duck.pos.y < explotions[i].y + HEIGHT_EXPLOTION);
+                                (duck.pos.y < explotions[i].y + config["explosions"]["height"].as<uint8_t>());
         if (horizontalOverlap && verticalOverlap) {
             duck.isAlive = false;
         }
@@ -307,7 +306,7 @@ bool PlayerState::shoot(platform_t* platforms, uint8_t numPlatforms) {
     return returnValue;
 }
 
-// Añadir este nuevo método a PlayerState
+
 void PlayerState::applyRecoil(float recoilForce, platform_t* platforms, uint8_t numPlatforms) {
     float baseRecoil = duck.faceLeft ? recoilForce : -recoilForce;
     

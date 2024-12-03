@@ -1,0 +1,66 @@
+
+general:
+  max_players: 4
+  winning_score: 10  
+  volume: 8
+  level_width: 1024
+  level_height: 720
+
+weapons:
+  grenade:
+    explosion_radius: 5
+    pin_duration: 4
+    recoil: 0
+    distance: 25
+    ammo: 1
+
+  banana:
+    recoil: 0
+    distance: 25
+    ammo: 1
+
+  dartgun:
+    recoil: 80
+    distance: 5
+    ammo: 1
+
+  ak47:
+    bullets: 30
+    dispersion: 0.2
+    recoil: 150
+    distance: 13
+    ammo: 30
+
+  pewpewlaser:
+    recoil: 80
+    distance: 38
+    ammo: 12
+
+  laserrifle:
+    recoil: 120
+    distance: 30
+    ammo: 10
+
+  cowboy:
+    recoil: 200
+    distance: 20
+    ammo: 6
+
+  magnum:
+    recoil: 250
+    distance: 20
+    ammo: 6
+
+  shotgun:
+    recoil: 400
+    distance: 9
+    ammo: 2
+
+  sniper:
+    recoil: 400
+    distance: 64
+    ammo: 3
+
+explosions:
+  height: 32
+  width: 32

@@ -11,6 +11,8 @@
 #include "armor_physics.h"
 #include "projectile_physics.h"
 #include "../common_src/utils.h"
+#include <yaml-cpp/yaml.h>
+#include "../common_src/config_manager.h"
 
 #define WHITE 1
 #define YELLOW 2
@@ -34,7 +36,8 @@ private:
     std::vector<ArmorPhysics> fallingArmors; 
     std::vector<armor_t> armorsInAir;  
     std::vector<ProjectilePhysics> projectilePhysics;
-    std::atomic<bool>& gameShouldContinue;
+    Server& server;
+    YAML::Node config;
 
     bool isColor(uint8_t action);
     void checkIfSomeoneWin();
@@ -64,7 +67,8 @@ private:
     void compactDucks(); 
 
 public:
-    GameState(std::atomic<bool>& gameShouldContinue);
+    
+    GameState(Server& server);
 
     void removePlayer(uint8_t id);
     game_state_t doAction(uint8_t id, uint8_t action);

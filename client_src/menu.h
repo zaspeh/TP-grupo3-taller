@@ -11,6 +11,7 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
 #include <string>
+#include "../common_src/config_manager.h"
 
 class Menu {
 private:
@@ -36,9 +37,10 @@ private:
     bool showText;
     bool closed;
     int chosenColor;
+    YAML::Node config = ConfigManager::getInstance();
     
-    const int WINDOW_WIDTH = LEVEL_WIDTH;
-    const int WINDOW_HEIGHT = LEVEL_HEIGHT;
+    const int WINDOW_WIDTH = config["general"]["level_width"].as<int>();
+    const int WINDOW_HEIGHT = config["general"]["level_height"].as<int>();
     const int BUTTON_WIDTH = 200;
     const int BUTTON_HEIGHT = 50;
     const int BUTTON_TOP_MARGIN = 80;

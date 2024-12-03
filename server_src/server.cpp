@@ -43,6 +43,10 @@ void Server::handleInput() {
     }
 }
 
+void Server::closeServer() {
+    gameShouldContinue = false;
+}
+
 void Server::run() {
     try {
         accepter.start();

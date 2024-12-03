@@ -66,6 +66,7 @@
         "set": "cpp",
         "unordered_set": "cpp",
         "iomanip": "cpp",
-        "variant": "cpp"
+        "variant": "cpp",
+        "*.yaml": "cpp"
     }
 }
