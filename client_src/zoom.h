@@ -1,8 +1,11 @@
 #ifndef ZOOM_H_
 #define ZOOM_H_
 
-const int SCREEN_WIDTH = 1024;
-const int SCREEN_HEIGHT = 720;
+#include "../common_src/config_manager.h"
+
+const YAML::Node config = ConfigManager::getInstance();
+const int SCREEN_WIDTH = config["general"]["level_width"].as<int>();
+const int SCREEN_HEIGHT = config["general"]["level_height"].as<int>();
 
 const int WORLD_SCALE = 4;
 const int WORLD_WIDTH = SCREEN_WIDTH * WORLD_SCALE;

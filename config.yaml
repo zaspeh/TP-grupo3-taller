@@ -1,7 +1,7 @@
 general:
   max_players: 4
   winning_score: 10  
-  volume: 8
+  volume: 0
   level_width: 1024
   level_height: 720
 
