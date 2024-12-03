@@ -8,7 +8,6 @@
 #include <vector>
 #include <cstdint> 
 
-// Esta clase va a tener herencia de Protocol
 class ClientProtocol : public Protocol {
 private:
     uint8_t client_identifier;

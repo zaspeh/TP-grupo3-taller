@@ -29,11 +29,9 @@ void Accepter::run() {
             receiver->start();
             receptores.push_back(receiver);
         } catch (const std::exception& e) {
-            std::cerr << "Error accepter: " << e.what() << std::endl;
             break;
         }
     }
-    std::cout << "Saliendo de run en accepter\n";
 }
 
 
@@ -55,7 +53,6 @@ void Accepter::stop() {
         }
         emisores.clear();
         receptores.clear();
-        std::cout << "Saliendo del accepter\n";
     } catch (const std::exception& e) {
         std::cerr << "Error accepter" << e.what() << std::endl;
     }

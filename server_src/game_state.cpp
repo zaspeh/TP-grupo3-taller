@@ -67,7 +67,7 @@ void GameState::updateState(uint8_t id, std::shared_ptr<PlayerState> player) {
     state.level.ducks[duckIndex] = player->getState();
     if (!player->isAlive()) {
         checkIfSomeoneWin();
-        std::cout << "Entrando por aquí\n";
+        //std::cout << "Entrando por aquí\n";
     }
 }
 
@@ -77,7 +77,7 @@ std::shared_ptr<PlayerState> GameState::connectPlayer(uint8_t id) {
     players[id] = std::make_shared<PlayerState>(id, pos.x, pos.y);  
     state.level.ducks[id] = players[id]->getState();
     state.level.num_ducks++;
-    std::cout << "Cantidad de patos: " << static_cast<int>(state.level.num_ducks) << std::endl;
+    //std::cout << "Cantidad de patos: " << static_cast<int>(state.level.num_ducks) << std::endl;
     return players[id];
 }
 
@@ -114,11 +114,11 @@ game_state_t GameState::doAction(uint8_t id, uint8_t action) {
                 }
             }
             state.level.ducks[duckIndex].score = 0;
-            std::cout << "Resetenado el score del pato " << static_cast<int>(id) << " a " << static_cast<int>(state.level.ducks[duckIndex].score) << std::endl; 
+            //std::cout << "Resetenado el score del pato " << static_cast<int>(id) << " a " << static_cast<int>(state.level.ducks[duckIndex].score) << std::endl; 
             player->resetPlayer(state.level.ducks[duckIndex], player->getPosition().x, player->getPosition().y);
             state.level.ducks[duckIndex] = player->getState(); 
         }
-        std::cout << "Match no terminado\n";
+        //std::cout << "Match no terminado\n";
         matchFinished = false;
         changeLevel();
     }
@@ -182,7 +182,7 @@ game_state_t GameState::doAction(uint8_t id, uint8_t action) {
                     player->setCrouched(!player->isCrouched());
                     break;
                 case NEW_CLIENT:
-                    std::cout << "Connect player\n";
+                    //std::cout << "Connect player\n";
                     player = connectPlayer(id);
                     break;
                 case INFINIT_AMMO:
@@ -210,7 +210,7 @@ game_state_t GameState::doAction(uint8_t id, uint8_t action) {
             }
         }
     } catch (const std::exception& e) {
-        std::cerr << "Error: " << e.what() << std::endl;
+        //std::cerr << "Error: " << e.what() << std::endl;
     }
 
     updateState(id, player);
@@ -342,7 +342,7 @@ void GameState::updateWeaponsPhysics(float deltaTime) {
             }
         }
     } catch (const std::exception& e) {
-        std::cerr << "Error updating weapons physics: " << e.what() << std::endl;
+        ///std::cerr << "Error updating weapons physics: " << e.what() << std::endl;
     }
 }
 
@@ -400,7 +400,7 @@ game_state_t GameState::updatePlayers(float deltaTime) {
         updateSpawns(deltaTime);
         checkIfSomeoneWin();
     } catch (const std::exception& e) {
-        std::cerr << "Error updating players: " << e.what() << std::endl;
+        //std::cerr << "Error updating players: " << e.what() << std::endl;
     }
     return state;
 }
@@ -456,20 +456,18 @@ void GameState::finishMatch(uint8_t id) {
                break;
            }
        }
-       std::cout << "Actualizando el estado del pato con id: " << static_cast<int>(id) << std::endl;
+       //std::cout << "Actualizando el estado del pato con id: " << static_cast<int>(id) << std::endl;
        state.level.ducks[newDuckIndex] = player->getState();
-       std::cout << "Pos x: " << static_cast<int>(state.level.ducks[newDuckIndex].pos.x) << " - Pos y: " << static_cast<int>(state.level.ducks[newDuckIndex].pos.x) << std::endl;  
+       //std::cout << "Pos x: " << static_cast<int>(state.level.ducks[newDuckIndex].pos.x) << " - Pos y: " << static_cast<int>(state.level.ducks[newDuckIndex].pos.x) << std::endl;  
    }
    state.level.num_ducks = currentDucks.size();
 }
 
-// Problema al cambiar de nivel y un pato desconectado
 void GameState::changeLevel() {
     std::lock_guard<std::mutex> lock(mtx);
     std::map<uint8_t, duck_t> currentDucks;
     for (auto& [id, player] : players) {
         if (!player) continue;
-        // Find correct duck index
         int duckIndex = 0;
         for (int i = 0; i < state.level.num_ducks; i++) {
             if (state.level.ducks[i].id == id) {
@@ -493,7 +491,6 @@ void GameState::changeLevel() {
         position_t pos = level.getSpawnPosition();
         player->resetPlayer(currentDucks[id], pos.x, pos.y);
         
-        // Find position for new duck
         int newDuckIndex = 0;
         for (int i = 0; i < state.level.num_ducks; i++) {
             if (state.level.ducks[i].id == id) {
@@ -511,7 +508,7 @@ void GameState::checkIfSomeoneWin() {
        if (player && player->isAlive())
            aliveDucks++;
            
-       // Encontrar la posición correcta del pato en el arreglo
+
        int duckIndex = 0;
        for (int i = 0; i < state.level.num_ducks; i++) {
            if (state.level.ducks[i].id == id) {
@@ -521,30 +518,26 @@ void GameState::checkIfSomeoneWin() {
        }
        
        if (state.level.ducks[duckIndex].score >= state.winning_score && !matchFinished) {
-            std::cout << "El pato " << static_cast<int>(id) << " acaba de ganar el juego y su score es " << static_cast<int>(state.level.ducks[duckIndex].score) << std::endl;
+            //std::cout << "El pato " << static_cast<int>(id) << " acaba de ganar el juego y su score es " << static_cast<int>(state.level.ducks[duckIndex].score) << std::endl;
            finishMatch(id);
            return;
        }
    }
    
    if ((aliveDucks == 1 && state.level.num_ducks > 1) || (state.level.num_ducks == 1 && aliveDucks == 0)) {
-    std::cout << "Cambiando de nivel\n";
+    //std::cout << "Cambiando de nivel\n";
        changeLevel(); 
    }
 }
 
 void GameState::createFiveShoots(int x, int y) {
-    // Crear 5 proyectiles adicionales
     for (int j = 0; j < 5; j++) {
         position_t explosionOrigin = {x, y};
                         
-        // Generar ángulo aleatorio entre 0 y 2π
         float randomAngle = static_cast<float>(rand()) / static_cast<float>(RAND_MAX) * 6.0f;
                         
-        // Calcular dirección aleatoria
         bool facingLeft = randomAngle > M_PI;
                         
-        // Crear nuevo proyectil en la posición de la explosión
         createProjectile(DARTGUN_WEAPON, explosionOrigin, facingLeft, randomAngle);
     }
 }
@@ -575,7 +568,7 @@ void GameState::updateBoxes() {
             i++;
         }
     } catch (...) { 
-        std::cerr << "Error inesperado en updateBoxes" << std::endl;
+        //std::cerr << "Error inesperado en updateBoxes" << std::endl;
     }
 }
 
@@ -607,7 +600,7 @@ uint8_t GameState::checkWeaponDistance(uint8_t weaponType) {
     }   
 }
 
-weapon_t GameState::getWeaponPosition(position_t position) { // SE PUEDE MODULARIZAR
+weapon_t GameState::getWeaponPosition(position_t position) { 
     weapon_t weapon = {
         {0, 0},
         NULL_WEAPON,
@@ -749,7 +742,7 @@ std::shared_ptr<Weapon> GameState::createWeapon(weapon_t weaponState) {
                 break;
         }
     } catch (const std::exception& e) {
-        std::cerr << "Exception caught: " << e.what() << std::endl;
+        //std::cerr << "Exception caught: " << e.what() << std::endl;
     }
     return newWeapon;
 }

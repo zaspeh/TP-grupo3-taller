@@ -8,7 +8,7 @@ Monitor::Monitor(Server& server): server(server) {}
 
 void Monitor::procesar_mensaje(const game_state_t gameState) {
     std::lock_guard<std::mutex> lock(mutex_clientes);
-    auto senders = server.obtener_emisores();
+    auto senders = server.getSenders();
     if (!senders.empty()) {
         for (auto& sender : senders) {
             if (sender && !sender->isQueueClosed()) {  

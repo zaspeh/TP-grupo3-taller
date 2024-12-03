@@ -33,7 +33,7 @@ void Receiver::run() {
     try {
         server.removeClient(protocol);
     } catch (const std::exception& e) {
-        std::cerr << "Error: " << e.what() << std::endl;
+        //std::cerr << "Error: " << e.what() << std::endl;
     }
     //std::cout << "Saliendo del receiver\n";
 }

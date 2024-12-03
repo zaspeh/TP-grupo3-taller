@@ -20,7 +20,7 @@ void Sender::run() {
             try {
                 state = gameStateQueue->pop();
             } catch (const std::exception& e) {
-                std::cerr << "Error: " << e.what() << std::endl;
+                //std::cerr << "Error: " << e.what() << std::endl;
                 break;
             }
 
@@ -50,7 +50,7 @@ void Sender::broadcast_message_with_info(game_state_t gameState) {
     try {
         gameStateQueue->try_push(gameState);
     } catch (const std::exception& e) {
-        std::cerr << "Error: " << e.what() << std::endl;
+        //std::cerr << "Error: " << e.what() << std::endl;
     }
 }
 
@@ -65,7 +65,7 @@ void Sender::stop() {
         gameStateQueue->close();
         //std::cout << "COla cerrada en el sender\n";
     } catch (const std::exception& e) {
-        std::cerr << "Error: " << e.what() << std::endl;
+        //std::cerr << "Error: " << e.what() << std::endl;
     }
 }
 
@@ -73,6 +73,6 @@ Sender::~Sender() {
     try {
         stop();
     } catch (const std::exception& e) {
-        std::cerr << "Error: " << e.what() << std::endl;
+        //std::cerr << "Error: " << e.what() << std::endl;
     }
 }

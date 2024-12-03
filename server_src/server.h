@@ -34,7 +34,7 @@ public:
     void addClient(std::shared_ptr<ServerProtocol> client);
     void closeServer();
     void removeClient(std::shared_ptr<ServerProtocol> client);
-    std::vector<std::shared_ptr<Sender>>& obtener_emisores();
+    std::vector<std::shared_ptr<Sender>>& getSenders();
     ~Server();
 };
 

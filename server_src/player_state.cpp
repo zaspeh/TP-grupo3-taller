@@ -152,7 +152,6 @@ void PlayerState::updatePosition(float deltaTime, platform_t* platforms, uint8_t
         }
     }
     
-    // Colisiones con plataformas
     for (int i = 0; i < numPlatforms; i++) {
         bool horizontalOverlap = (duck.pos.x + WIDTH_DUCK > platforms[i].pos.x + 20) && 
                                 (duck.pos.x < platforms[i].pos.x + WIDTH_PLATFORM); 
@@ -286,7 +285,6 @@ bool PlayerState::shoot(platform_t* platforms, uint8_t numPlatforms) {
             std::shared_ptr<Grenade> grenade = std::dynamic_pointer_cast<Grenade>(weapon); 
             if (grenade != nullptr && grenade->getPinPulled()) {
                 grenade->throw_grenade();
-                // Si está en modo infinito, reseteamos la munición
                 if (infinitAmmo) {
                     weapon->setAmmo(1);
                 }

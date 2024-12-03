@@ -88,9 +88,6 @@ public:
 
     bool doNotCollideX(platform_t* plat, uint8_t numPlats, int new_x);
 
-    /* int getScore() const;
-    void setScore(int newScore);*/
-
     void takeDamage(uint8_t damage);
 
     bool shoot(platform_t* platforms, uint8_t numPlatforms);

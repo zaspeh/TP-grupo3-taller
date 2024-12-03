@@ -1,5 +1,6 @@
 #include "game.h"
 #include <algorithm>  
+#include <chrono>
 
 Game::Game(std::shared_ptr<Queue<game_state_t>> gameStateQueue, std::shared_ptr<Queue<uint8_t>> commandQueue, Client& client)
     : gameStateQueue(gameStateQueue),
@@ -62,8 +63,6 @@ void Game::initializeGameObjects() {
     spawns.resize(gameState.level.num_spawn_places);
     boxes.resize(gameState.level.num_boxes);
 }
-
-#include <chrono>
 
 const std::chrono::milliseconds COMMAND_INTERVAL(50); 
 const std::chrono::milliseconds SHOOT_INTERVAL(200); 
@@ -270,8 +269,6 @@ void Game::run()
         }
 
     }
-    printf("Saliendo del game run\n");
-    //client.stop();
 }
 
 void Game::render() {
@@ -382,13 +379,10 @@ void Game::render() {
 
 void Game::update(game_state_t gameState) {
     std::lock_guard<std::mutex> lock(sdl_mutex);
-    //std::cout << "Número de patos recibidos: " << static_cast<int>(gameState.level.num_ducks) << std::endl;
     for (size_t i = 0; i < ducks.size(); i++) {
         bool found = false;
         for (int j = 0; j < gameState.level.num_ducks; j++) {
-            //std::cout << "Duck con id: " << static_cast<int>(gameState.level.ducks[j].id) << " - position: " << gameState.level.ducks[i].pos.x << "," << gameState.level.ducks[i].pos.y << std::endl;
             if (ducks[i] && ducks[i]->getId() == gameState.level.ducks[j].id) {
-                //std::cout << "Actualizando el estado del pato" << ducks[i]->getId() << std::endl;
                 ducks[i]->updateState(gameState.level.ducks[j]);
                 found = true;
                 break;
@@ -564,9 +558,7 @@ void Game::renderText(const std::string& message, int x, int y, int color) {
 
 
 void Game::stop() {
-    printf("Stop1.\n");
     std::lock_guard<std::mutex> lock(sdl_mutex);
-    printf("Stop2.\n");
     if (!_keep_running) return;
     try {
         Thread::stop();
@@ -580,47 +572,21 @@ void Game::stop() {
         boxes.clear();
         bananas.clear();
         background.reset();
-        printf("Stop3.\n");
 
-/*         // Luego cerrar el font antes de finalizar SDL_TTF
-        music.stop();
-        Mix_CloseAudio();
-        printf("Stop4.\n");
-        gFont.reset(nullptr);  // Asegurarse de que la fuente se libere antes de TTF_Quit
-        TTF_Quit();
-
-        // Finalmente cerrar todos los subsistemas SDL en orden inverso
-        IMG_Quit();
-        printf("Stop5.\n");
-        
-        if (gRenderer) {
-            gRenderer.reset(nullptr);
-        }
-        
-        if (gWindow) {
-            gWindow.reset(nullptr);
-        }
-        
-        SDL_Quit(); */
-
-            // Audio cleanup
         music.stop();
         Mix_HaltChannel(-1);
         Mix_CloseAudio();
         Mix_Quit();
         
-        // Font cleanup
         gFont.reset(nullptr);
         TTF_Quit();
         
-        // Graphics cleanup
         IMG_Quit();
         gRenderer.reset(nullptr);
         gWindow.reset(nullptr);
         
         SDL_QuitSubSystem(SDL_INIT_VIDEO | SDL_INIT_AUDIO);
         SDL_Quit();
-        printf("Stop6.\n");
 
     } catch (const std::exception& e) {
         std::cerr << "Error during game shutdown: " << e.what() << std::endl;
@@ -637,5 +603,4 @@ Game::~Game() {
     } catch (const std::exception& e) {
         std::cerr << "Error in Game destructor: " << e.what() << std::endl;
     }
-    printf("Game destroyed.\n");
 }

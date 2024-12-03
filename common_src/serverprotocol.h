@@ -5,7 +5,7 @@
 #include "../server_src/game_state.h"
 
 
-// esta clase va a tener herencia de protocolo
+
 
 class ServerProtocol: public Protocol {
     private:

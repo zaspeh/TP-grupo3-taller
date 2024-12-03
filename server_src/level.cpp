@@ -2,12 +2,11 @@
 
 
 Level::Level()  {
-    std::random_device rd;  // Obtiene una semilla del hardware
+    std::random_device rd;  
     rng = std::mt19937(rd());
     boxDist = std::uniform_int_distribution<int>(1, MAX_BOXES);
     weaponDist = std::uniform_int_distribution<int>(20, 29);
     armorDist = std::uniform_int_distribution<int>(30, 31);
-    // hago un random id:
     std::uniform_int_distribution<int> levelDist(0, 2);
     chosenLevel = levelDist(rng);
     createLevelById(chosenLevel);
@@ -122,7 +121,7 @@ void Level::initLevel0() {
         }
         levelState.platforms[i].type = GRASS_PLATFORM;
     }
-    // a cada plataforma le bajo 1.
+
     for (int i = 57; i < 64; ++i) {
         levelState.platforms[i].pos.y += i-57;
     }
@@ -199,7 +198,7 @@ void Level::initLevel0() {
 
 
 
-    // Inicialización de cajas y proyectiles
+
     this->boxes.clear();
     this->boxes.push_back(getRandomBox(525, 159));
     this->boxes.push_back(getRandomBox(375, 642));
@@ -239,15 +238,9 @@ void Level::initLevel1() {
         levelState.platforms[i] = {{i * WIDTH_PLATFORM - 16*WIDTH_PLATFORM, 300}, GRASS_PLATFORM};
     }
 
-    //         --------------------------
-    // ---------------   ------   ------------------
-
-
-// 22
     
     levelState.num_platforms += 4;
     for (int i = 47; i < 51; ++i) {
-        // pongo bloques en x = 11, 12, 19,20
         if (i < 49) {
             levelState.platforms[i] = {{i * WIDTH_PLATFORM - 37*WIDTH_PLATFORM + 15, 400}, GRASS_PLATFORM};
         } else {
@@ -257,7 +250,6 @@ void Level::initLevel1() {
 
     levelState.num_platforms += 6;
     for (int i = 51; i < 57; ++i) {
-        // pongo bloques en x = 4, 5, 6, 7
         levelState.platforms[i] = {{i * WIDTH_PLATFORM - 48*WIDTH_PLATFORM + 4, 500}, GRASS_PLATFORM};
     }
 
@@ -275,11 +267,6 @@ void Level::initLevel1() {
         levelState.platforms[i].pos = {levelState.platforms[i].pos.x - i, levelState.platforms[i].pos.y};
 
     
-    //          --------------------------
-
-    //  --------------  -----  -----------------                
-    //  -----------------------------  -  -  -----
-    // Configuración de lugares de aparición (spawn)
     levelState.num_spawn_places = 10;
     
     levelState.spawn_places[0] = {{13*32, 140}, true, nullWeapon, nullArmor};
@@ -306,7 +293,6 @@ void Level::initLevel1() {
     this->spawns.push_back(std::make_unique<Spawn>(432, 268, true, false, 0.0f));
     this->spawns.push_back(std::make_unique<Spawn>(482, 268, true, false, 0.0f));
 
-    // Inicialización de cajas y proyectiles
     this->boxes.clear();
     this->boxes.push_back(getRandomBox(140, 294));
     this->boxes.push_back(getRandomBox(190, 294));
@@ -334,7 +320,6 @@ void Level::initLevel2() {
     }
 
 
-    // empiezo desde el 9
     levelState.num_platforms += 16;
     for (int i = 20; i < 36; ++i) {
         if ( 23 <= i && i < 33) 
@@ -362,7 +347,6 @@ void Level::initLevel2() {
     levelState.platforms[levelState.num_platforms++] = {{20* WIDTH_PLATFORM - 15, 400+HEIGHT_PLATFORM }, DIRT_PLATFORM};
 
 
-    // Configuración de lugares de aparición (spawn)
     levelState.num_spawn_places = 10;
     
     levelState.spawn_places[0] = {{6*32, 360}, true, nullWeapon, nullArmor};
@@ -391,7 +375,6 @@ void Level::initLevel2() {
     this->spawns.push_back(std::make_unique<Spawn>(695, 117 + HEIGHT_PLATFORM, true, false, 0.0f));
 
 
-    // Inicialización de cajas y proyectiles
     this->boxes.clear();
     this->boxes.push_back(getRandomBox(255, 394));
     this->boxes.push_back(getRandomBox(305, 394));
@@ -406,11 +389,10 @@ void Level::initLevel2() {
 
 }
 
-// Implementación de getLevel0
 void Level::winningLevel() {
     clearLevelState();
 
-    // Configuración de plataformas 
+ 
     levelState.num_platforms = 15;
     for (int i = 0; i < 15; ++i) {
         levelState.platforms[i] = {{32*7 + i * WIDTH_PLATFORM - i, 400}, GRASS_PLATFORM};
@@ -446,7 +428,6 @@ void Level::winningLevel() {
 
 }
 
-// Métodos para acceder a la información del nivel
 level_t& Level::getLevel() {
     return levelState;
 }
@@ -458,7 +439,7 @@ position_t Level::getSpawnPosition() {
             return levelState.spawn_places[i].pos;
         }
     }
-    return {0, 0};  // Retorna posición nula si no hay spawn activo
+    return {0, 0}; 
 }
 
 std::unique_ptr<Box> Level::getRandomBox(int x, int y) {

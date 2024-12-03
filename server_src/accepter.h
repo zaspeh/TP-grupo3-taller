@@ -29,7 +29,7 @@ private:
 
 public:
     Accepter(int port, Server& server, Monitor& monitor, GameLoop& gameLoop);
-    std::vector<std::shared_ptr<Sender>>& obtener_emisores() { return emisores; }
+    std::vector<std::shared_ptr<Sender>>& getSenders() { return emisores; }
     void run() override;
     void stop() override;
 

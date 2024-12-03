@@ -51,23 +51,6 @@ void ClientProtocol::readDucks(duck_t ducks[MAX_DUCKS], uint8_t numDucks, bool &
     }
 }
 
-/* 
-void ClientProtocol::readDucks(duck_t ducks[MAX_DUCKS], uint8_t numDucks, bool &wasClosed) {
-    for (int i = 0; i < MAX_DUCKS; ++i) {
-        ducks[i] = {}; 
-    }
-
-    for (uint8_t i = 0; i < numDucks; ++i) {
-        duck_t duck = readDuck(wasClosed);
-        if (duck.id < MAX_DUCKS) {
-            ducks[duck.id] = duck;
-        } else {
-            std::cerr << "Error: Duck ID fuera de rango: " << static_cast<int>(duck.id) << std::endl;
-        }
-    }
-}
- */
-
 void ClientProtocol::readPlatforms(platform_t platforms[MAX_PLATFORMS], uint8_t numPlatforms, bool &wasClosed) {
     for (uint8_t i = 0; i < numPlatforms; i++) {
         platforms[i].pos = readPosition(wasClosed);
@@ -155,5 +138,4 @@ void ClientProtocol::setID(int id) {
 ClientProtocol::ClientProtocol(Socket&& socket, uint8_t client_id)
         : Protocol(std::move(socket)),  
           client_identifier(client_id) {
-            std::cout << "Id inicializando en: " << static_cast<int>(client_identifier) << std::endl;
           }  

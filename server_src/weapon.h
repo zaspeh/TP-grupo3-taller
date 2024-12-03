@@ -8,7 +8,6 @@
 #include "../common_src/game_state.h"
 #include "../common_src/config_manager.h"
 
-// Declaración de mapas globales.
 extern std::map<int, float> weaponRecoil;
 extern std::map<int, uint8_t> ammoForWeapons;
 
@@ -40,7 +39,6 @@ public:
     float getRecoil() const { return weaponRecoil[weaponState.type]; }
 };
 
-// Clases de armas específicas.
 class Grenade : public Weapon {
 private:
     bool pinPulled;
@@ -88,7 +86,6 @@ public:
     }
 };
 
-// Resto de las clases de armas similares a Banana.
 class Dartgun : public Weapon {
 public:
     Dartgun(weapon_t weaponState) : Weapon(weaponState, 15) {}

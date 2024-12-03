@@ -127,7 +127,6 @@ void Menu::handleEvents() {
                     stop();
                 }
             }
-            std::cout << "Color elegido: " << chosenColor << std::endl;
         }
         else if (event.type == SDL_KEYDOWN) {
             if (event.key.keysym.sym == SDLK_ESCAPE) {

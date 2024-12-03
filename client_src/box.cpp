@@ -32,7 +32,6 @@ bool Box::loadTexture() {
             path += "box4.png";
             break;
         case 0:
-            std::cout << "Caja sin vida: " << path << std::endl;
             break;
         default:
             std::cerr << "Caja no cargada" << std::endl;

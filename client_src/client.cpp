@@ -22,20 +22,6 @@ Client::Client(const std::string& server_ip, const std::string& server_port)
         gameThread->start();
     }
 
-/* void Client::checkIfClose() {
-    while (_keep_running) {
-        std::string input;
-        std::getline(std::cin, input);  // Directa lectura sin verificación del búfer
-
-        if (input == "q") {
-            break;
-
-        }
-        std::cout << "Entrada inválida. Intente nuevamente: ";
-    }
-    stop();
-} */
-
 bool inputAvailable() {
     fd_set set;
     struct timeval timeout;
@@ -52,9 +38,6 @@ void Client::checkIfClose() {
         while (_keep_running && clientContinue) {
             if (inputAvailable()) {
                 std::getline(std::cin, input);
-                /* if (input == "q") {
-                    stop();
-                } */
             }
         }
         if (!clientContinue) {

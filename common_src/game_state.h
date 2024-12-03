@@ -102,7 +102,6 @@ typedef struct {
     position_t bananas[MAX_ITEMS];
 } level_t;
 
-// Estado global del juego
 typedef struct {
     level_t level;
     uint8_t current_level;

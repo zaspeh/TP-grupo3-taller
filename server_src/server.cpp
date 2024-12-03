@@ -9,8 +9,8 @@ constexpr const char* SALIR = "q";
 
 Server::Server(int port): gameShouldContinue(true), gameloop(*this, monitor, gameShouldContinue), monitor(*this), accepter(port, *this, monitor, gameloop) {}
 
-std::vector<std::shared_ptr<Sender>>& Server::obtener_emisores() {
-    return accepter.obtener_emisores();
+std::vector<std::shared_ptr<Sender>>& Server::getSenders() {
+    return accepter.getSenders();
 }
 
 bool inputAvailable() {
@@ -81,7 +81,7 @@ void Server::stop() {
         gameloop.join();
         monitor.cerrar_clientes();
     } catch (const std::exception& e) {
-        std::cerr << "Error server: " << e.what() << std::endl;
+        //std::cerr << "Error server: " << e.what() << std::endl;
     }
 }
 
@@ -89,6 +89,6 @@ Server::~Server() {
     try {
         stop();
     } catch (const std::exception& e) {
-        std::cerr << "Error: " << e.what() << std::endl;
+        //std::cerr << "Error: " << e.what() << std::endl;
     }
 }

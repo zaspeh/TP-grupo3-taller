@@ -146,14 +146,6 @@ void Duck::render(const Camera& camera, float zoom) {
             else
                 armor->render(duckState.pos.x , duckState.pos.y - 17, faceLeft, HELMET_ARMOR, camera, zoom);
         } 
-        /*if (duckState.chestplate.type == CHESTPLATE_ARMOR) {
-            if (!armor->loadTexture())
-                std::cout << "Failed to load texture weapon\n"; 
-            if (faceLeft)
-                armor->render(duckState.pos.x + 18, duckState.pos.y + 27, faceLeft, CHESTPLATE_ARMOR, camera, zoom);
-            else 
-                armor->render(duckState.pos.x + 15, duckState.pos.y + 27, faceLeft, CHESTPLATE_ARMOR, camera, zoom);
-        }*/
 
         if (duckState.chestplate.type == CHESTPLATE_ARMOR){
             SDL_Rect scaleArmor;
