@@ -64,10 +64,6 @@ void Game::initializeGameObjects() {
     boxes.resize(gameState.level.num_boxes);
 }
 
-<<<<<<< HEAD
-=======
-
->>>>>>> 506f0fe503ef3f822b59ed3636980357dcb10dd1
 const std::chrono::milliseconds COMMAND_INTERVAL(50); 
 const std::chrono::milliseconds SHOOT_INTERVAL(200); 
 std::chrono::steady_clock::time_point lastCommandTime = std::chrono::steady_clock::now();
