@@ -1,0 +1,3 @@
+repository='external project URL'
+module='https://github.com/libSDL2pp/libSDL2pp/archive/cc198c9a5657048bee67ece82de620b2d5661084.zip'
+tag=''
